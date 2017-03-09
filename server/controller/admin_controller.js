@@ -1,7 +1,8 @@
 const uu_request = require('../utils/uu_request');
 var service_info = "ec order service";
 var fs = require('fs-extra');
-
+var eventproxy = require('eventproxy');
+var service_info = "drp admin service"
 if(typeof require !== 'undefined') XLSX = require('xlsjs');
 
 var do_get_method = function(url,cb){
@@ -25,10 +26,12 @@ var do_post_method = function(data,url,cb){
 	});
 };
 exports.register = function(server, options, next){
+	//临时订单号
 	var get_temp_order_no = function(cb){
 		var url = "http://211.149.248.241:18011/get_temp_order_no?org_code=ioio&order_type=purchase_inbound"
 		do_get_method(url,cb);
 	};
+	//生成订单号
 	var generate_order_no = function(cb){
 		var url = "http://211.149.248.241:18011/generate_order_no"
 		var data = {
@@ -37,6 +40,7 @@ exports.register = function(server, options, next){
 		};
 		do_post_method(data,url,cb);
 	};
+	//读取导入eccel
 	var read_purchase_excel = function(path, reply) {
 		generate_order_no(function(err,row){
 			if (!err) {
@@ -107,16 +111,29 @@ exports.register = function(server, options, next){
 			}
 		});
 	};
+	//保存采购单
 	var save_purchase_orders = function(purchase_id,purchased_person,pay_amount,total_sorts,total_number,pay_account,purchased_at,purchase_warehouse,status,supply_id,remark,cb){
 		server.plugins['models'].purchase_orders.save_purchase_orders(purchase_id,purchased_person,pay_amount,total_sorts,total_number,pay_account,purchased_at,purchase_warehouse,status,supply_id,remark,function(err,results){
 			cb(err,results);
 		});
 	};
+	//保存采购单明细
 	var save_purchase_detail = function(purchase_id,product_id,purchase_price,wholesale_price,retail_price,unit,number,cb){
 		server.plugins['models'].purchase_orders_details.save_purchase_detail(purchase_id,product_id,purchase_price,wholesale_price,retail_price,unit,number,function(err,results){
 			cb(err,results);
 		});
 	};
+	//查询订单商品列表
+	var search_order_products = function(order_id,cb){
+		var url ="http://211.149.248.241:18010/search_order_products?order_id="+order_id;
+		do_get_method(url,cb);
+	}
+	//订单支付信息
+	var get_order_pay_infos = function(order_id,cb){
+		var url = "http://139.196.148.40:18008/get_order_pay_infos?order_id=";
+		url = url + order_id;
+		do_get_method(url,cb);
+	}
 	server.route([
 		//创建临时订单号
 		{
@@ -169,6 +186,59 @@ exports.register = function(server, options, next){
 	            }
 			},
 		},
+		//根据订单号查询订单商品
+		{
+			method: 'GET',
+			path: '/search_order_infos',
+			handler: function(request, reply){
+				var order_id = request.query.order_id;
+				var ep = eventproxy.create("order","order_details","pay_infos",
+					function(order,order_details,pay_infos){
+						console.log("123");
+						return reply({"success":true,"order":order,"order_details":order_details,"pay_infos":pay_infos,"service_info":service_info});
+				});
+				search_order_products(order_id, function(err,row){
+					console.log("row:"+JSON.stringify(row));
+					if (!err) {
+						if (row.success) {
+							var order_details = row.order_details;
+							var products = row.products;
+							var order = row.order;
+							order.store = row.store;
+							for (var i = 0; i < order_details.length; i++) {
+								for (var j = 0; j < products.length; j++) {
+									if (order_details[i].product_id == products[j].id) {
+										order_details[i].product = products[j];
+									}
+								}
+							}
+							ep.emit("order", order);
+							ep.emit("order_details", order_details);
+						}else {
+							ep.emit("order", null);
+							ep.emit("order_details", null);
+						}
+					}else {
+					}
+				});
+				get_order_pay_infos(order_id, function(err,row){
+					if (!err) {
+						if (row.success) {
+							var pay_infos = row.rows;
+							console.log("pay_infos"+pay_infos);
+							ep.emit("pay_infos", pay_infos);
+						}else {
+							ep.emit("pay_infos", null);
+						}
+					}else {
+
+					}
+				});
+
+			}
+		},
+
+
 
 	]);
 

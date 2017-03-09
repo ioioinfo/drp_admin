@@ -5,6 +5,7 @@
 <title>menu</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
 <script src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js" type="text/javascript"></script>
+<script src="js/lodash.min.js" type="text/javascript"></script>
 <style type="text/css">
 	.weui_mask{
 		position: fixed;
@@ -49,8 +50,74 @@
 			</div>
 		</div>
 	</div>
+	<div>
+	  查询订单号：
+	  <input type="text" name="" value="" id="search_order">
+	</div>
+	<div id="order_table"></div>
+	<script id="order_table_infos" type="text/template">
+		<div>门店：<%- order_infos.order.store.org_store_name %></div>
+		<div>机器号：<%- order_infos.order.pos_id %></div>
+		<div>商品总计：<%- order_infos.order.total_price %></div>
+		<div>打折优惠：<%- order_infos.order.card_reduce %></div>
+		<div>实际支付：<%- order_infos.order.actual_price %></div>
+		<div>抹零：<%- order_infos.order.small_change %></div>
+		<div>找零：<%- order_infos.order.changes %></div>
+		<% _.forEach(order_infos.order_details, function(order_detail,index) { %>
+			<%- index+1 %>
+			<img src="/images/<%- order_detail.product.img.location %>" alt="" />
+			<div>商品：<%- order_detail.product.product_name %></div>
+			<div>数量：<%- order_detail.number %></div>
+			<div>折扣：<%- order_detail.discount %></div>
+			<div>价格：<%- order_detail.price %></div>
+		<% }); %>
+
+		<% _.forEach(order_infos.pay_infos, function(pay_info,index) { %>
+			<%- index+1 %>
+			<div>付款方式：<%- pay_info.pay_way %></div>
+			<div>流水号：<%- pay_info.fin_occurrence_log_id %></div>
+			<div>金额：<%- pay_info.pay_amount %></div>
+		<% }); %>
+	</script>
 	<script>
 	$(function(){
+		var order_infos ={
+			"order" : null,
+			"order_details" : null,
+			"pay_infos" : null
+		};
+		//get方法
+		var do_get_method = function(url,params,cb){
+			$.get(url,params,function(data){
+				if (data.success) {
+					cb(data);
+				}else {
+					alert(data.message);
+					return;
+				}
+			});
+		};
+		//查询订单详细
+		var get_order_details = function(order_id){
+			do_get_method("/search_order_infos",{"order_id":order_id},function(data){
+				order_infos.order = data.order;
+				order_infos.order_details = data.order_details;
+				order_infos.pay_infos = data.pay_infos;
+				var t = _.template($("#order_table_infos").html());
+				$("#order_table").html(t({order_infos:order_infos}));
+				$("#order_infos").removeAttr("style");
+			});
+		};
+		//订单号查询
+		$("#search_order").keypress(function(e){
+			var search_order = $("#search_order").val();
+			var key = e.which;
+			if (!search_order || key != 13) {
+				return;
+			}
+			get_order_details(search_order);
+		});
+
 		$(".add").click(function(){
 			$(".add_purchase").attr("style","display:none;");
 			$.get("/create_purchase_order",function(data){
