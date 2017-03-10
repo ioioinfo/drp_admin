@@ -65,7 +65,7 @@
 		<div>找零：<%- order_infos.order.changes %></div>
 		<% _.forEach(order_infos.order_details, function(order_detail,index) { %>
 			<%- index+1 %>
-			<img src="/images/<%- order_detail.product.img.location %>" alt="" />
+			<img src="{{image_host}}/images/<%- order_detail.product.img.location %>" alt="" />
 			<div>商品：<%- order_detail.product.product_name %></div>
 			<div>数量：<%- order_detail.number %></div>
 			<div>折扣：<%- order_detail.discount %></div>

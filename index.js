@@ -64,6 +64,10 @@ server.register([
       register: require('./server/assets/index.js')
     },
 	{
+		register: require('./server/utils/g.js'),
+		options: require('./view_globals.js')
+	},
+	{
       register: require('./server/models/models.js')
     },
 	{
