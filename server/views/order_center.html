@@ -31,39 +31,48 @@
 	<script id="all_orders_infos" type="text/template">
 		<% _.forEach(orders, function(order,index) { %>
 			<div class="click_order_info" data-id="<%- order.order_id %>">
-				<div>日期：<%- order.order_date_text %></div>
-				<div>订单号：<%- order.order_id %></div>
+				<span>日期：<%- order.order_date_text %></span>
+				<span>订单号：<%- order.order_id %></span>
+				<span>订单人：<%- order.person_id %></span>
+				<span>可获积分：<%- order.gain_point %></span>
+				<span>门店：<%- order.store_id %></span>
+				<span>实付：<%- order.actual_price %></span>
+				<span>找零：<%- order.changes %></span>
+				<span>抹零：<%- order.small_change %></span>
+				<span>状态：<%- order.order_status %></span>
 			</div>
+			<div>-------------------------------------------------------</div>
 		<% }); %>
 	</script>
 	<script id="order_table_infos" type="text/template">
-		<div>门店：<%- order_infos.order.store.org_store_name %></div>
-		<div>机器号：<%- order_infos.order.pos_id %></div>
-		<div>商品总计：<%- order_infos.order.total_price %></div>
-		<div>打折优惠：<%- order_infos.order.card_reduce %></div>
-		<div>实际支付：<%- order_infos.order.actual_price %></div>
-		<div>抹零：<%- order_infos.order.small_change %></div>
-		<div>找零：<%- order_infos.order.changes %></div>
 		<% _.forEach(order_infos.order_details, function(order_detail,index) { %>
-			<%- index+1 %>
-			<img src="{{image_host}}/images/<%- order_detail.product.img.location %>" alt="" />
-			<div>商品：<%- order_detail.product.product_name %></div>
-			<div>数量：<%- order_detail.number %></div>
-			<div>折扣：<%- order_detail.discount %></div>
-			<div>价格：<%- order_detail.price %></div>
+			<div>
+				<%- index+1 %>
+				<% if (order_detail.product.img) { %>
+					<img src="{{image_host}}/images/<%- order_detail.product.img.location %>" alt="" width="30px" />
+				<% } %>
+				<span>商品：<%- order_detail.product.product_name %></span>
+				<span>数量：<%- order_detail.number %></span>
+				<span>折扣：<%- order_detail.discount %></span>
+				<span>价格：<%- order_detail.price %></span>
+				<span>重量：<%- order_detail.weight %></span>
+				<span>编码：<%- order_detail.code %></span>
+			</div>
 		<% }); %>
 
 		<% _.forEach(order_infos.pay_infos, function(pay_info,index) { %>
-			<%- index+1 %>
-			<div>付款方式：<%- pay_info.pay_way %></div>
-			<div>流水号：<%- pay_info.fin_occurrence_log_id %></div>
-			<div>金额：<%- pay_info.pay_amount %></div>
+			<div>
+				<%- index+1 %>
+				<span>付款方式：<%- pay_info.pay_way %></span>
+				<span>流水号：<%- pay_info.fin_occurrence_log_id %></span>
+				<span>金额：<%- pay_info.pay_amount %></span>
+			</div>
 		<% }); %>
 	</script>
 	<script>
 	$(function(){
+		var orders = [];
 		var order_infos ={
-			"order" : null,
 			"order_details" : null,
 			"pay_infos" : null
 		};
@@ -80,13 +89,32 @@
 		};
 		//查询订单详细
 		var get_order_details = function(order_id){
-			do_get_method("/search_order_infos",{"order_id":order_id},function(data){
-				order_infos.order = data.order;
-				order_infos.order_details = data.order_details;
-				order_infos.pay_infos = data.pay_infos;
-				var t = _.template($("#order_table_infos").html());
-				$("#order_table").html(t({order_infos:order_infos}));
-				$("#order_infos").removeAttr("style");
+			do_get_method("/get_order_details",{"order_id":order_id},function(data){
+				if (data.success) {
+					order_infos.order_details = data.order_details;
+					order_infos.pay_infos = data.pay_infos;
+					var t = _.template($("#order_table_infos").html());
+					$("#order_table").html(t({order_infos:order_infos}));
+					$("#order_infos").removeAttr("style");
+				}else {
+					alert(data.message);
+				}
+			});
+		};
+		var search_order_info = function(order_id){
+			do_get_method("/search_order_info",{"order_id":order_id},function(data){
+				if (data.success) {
+					orders = data.row;
+					var t = _.template($("#all_orders_infos").html());
+					$("#all_orders").html(t({orders:orders}));
+					$("#orders").removeAttr("style");
+					$(".click_order_info").click(function(){
+						var order_id = $(this).data("id");
+						get_order_details(order_id);
+					});
+				}else {
+					alert(data.message);
+				}
 			});
 		};
 		//订单号查询
@@ -96,7 +124,7 @@
 			if (!search_order || key != 13) {
 				return;
 			}
-			get_order_details(search_order);
+			search_order_info(search_order);
 		});
 		//查询所有订单
 		$(".find_all").click(function(){
@@ -111,6 +139,7 @@
 						get_order_details(order_id);
 					});
 				}else {
+					alert(data.message);
 				}
 			});
 		});

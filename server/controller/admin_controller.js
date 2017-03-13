@@ -127,25 +127,228 @@ exports.register = function(server, options, next){
 	var search_order_products = function(order_id,cb){
 		var url ="http://211.149.248.241:18010/search_order_products?order_id="+order_id;
 		do_get_method(url,cb);
-	}
+	};
 	//获取所有订单
 	var get_all_orders = function(cb){
 		var url = "http://211.149.248.241:18010/get_all_orders";
 		do_get_method(url,cb);
-	}
+	};
 	//根据日期查询订单
 	var get_orders_byDate = function(date1,date2,cb){
 		var url = "http://211.149.248.241:18010/get_orders_byDate?date1=";
 		url = url + date1 + "&date2=" + date2;
 		do_get_method(url,cb);
-	}
+	};
 	//订单支付信息
 	var get_order_pay_infos = function(order_id,cb){
 		var url = "http://139.196.148.40:18008/get_order_pay_infos?order_id=";
 		url = url + order_id;
 		do_get_method(url,cb);
-	}
+	};
+	//查询单条订单
+	var search_order_info = function(order_id,cb){
+		var url = "http://211.149.248.241:18010/search_order_info?order_id=";
+		url = url + order_id;
+		do_get_method(url,cb);
+	};
+	//查询单条订单明细
+	var get_order_details = function(order_id,cb){
+		var url = "http://211.149.248.241:18010/get_order_details?order_id=";
+		url = url + order_id;
+		do_get_method(url,cb);
+	};
+	//查询mp订单列表
+	var mp_orders_list = function(cb){
+		var url = "http://211.149.248.241:18010/mp_orders_list";
+		do_get_method(url,cb);
+	};
+	//mp 单条
+	var get_order = function(order_id,cb){
+		var url = "http://211.149.248.241:18010/get_order?order_id=";
+		url = url + order_id;
+		do_get_method(url,cb);
+	};
+	//mp 订单明细
+	var get_mp_order_details = function(order_id,cb){
+		var url = "http://211.149.248.241:18010/get_mp_order_details?order_id=";
+		url = url + order_id;
+		do_get_method(url,cb);
+	};
+	// 商品列表
+	var get_products_list = function(cb){
+		var url = "http://211.149.248.241:18002/get_products_list";
+		do_get_method(url,cb);
+	};
+	//查询产品信息
+	var product_info = function(product_id,cb){
+		var url = "http://211.149.248.241:18002/product_info?product_id=";
+		url = url + product_id;
+		do_get_method(url,cb);
+	};
 	server.route([
+		//商品查询
+		{
+			method: 'GET',
+			path: '/search_product_info',
+			handler: function(request, reply){
+				var product_id = request.query.product_id;
+				if (!product_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				product_info(product_id,function(err,row){
+					if (!err) {
+						var products = [];
+						if (!row.row) {
+							return reply({"success":false,"message":"没有查到数据","service_info":service_info});
+						}
+						products.push(row.row);
+						return reply({"success":true,"message":"ok","products":products,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//商品列表
+		{
+			method: 'GET',
+			path: '/get_products_list',
+			handler: function(request, reply){
+				get_products_list(function(err,rows){
+					if (!err) {
+						return reply({"success":true,"message":"ok","products":rows.products,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//商品页面
+		{
+			method: 'GET',
+			path: '/products_center',
+			handler: function(request, reply){
+				return reply.view("products_center");
+			}
+		},
+		//mp订单明细
+		{
+			method: 'GET',
+			path: '/get_mp_order_details',
+			handler: function(request, reply){
+				var order_id = request.query.order_id;
+				if (!order_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				get_mp_order_details(order_id,function(err,row){
+					if (!err) {
+						return reply({"success":true,"message":"ok","details":row.details,"products":row.products,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//mp订单号查询
+		{
+			method: 'GET',
+			path: '/get_order',
+			handler: function(request, reply){
+				var order_id = request.query.order_id;
+				if (!order_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				get_order(order_id,function(err,row){
+					if (!err) {
+						return reply({"success":true,"message":"ok","orders":row.order,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//mp订单列表
+		{
+			method: 'GET',
+			path: '/mp_orders_list',
+			handler: function(request, reply){
+				mp_orders_list(function(err,rows){
+					if (!err) {
+						return reply({"success":true,"message":"ok","orders":rows.orders,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//mp订单页面
+		{
+			method: 'GET',
+			path: '/mp_order_center',
+			handler: function(request, reply){
+				return reply.view("mp_order_center");
+			}
+		},
+		//pos 单条订单详情
+		{
+			method: 'GET',
+			path: '/get_order_details',
+			handler: function(request, reply){
+				var order_id = request.query.order_id;
+				if (!order_id) {
+					return reply({"success":false,"message":"params is null","service_info":service_info});
+				}
+				get_order_details(order_id,function(err,row){
+					if (!err) {
+						if (row.success) {
+							var order_details = row.order_details;
+							var products = row.products;
+							var pay_infos = row.pay_infos;
+							if (!order_details) {
+								return reply({"success":false,"message":"订单明细不存在！","service_info":service_info});
+							}
+							for (var i = 0; i < order_details.length; i++) {
+								for (var j = 0; j < products.length; j++) {
+									if (order_details[i].product_id == products[j].id) {
+										order_details[i].product = products[j];
+									}
+								}
+							}
+							return reply({"success":true,"pay_infos":pay_infos,"order_details":order_details,"service_info":service_info});
+						}else {
+							return reply({"success":false,"message":row.message,"service_info":service_info});
+						}
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//pos单条订单查询
+		{
+			method: 'GET',
+			path: '/search_order_info',
+			handler: function(request, reply){
+				var order_id = request.query.order_id;
+				if (!order_id) {
+					return reply({"success":false,"message":"params is null","service_info":service_info});
+				}
+				search_order_info(order_id,function(err,row){
+					if (!err) {
+						if (row.success) {
+							console.log("row:"+JSON.stringify(row));
+							var orders = [];
+							orders.push(row.order);
+							return reply({"success":true,"row":orders,"service_info":service_info});
+						}else {
+							return reply({"success":false,"message":row.message,"service_info":service_info});
+						}
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
 		//创建临时订单号
 		{
 			method: 'GET',
@@ -172,7 +375,7 @@ exports.register = function(server, options, next){
 				return reply.view("menu");
 			}
 		},
-		//菜单页
+		//订单页面
 		{
 			method: 'GET',
 			path: '/order_center',
@@ -211,6 +414,9 @@ exports.register = function(server, options, next){
 			path: '/search_order_infos',
 			handler: function(request, reply){
 				var order_id = request.query.order_id;
+				if (!order_id) {
+					return reply({"success":true,"message":"params is null","service_info":service_info});
+				}
 				var ep = eventproxy.create("order","order_details","pay_infos",
 					function(order,order_details,pay_infos){
 						console.log("123");
@@ -297,7 +503,22 @@ exports.register = function(server, options, next){
 				});
 			}
 		},
-
+		//会员页面
+		{
+			method: 'GET',
+			path: '/member_center',
+			handler: function(request, reply){
+				return reply.view("member_center");
+			}
+		},
+		//门店页面
+		{
+			method: 'GET',
+			path: '/mendian_center',
+			handler: function(request, reply){
+				return reply.view("mendian_center");
+			}
+		},
 	]);
 
     next();
