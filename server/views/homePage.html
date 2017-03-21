@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>首页</title>
+    <script src="js/react.min.js"></script>
+    <script src="js/react-dom.min.js"></script>
+    <script src="js/browser.min.js"></script>
+    <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
+    <style media="screen">
+      *{
+        padding: 0;
+        margin: 0;
+      }
+      body{
+        font-family: "\5FAE\8F6F\96C5\9ED1", Tahoma, Verdana, sans-serif, "微软雅黑";
+        padding: 0;
+        margin: 0;
+      }
+      li{
+        list-style: none;
+      }
+    .wrap{
+        width: 100%;
+        height: 768px;
+        overflow: auto;
+        background: #E7E8EA;
+        border: 1px solid #212629;
+      }
+      /*左边*/
+      .wrapLeft{
+        width: 13.323572474%;
+        height: 768px;
+        box-sizing: border-box;
+        float: left;
+        background: #000;
+      }
+      /*左边logo*/
+      .wrapLeftLogo{
+        width: 100%;
+        height: 42px;
+        line-height: 42px;
+        overflow: hidden;
+        text-indent: 10px;
+        background: #fff;
+      }
+      .wrapLeftLogo img{
+        width: 36px;
+        height: 30px;
+        margin-top:6px;
+      }
+      /*左边导航部分*/
+      .wrapLeftNav_ul{
+        width: 100%;
+      }
+      .wrapLeftNav_ul li{
+        /*height: 22px;
+        line-height: 22px;*/
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #a6a7a7;
+        overflow: hidden;
+      }
+      .wrapLeftNav_ul li.on{
+        background: #d94f45;
+        color: #fff;
+        /*height: 44px;
+        line-height: 44px;*/
+        animation: myfirst ease  0.5s;
+        -moz-animation: myfirst ease  0.5s;	/* Firefox */
+        -webkit-animation: myfirst  ease 0.5s;	/* Safari 和 Chrome */
+        -o-animation: myfirst ease  0.5s;
+      }
+
+      .wrapLeftNav_ul li span img{
+        width: 20px;
+        height: 20px;
+        margin-left: 10px;
+        vertical-align: middle;
+      }
+      .wrapLeftNav_word{
+        text-indent: 10px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      .wrapRight{
+          float: right;
+          width: 86.67642752%;
+
+      }
+      .wrapRightHead{
+        width: 100%;
+        height: 42px;
+        line-height: 42px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .wrapRightHead_left{
+        position: relative;
+        float: left;
+        width: 1020px;
+      }
+      .wrapRightHead_left span img{
+        width: 20px;
+        height: 16px;
+        margin-left: 15px;
+      }
+      .wrapRightHead_left_sapn1{
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 7px;
+        font-weight: bold;
+        color: #fff;
+        text-align: center;
+        line-height: 14px;
+        font-size: 12px;
+      }
+      .wrapRightHead_left_sapn2{
+        background: #FF412C;
+        position: absolute;
+        top: 5px;
+        left: 27px;
+      }
+      .wrapRightHead_left_sapn3{
+        background: #F8D435;
+        position: absolute;
+        top: 5px;
+        left: 57px;
+      }
+      .wrapRightHead_right{
+        float: right;
+        width: 149px;
+        font-size: 14px;
+        text-align: left;
+        color: #666;
+      }
+      .wrapRightHead_right span img{
+        width: 30px;
+        height: 30px;
+        margin-left: 15px;
+        margin-right: 10px;
+        vertical-align: middle;
+      }
+      /*二级导航*/
+      .second_nav{
+        width: 100%;
+      }
+      .second_nav .second_navInfor{
+        width: 100%;
+        height: 25px;
+        line-height: 25px;
+      }
+      .second_nav .second_navInfor p{
+        display: inline-block;
+        width: 50%;
+        font-size: 12px;
+      }
+      .second_nav .second_navInfor img{
+        margin-left: 20px;
+        width: 16px;
+        height: 16px;
+        vertical-align: middle;
+      }
+    }
+    </style>
+  </head>
+  <body>
+    <div id="example"></div>
+
+    <script type="text/babel">
+      // 框架
+      class Wrap extends React.Component {
+        render() {
+            return (
+              <div className="wrap">
+                <Left/>
+                <Right/>
+              </div>
+            );
+        }
+      };
+      // 左边导航
+      class Left extends React.Component {
+        render() {
+            return (
+              <div className="wrapLeft">
+                <Logo/>
+                <Nav/>
+              </div>
+            );
+        }
+      };
+      // 左边导航头部
+      class Logo extends React.Component {
+        render() {
+            return (
+              <div className="wrapLeftLogo">
+                <img src="images/zuncongxing.png" alt="" />
+              </div>
+            );
+        }
+      };
+      // 左侧导航具体导航
+      class Nav extends React.Component {
+        // 2
+        constructor(props) {
+            super(props);
+            // 初始化一个空对象
+            this.setSelected = this.setSelected.bind(this);
+            this.state = {items: [],selected:'首页'};
+        }
+
+        setSelected(id){
+          this.setState({selected: id});
+        }
+        // 3
+        componentDidMount() {
+          var hh = [{img:'images/shouye1.png',img2:'images/shouye-4.png',word:'首页',child:[
+            {img:'images/shouye-4.png',word:'子节点'},{img:'images/shouye-4.png',word:'子节点'},{img:'images/shouye-4.png',word:'子节点'}
+          ]}
+            ,{img:'images/htshangpin1.png',img2:'images/htshangpin2.png',word:'商品',child:[{img:'images/shouye-4.png',word:'子节点'},{img:'images/shouye-4.png',word:'子节点'}]}
+            ,{img:'images/htkucun1.png',img2:'images/htkucun2.png',word:'库存',child:[{img:'images/shouye-4.png',word:'子节点'}]}
+            ,{img:'images/htwuliu1.png',img2:'images/htwuliu2.png',word:'物流',child:[{img:'images/shouye-4.png',word:'子节点'}]}
+            ,{img:'images/htdingdan1.png',img2:'images/htdingdan2.png',word:'订单',child:[{img:'images/shouye-4.png',word:'子节点'}]}
+            ,{img:'images/htmendian1.png',img2:'images/htmendian2.png',word:'门店',child:[{img:'images/shouye-4.png',word:'子节点'}]}
+            ,{img:'images/htzhanghao1.png',img2:'images/htzhanghao2.png',word:'帐号',child:[{img:'images/shouye-4.png',word:'子节点'}]}
+            ,{img:'images/hthuiyuan1.png',img2:'images/hthuiyuan2.png',word:'会员',child:[{img:'images/shouye-4.png',word:'子节点'}]}];
+          this.setState({items:hh});
+        }
+
+        // 1
+        render() {
+
+            return (
+              <div className="wrapLeftNav">
+                <ul className="wrapLeftNav_ul">
+                  {this.state.items.map(item => (
+                      <Li item={item} setSelected={this.setSelected} selected={this.state.selected} />))
+                  }
+                </ul>
+              </div>
+            );
+        }
+      };
+      class Li extends React.Component {
+        constructor(props) {
+            super(props);
+            // 初始化一个空对象
+            this.handleClick = this.handleClick.bind(this);
+            // 二级导航状态
+            this.state={show:false};
+        }
+
+        handleClick(e){
+          this.props.setSelected(this.props.item.word);
+          this.setState({show:!this.state.show});
+
+        }
+        render() {
+
+            var c = "";
+            var img = this.props.item.img;
+            if(this.props.selected==this.props.item.word){
+              c = "on";
+              img = this.props.item.img2;
+            }
+            var d = (<div>{this.props.item.child.map(item => (
+                <Secondnav item={item}  />))
+            }</div>);
+            if (!this.state.show) {
+              d = <div></div>;
+            };
+
+            return (
+              <li className={c} onClick={this.handleClick}>
+                <span><img src={img} alt="" /></span>
+                <span className="wrapLeftNav_word">{this.props.item.word}</span>
+                {d}
+              </li>
+            );
+        }
+      };
+      // 二级导航
+      class Secondnav extends React.Component {
+        render() {
+          var img=this.props.item.img;
+            return (
+              <div className="second_nav">
+                <div className="second_navInfor">
+                  <img src={img} />
+                  <p>{this.props.item.word}</p>
+                </div>
+              </div>
+            );
+        }
+      };
+      // 右侧
+      class Right extends React.Component {
+        render() {
+            return (
+              <div className="wrapRight">
+                <WrapRightHead/>
+              </div>
+            );
+        }
+      };
+      // 右侧头部
+      class WrapRightHead extends React.Component {
+        render() {
+            return (
+              <div className="wrapRightHead">
+                <div className="wrapRightHead_left">
+                  <span><img src="images/houtai_email.png" alt /></span>
+                  <span><img src="images/houtai_news.png" alt /></span>
+                  <span className="wrapRightHead_left_sapn1 wrapRightHead_left_sapn2">1</span>
+                  <span className="wrapRightHead_left_sapn1 wrapRightHead_left_sapn3">9</span>
+                </div>
+                <div className="wrapRightHead_right">
+                    <span><img src="images/houtai_touxiang1.png" alt />这小子真帅</span>
+                </div>
+              </div>
+            );
+        }
+      };
+      // 返回到页面
+      ReactDOM.render(
+        <Wrap/>,
+        document.getElementById("example")
+      );
+    </script>
+
+
+    <!-- <script type="text/javascript">
+      $(function(){
+        $(".wrapLeftNav_ul li").click(function(){
+
+          alert("ff");
+        });
+      });
+    </script> -->
+  </body>
+</html>

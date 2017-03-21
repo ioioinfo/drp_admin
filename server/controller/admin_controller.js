@@ -2,7 +2,8 @@ const uu_request = require('../utils/uu_request');
 var service_info = "ec order service";
 var fs = require('fs-extra');
 var eventproxy = require('eventproxy');
-var service_info = "drp admin service"
+var service_info = "drp admin service";
+var org_code = "ioio";
 if(typeof require !== 'undefined') XLSX = require('xlsjs');
 
 var do_get_method = function(url,cb){
@@ -129,14 +130,30 @@ exports.register = function(server, options, next){
 		do_get_method(url,cb);
 	};
 	//获取所有订单
-	var get_all_orders = function(cb){
-		var url = "http://211.149.248.241:18010/get_all_orders";
+	var get_all_orders = function(params,cb){
+		var url = "http://211.149.248.241:18010/get_all_orders?params="+params;
+		do_get_method(url,cb);
+	};
+	//获取所有订单数量
+	var get_all_num = function(params,cb){
+		var url = "http://211.149.248.241:18010/get_all_num?params="+params;
+		do_get_method(url,cb);
+	};
+	//获取所有门店
+	var get_all_mendian = function(cb){
+		var url = "http://211.149.248.241:19999/store/list?org_code="+org_code;
 		do_get_method(url,cb);
 	};
 	//根据日期查询订单
 	var get_orders_byDate = function(date1,date2,cb){
 		var url = "http://211.149.248.241:18010/get_orders_byDate?date1=";
 		url = url + date1 + "&date2=" + date2;
+		do_get_method(url,cb);
+	};
+	//根据personids找昵称
+	var get_person_avatar = function(person_ids, cb){
+		var url = "http://139.196.148.40:18003/get_person_avatar?person_ids=";
+		url = url + person_ids + "&scope_code=" +org_code;
 		do_get_method(url,cb);
 	};
 	//订单支付信息
@@ -179,13 +196,82 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18002/get_products_list";
 		do_get_method(url,cb);
 	};
+	// 商品列表
+	var find_shantao_infos = function(product_ids,cb){
+		var url = "http://211.149.248.241:18002/find_shantao_infos?product_ids="+product_ids;
+		do_get_method(url,cb);
+	};
 	//查询产品信息
 	var product_info = function(product_id,cb){
 		var url = "http://211.149.248.241:18002/product_info?product_id=";
 		url = url + product_id;
 		do_get_method(url,cb);
 	};
+	//通过商品id查找到商品
+	var find_properties_by_product = function(product_id, cb){
+		var url = "http://127.0.0.1:18002/find_properties_by_product?product_id=";
+		url = url + product_id;
+		do_get_method(url,cb);
+	};
+	//通过商品id找到图片
+	var find_pictures_byId = function(product_id, cb){
+		var url = "http://127.0.0.1:18002/get_product_pictures?product_id=";
+		url = url + product_id;
+		do_get_method(url,cb);
+	};
+
 	server.route([
+		//订单主页
+		{
+			method: 'GET',
+			path: '/order',
+			handler: function(request, reply){
+				return reply.view("order");
+			}
+		},
+		//首页
+		{
+			method: 'GET',
+			path: '/',
+			handler: function(request, reply){
+				return reply.view("homePage");
+			}
+		},
+		//查询商品属性,图片
+		{
+			method: 'GET',
+			path: '/search_product_detail',
+			handler: function(request, reply){
+				var product_id = request.query.product_id;
+				if (!product_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+
+				var ep =  eventproxy.create("pictures","properties",
+					function(pictures,properties){
+						return reply({"success":true,"message":"ok","pictures":pictures,"properties":properties,"service_info":service_info});
+				});
+
+				find_pictures_byId(product_id,function(err,rows){
+					if (!err) {
+						ep.emit("pictures", rows.rows);
+					}else {
+						console.log(rows.message);
+						ep.emit("pictures", []);
+					}
+				});
+
+				find_properties_by_product(product_id,function(err,row){
+					if (!err) {
+						ep.emit("properties", row.properties);
+					}else {
+						console.log(rows.message);
+						ep.emit("properties", []);
+					}
+				});
+			}
+		},
+
 		//商品查询
 		{
 			method: 'GET',
@@ -216,7 +302,38 @@ exports.register = function(server, options, next){
 			handler: function(request, reply){
 				get_products_list(function(err,rows){
 					if (!err) {
-						return reply({"success":true,"message":"ok","products":rows.products,"service_info":service_info});
+						if (rows.success) {
+							var products = rows.products;
+							var product_ids = [];
+							for (var i = 0; i < products.length; i++) {
+								product_ids.push(products[i].id);
+							}
+							find_shantao_infos(JSON.stringify(product_ids),function(err,content){
+								if (!err) {
+									if (content.success) {
+										var shantaos = content.rows;
+										for (var i = 0; i < products.length; i++) {
+											var product = products[i];
+											for (var j = 0; j < shantaos.length; j++) {
+												if (shantaos[j].product_id == product.id) {
+													product.is_new = shantaos[j].is_new;
+													product.row_materials = shantaos[j].row_materials;
+													product.size_name = shantaos[j].size_name;
+													product.batch_code = shantaos[j].batch_code;
+												}
+											}
+											return reply({"success":true,"message":"ok","products":products,"service_info":service_info});
+										}
+									}else {
+										return reply({"success":false,"message":content.message,"service_info":service_info});
+									}
+								}else {
+									return reply({"success":false,"message":content.message,"service_info":service_info});
+								}
+							});
+						}else {
+							return reply({"success":false,"message":rows.message,"service_info":service_info});
+						}
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":service_info});
 					}
@@ -370,7 +487,7 @@ exports.register = function(server, options, next){
 		//菜单页
 		{
 			method: 'GET',
-			path: '/',
+			path: '/menu',
 			handler: function(request, reply){
 				return reply.view("menu");
 			}
@@ -464,23 +581,94 @@ exports.register = function(server, options, next){
 
 			}
 		},
-		//获取所有订单
+		//获取所有订单 及数量
 		{
-			method: 'GET',
+			method: 'POST',
 			path: '/get_all_orders',
 			handler: function(request, reply){
-				get_all_orders(function(err,rows){
+				var params = request.payload.params;
+				if (!params) {
+					return reply({"success":false,"message":"params wrong","service_info":service_info});
+				}
+				var ep =  eventproxy.create("orders","num","mendians",
+					function(orders,num,mendians){
+						for (var i = 0; i < orders.length; i++) {
+							var order = orders[i];
+							for (var j = 0; j < mendians.length; j++) {
+								if (mendians[j].org_store_id == order.store_id) {
+									order.org_store_name = mendians[j].org_store_name;
+								}
+							}
+						}
+					return reply({"success":true,"orders":orders,"num":num,"message":"ok"});
+				});
+
+				get_all_orders(params,function(err,rows){
 					if (!err) {
 						if (rows.success) {
-							console.log("rows:"+JSON.stringify(rows));
-							return reply({"success":true,"rows":rows.rows,"service_info":service_info});
+							var orders = rows.rows;
+							var person_ids = [];
+							for (var i = 0; i < orders.length; i++) {
+								person_ids.push(orders[i].person_id);
+							}
+							get_person_avatar(JSON.stringify(person_ids),function(err,content){
+								if (!err) {
+									if (content.success) {
+										var persons = content.rows;
+										for (var i = 0; i < persons.length; i++) {
+											var person = persons[i];
+											for (var j = 0; j < orders.length; j++) {
+												if (person.person_id == orders[j].person_id) {
+													orders[j].nickname = person.nickname;
+												}
+											}
+										}
+										for (var i = 0; i < orders.length; i++) {
+											if (!orders[i].nickname) {
+												orders[i].nickname = "无名氏";
+											}
+										}
+										ep.emit("orders", orders);
+									}else {
+										ep.emit("orders", orders);
+									}
+								}else {
+									ep.emit("orders", orders);
+								}
+							});
 						}else {
-							return reply({"success":false,"message":rows.message,"service_info":service_info});
+							ep.emit("orders", []);
 						}
 					}else {
-						return reply({"success":false,"message":rows.message,"service_info":service_info});
+						ep.emit("orders", []);
 					}
 				});
+				get_all_num(params,function(err,row){
+					if (!err) {
+						if (row.success) {
+							var num = row.num;
+							ep.emit("num", num);
+						}else {
+							ep.emit("num", 0);
+						}
+					}else {
+						ep.emit("num", 0);
+					}
+				});
+				get_all_mendian(function(err,rows){
+					if (!err) {
+						if (rows.success) {
+							var mendians = rows.rows
+							ep.emit("mendians", mendians);
+						}else {
+							ep.emit("mendians", []);
+						}
+					}else {
+						ep.emit("mendians", []);
+					}
+				});
+
+
 			}
 		},
 		//根据日期获取订单

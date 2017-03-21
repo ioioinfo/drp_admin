@@ -40,6 +40,7 @@
 		<input class="find_all" type="button" value="查询所有商品"/>
 	</div>
 	<div style="width:100%;" id="all_orders"></div>
+	<div id="order_table"></div>
 	<script id="all_orders_infos" type="text/template">
 		<% _.forEach(products, function(product,index) { %>
 			<div class="click_order_info" data-id="<%- product.id %>">
@@ -49,13 +50,32 @@
 				<span>市场价：<%- product.product_marketing_price %></span>
 				<span>重量：<%- product.weight %></span>
 				<span>编码：<%- product.code %></span>
+				<span>成色：<%- product.is_new %></span>
+				<span>材质：<%- product.row_materials %></span>
+				<span>尺寸：<%- product.size_name %></span>
+				<span>批次：<%- product.batch_code %></span>
 			</div>
 			<div>-------------------------------------------------------</div>
+		<% }); %>
+	</script>
+	<script id="order_table_infos" type="text/template">
+		<% _.forEach(properties, function(property,index) { %>
+			<%- index+1 %>
+			<span><%- property.name %>：<%- property.value %></span>
+		<% }); %>
+
+		<% _.forEach(pictures, function(picture,index) { %>
+			<div>
+				<%- index+1 %>
+				<img src="{{image_host}}/images/<%- picture.location %>" alt="" width="30px" />
+			</div>
 		<% }); %>
 	</script>
 	<script>
 	$(function(){
 		var products = [];
+		var pictures = [];
+		var properties = [];
 		//get方法
 		var do_get_method = function(url,params,cb){
 			$.get(url,params,function(data){
@@ -67,6 +87,20 @@
 				}
 			});
 		};
+		//查询商品详细
+		var search_product_detail = function(product_id){
+			do_get_method("/search_product_detail",{"product_id":product_id},function(data){
+				if (data.success) {
+					pictures = data.pictures;
+					properties = data.properties;
+					var t = _.template($("#order_table_infos").html());
+					$("#order_table").html(t({pictures:pictures,properties:properties}));
+					$("#order_infos").removeAttr("style");
+				}else {
+					alert(data.message);
+				}
+			});
+		};
 		var search_product_info = function(product_id){
 			do_get_method("/search_product_info",{"product_id":product_id},function(data){
 				if (data.success) {
@@ -74,10 +108,10 @@
 					var t = _.template($("#all_orders_infos").html());
 					$("#all_orders").html(t({products:products}));
 					$("#orders").removeAttr("style");
-					// $(".click_order_info").click(function(){
-					// 	var order_id = $(this).data("id");
-					// 	get_order_details(order_id);
-					// });
+					$(".click_order_info").click(function(){
+						var product_id = $(this).data("id");
+						search_product_detail(product_id);
+					});
 				}else {
 					alert(data.message);
 				}
@@ -100,10 +134,10 @@
 					var t = _.template($("#all_orders_infos").html());
 					$("#all_orders").html(t({products:products}));
 					$("#orders").removeAttr("style");
-					// $(".click_order_info").click(function(){
-					// 	var order_id = $(this).data("id");
-					// 	get_order_details(order_id);
-					// });
+					$(".click_order_info").click(function(){
+						var product_id = $(this).data("id");
+						search_product_detail(product_id);
+					});
 				}else {
 					alert(data.message);
 				}
