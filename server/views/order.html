@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>商品列表</title>
+    <title>POS订单列表</title>
     <script src="js/react.min.js"></script>
     <script src="js/react-dom.min.js"></script>
     <script src="js/browser.min.js"></script>
@@ -292,8 +292,10 @@
 				 alert(data.message);
 			 }
 		 });
-      }
-    </script>
+	 };
+
+
+	</script>
     <script type="text/babel">
       // 框架
       class Wrap extends React.Component {
@@ -491,6 +493,7 @@
         }
       };
 	  class Search extends React.Component {
+
 	    render() {
 	  	  return (
 	  		<div className="search">

@@ -10,22 +10,36 @@ var do_get_method = function(url,cb){
 	uu_request.get(url, function(err, response, body){
 		if (!err && response.statusCode === 200) {
 			var content = JSON.parse(body);
-			cb(false, content);
+			do_result(false, content, cb);
 		} else {
 			cb(true, null);
 		}
 	});
 };
-var do_post_method = function(data,url,cb){
+//所有post调用接口方法
+var do_post_method = function(url,data,cb){
 	uu_request.request(url, data, function(err, response, body) {
 		console.log(body);
 		if (!err && response.statusCode === 200) {
-			cb(false,body);
+			do_result(false, body, cb);
 		} else {
 			cb(true,null);
 		}
 	});
 };
+//处理结果
+var do_result = function(err,result,cb){
+	if (!err) {
+		if (result.success) {
+			cb(false,result);
+		}else {
+			cb(true,result);
+		}
+	}else {
+		cb(true,null);
+	}
+};
+
 exports.register = function(server, options, next){
 	//临时订单号
 	var get_temp_order_no = function(cb){
@@ -219,8 +233,112 @@ exports.register = function(server, options, next){
 		url = url + product_id;
 		do_get_method(url,cb);
 	};
+	//复杂的产品保存
+	var save_product_complex = function(data,cb){
+		var url = "http://211.149.248.241:18002/save_product_complex";
+		do_post_method(url,data,cb);
+	}
+	//读取，保存商品
+	var read_product_excel = function(path, reply) {
+		var workbook = XLSX.readFile(path);
+		var first_sheet_name = workbook.SheetNames[0];
+		var worksheet = workbook.Sheets[first_sheet_name];
+		var rows = [];
+		for (z in worksheet) {
+			if(z[0] === '!') continue;
 
+			var cell = XLSX.utils.decode_cell(z);
+			var r = cell.r;
+			var c = cell.c;
+
+			var row = {};
+			if (rows.length > r) {
+				row = rows[r];
+			} else {
+				rows.push(row);
+			}
+			row[c] = worksheet[z].v;
+		}
+		console.log(rows);
+		for (var i = 0; i < rows.length; i++) {
+			if (i>0) {
+				//3个主要字段
+				var product_id = rows[i]["0"];
+				var product_name = rows[i]["1"];
+				var product_sale_price = rows[i]["2"];
+				var product_marketing_price = rows[i]["3"];
+				//8个次要字段
+				var sort_id = rows[i]["4"];
+				var product_brand = rows[i]["5"];
+				var product_describe = rows[i]["6"];
+				var time_to_market = rows[i]["7"];
+				var color = rows[i]["8"];
+				var weight = rows[i]["9"];
+				var guarantee = rows[i]["10"];
+				var barcode = rows[i]["11"];
+				// 4个行业属性字段
+				var is_new = rows[i]["12"];
+				var row_materials = rows[i]["13"];
+				var batch_code = rows[i]["14"];
+				var size_name = rows[i]["15"];
+				var data = {
+					"product_id" : rows[i]["0"],
+					"product_name" : rows[i]["1"],
+					"product_sale_price" : rows[i]["2"],
+					"product_marketing_price" : rows[i]["3"],
+					"sort_id" : rows[i]["4"],
+					"product_brand" : rows[i]["5"],
+					"product_describe" : rows[i]["6"],
+					"time_to_market" : rows[i]["7"],
+					"color" : rows[i]["8"],
+					"weight" : rows[i]["9"],
+					"guarantee" : rows[i]["10"],
+					"barcode" : rows[i]["11"],
+					"is_new" : rows[i]["12"],
+					"row_materials" : rows[i]["13"],
+					"batch_code" : rows[i]["14"],
+					"size_name" : rows[i]["15"]
+				};
+				console.log("data:"+JSON.stringify(data));
+				save_product_complex(data,function(err,result){
+					if (!err) {
+						return reply({"success":true,"message":"ok"});
+					}else {
+						return reply({"success":false,"message":result.message});
+					}
+				});
+
+			}
+		}
+
+	};
 	server.route([
+		//处理上传文件
+		{
+			method: 'POST',
+			path: '/upload_product',
+			config: {
+				payload: {
+				   output: 'file',
+				   maxBytes: 209715200,
+				   parse: true //or just remove this line since true is the default
+				},
+				handler:function (request, reply) {
+					var path = request.payload.file.path;
+					console.log('fileUpload path : ' + path);
+					read_product_excel(path, reply);
+				}
+			},
+		},
+		//保存商品
+		{
+			method: 'POST',
+			path: '/save_product',
+			handler: function(request, reply){
+				var product = request.payload.product;
+
+			}
+		},
 		//订单主页
 		{
 			method: 'GET',
