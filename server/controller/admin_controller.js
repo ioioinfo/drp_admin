@@ -4,6 +4,7 @@ var fs = require('fs-extra');
 var eventproxy = require('eventproxy');
 var service_info = "drp admin service";
 var org_code = "ioio";
+var platform_code = "ioio";
 if(typeof require !== 'undefined') XLSX = require('xlsjs');
 
 var do_get_method = function(url,cb){
@@ -312,7 +313,275 @@ exports.register = function(server, options, next){
 		}
 
 	};
+	//头条查看
+	var list_headline = function(cb){
+		var url = "http://139.196.148.40:18005/list_headline_by_platform?platform_code=";
+		url = url + platform_code;
+		do_get_method(url,cb);
+	};
+	//头条新增
+	var save_announce = function(data,cb){
+		var url = "http://139.196.148.40:18005/save_announce";
+		do_post_method(url,data,cb);
+	}
+	//头条删除
+	var delete_announce = function(data,cb){
+		var url = "http://139.196.148.40:18005/delete_announce";
+		do_post_method(url,data,cb);
+	}
+	//头条查看
+	var get_announce_by_id = function(id,cb){
+		var url = "http://139.196.148.40:18005/get_announce_by_id?platform_code=";
+		url = url + platform_code + "&id=" +id;
+		do_get_method(url,cb);
+	}
+	//头条编辑
+	var update_announce = function(data,cb){
+		var url = "http://139.196.148.40:18005/update_announce";
+		do_post_method(url,data,cb);
+	}
+	//公告列表
+	var list_announce_by_platform = function(cb){
+		var url = "http://139.196.148.40:18005/list_announce_by_platform?platform_code=";
+		url = url + platform_code;
+		do_get_method(url,cb);
+	};
+	//获取peson登入id
+	var get_person_login = function(person_id,cb){
+		var url = "http://139.196.148.40:18666/user/get_person_login?org_code=";
+		url = url + org_code + "&person_id=" + person_id;
+		do_get_method(url,cb);
+	};
+	//门店列表信息
+	var list_store_accounts = function(store_id,cb){
+		var url = "http://139.196.148.40:18666/user/list_store_accounts?org_code=";
+		url = url + org_code + "&store_id=" + store_id;
+		do_get_method(url,cb);
+	};
+	//绑定
+	var bind_store_account = function(data,cb){
+		var url = "http://139.196.148.40:18666/user/bind_store_account";
+		do_post_method(url,data,cb);
+	};
+	//解绑
+	var unbind_store_account = function(data,cb){
+		var url = "http://139.196.148.40:18666/user/unbind_store_account";
+		do_post_method(url,data,cb);
+	};
 	server.route([
+		//解绑
+		{
+			method: 'POST',
+			path: '/unbind_store_account',
+			handler: function(request, reply){
+				var person_login_id = request.payload.person_login_id;
+				var store_id = request.payload.store_id;
+				if (!store_id || !person_login_id) {
+					return reply({"success":false,"message":"params wrong"});
+				}
+				var data = {"person_login_id":person_login_id,"store_id":store_id,"org_code":org_code};
+				unbind_store_account(data,function(err,row){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//绑定
+		{
+			method: 'POST',
+			path: '/bind_store_account',
+			handler: function(request, reply){
+				var person_login_id = request.payload.person_login_id;
+				var store_id = request.payload.store_id;
+				if (!store_id || !person_login_id) {
+					return reply({"success":false,"message":"params wrong"});
+				}
+				var data = {"person_login_id":person_login_id,"store_id":store_id,"org_code":org_code};
+				bind_store_account(data,function(err,row){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//门店列表信息
+		{
+			method: 'GET',
+			path: '/list_store_accounts',
+			handler: function(request, reply){
+				var store_id = request.query.store_id;
+
+				if (!store_id) {
+					return reply({"success":false,"message":"params wrong"});
+				}
+				list_store_accounts(store_id,function(err,rows){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info,"rows":rows.rows});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//获取perosn登入id
+		{
+			method: 'GET',
+			path: '/get_person_login',
+			handler: function(request, reply){
+				var person_id = request.query.person_id;
+
+				if (!person_id) {
+					return reply({"success":false,"message":"params wrong"});
+				}
+				get_person_login(person_id,function(err,row){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info,"row":row.row});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+
+		//公告新增
+		{
+			method: 'POST',
+			path: '/save_announce2',
+			handler: function(request, reply){
+				var title = request.payload.title;
+				var content = request.payload.content;
+				var headline = 0;
+				var imgs = request.payload.imgs;
+				if (!title || !content || !headline || !imgs) {
+					return reply({"success":false,"message":"params wrong"});
+				}
+				var data = {"title":title,"content":content,"headline":headline,"imgs":imgs,"platform_code":platform_code};
+				save_announce(data,function(err,row){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info,"id":row.id});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+
+		//公告列表
+		{
+			method: 'GET',
+			path: '/list_announce_by_platform',
+			handler: function(request, reply){
+				list_announce_by_platform(function(err,rows){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info,"rows":rows.rows});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//头条编辑
+		{
+			method: 'POST',
+			path: '/update_announce',
+			handler: function(request, reply){
+				var title = request.payload.title;
+				var id = request.payload.id;
+				var content = request.payload.content;
+				var imgs = request.payload.imgs;
+				var headline = request.payload.headline;
+				var data = {
+					"title" : title,
+					"id" : id,
+					"content" : content,
+					"imgs" : imgs,
+					"headline" : headline,
+					"platform_code" : platform_code
+				};
+				update_announce(data,function(err,row){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info,"row":row.row});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//头条查看
+		{
+			method: 'GET',
+			path: '/get_announce_by_id',
+			handler: function(request, reply){
+				var id = request.query.id;
+				get_announce_by_id(id,function(err,row){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info,"row":row.row});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//头条删除
+		{
+			method: 'POST',
+			path: '/delete_announce',
+			handler: function(request, reply){
+				var id = request.payload.id;
+				var data = {"id":id};
+				delete_announce(data,function(err,rows){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+
+		//头条新增
+		{
+			method: 'POST',
+			path: '/save_announce',
+			handler: function(request, reply){
+				var title = request.payload.title;
+				var content = request.payload.content;
+				var headline = 1;
+				var imgs = request.payload.imgs;
+				if (!title || !content || !headline || !imgs) {
+					return reply({"success":false,"message":"params wrong"});
+				}
+				var data = {"title":title,"content":content,"headline":headline,"imgs":imgs,"platform_code":platform_code};
+				save_announce(data,function(err,row){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info,"id":row.id});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+
+		//头条列表
+		{
+			method: 'GET',
+			path: '/list_headline',
+			handler: function(request, reply){
+				list_headline(function(err,rows){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info,"rows":rows.rows});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+
 		//处理上传文件
 		{
 			method: 'POST',
@@ -330,15 +599,7 @@ exports.register = function(server, options, next){
 				}
 			},
 		},
-		//保存商品
-		{
-			method: 'POST',
-			path: '/save_product',
-			handler: function(request, reply){
-				var product = request.payload.product;
 
-			}
-		},
 		//订单主页
 		{
 			method: 'GET',
