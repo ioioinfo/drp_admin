@@ -369,6 +369,14 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	};
 	server.route([
+		//会员列表
+		{
+			method: 'POST',
+			path: '/unbind_store_account',
+			handler: function(request, reply){
+				
+			}
+		},
 		//解绑
 		{
 			method: 'POST',
