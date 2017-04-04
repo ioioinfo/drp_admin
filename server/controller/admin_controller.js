@@ -369,12 +369,20 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	};
 	server.route([
+		//会员主页
+		{
+			method: 'GET',
+			path: '/headline_center',
+			handler: function(request, reply){
+				return reply.view("headline_center");
+			}
+		},
 		//会员列表
 		{
 			method: 'POST',
 			path: '/unbind_store_account',
 			handler: function(request, reply){
-				
+
 			}
 		},
 		//解绑
