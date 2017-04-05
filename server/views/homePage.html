@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>首页</title>
+    <title>商品列表</title>
     <script src="js/react.min.js"></script>
     <script src="js/react-dom.min.js"></script>
     <script src="js/browser.min.js"></script>
@@ -16,6 +16,7 @@
         font-family: "\5FAE\8F6F\96C5\9ED1", Tahoma, Verdana, sans-serif, "微软雅黑";
         padding: 0;
         margin: 0;
+        overflow-x: hidden;
       }
       li{
         list-style: none;
@@ -23,7 +24,6 @@
     .wrap{
         width: 100%;
         height: 768px;
-        overflow: auto;
         background: #E7E8EA;
         border: 1px solid #212629;
       }
@@ -54,9 +54,9 @@
         width: 100%;
       }
       .wrapLeftNav_ul li{
-        /*height: 22px;
-        line-height: 22px;*/
-        margin-bottom: 10px;
+        height: 38px;
+        line-height: 38px;
+        /*margin-bottom: 10px;*/
         font-size: 14px;
         color: #a6a7a7;
         overflow: hidden;
@@ -98,7 +98,7 @@
       .wrapRightHead_left{
         position: relative;
         float: left;
-        width: 1020px;
+        width: 87.2354%;
       }
       .wrapRightHead_left span img{
         width: 20px;
@@ -130,7 +130,7 @@
       }
       .wrapRightHead_right{
         float: right;
-        width: 149px;
+        width: 11.3748%;
         font-size: 14px;
         text-align: left;
         color: #666;
@@ -146,6 +146,10 @@
       .second_nav{
         width: 100%;
       }
+      .second_nav a{
+          color: #fff;
+          font-size: 12px;
+      }
       .second_nav .second_navInfor{
         width: 100%;
         height: 25px;
@@ -155,6 +159,7 @@
         display: inline-block;
         width: 50%;
         font-size: 12px;
+        color: #fff;
       }
       .second_nav .second_navInfor img{
         margin-left: 20px;
@@ -162,12 +167,135 @@
         height: 16px;
         vertical-align: middle;
       }
-    }
+
+      /*右侧下面部分*/
+      .wrapRightMain{
+        width: 100%;
+        height: 726px;
+      }
+      /*搜索框样式*/
+      .search{
+        width: 90%;
+        display: flex;
+        margin: 35px auto;
+      }
+      .search input{
+        width: 20%;
+        justify-content:space-between;
+        height: 32px;
+        font-size: 14px;
+        color: #000;
+        margin-right: 10px;
+      }
+      /*表格样式*/
+      table{
+        width: 90%;
+        background: #fff;
+        border-bottom:1px solid #CFCFCF;
+        border-right: 1px solid #CFCFCF;
+        margin: 0 auto 0;
+      }
+      th,td{
+        border: 1px solid #CFCFCF;
+        border-right: none;
+        border-bottom: none;
+        font-size: 12px;
+        text-align: center;
+        height: 32px;
+        color: #838383;
+      }
+      th{
+        font-size: 14px;
+        color: #3C3D3F;
+        background: #D8D9DB;
+      }
+      th img{
+        width: 23px;
+        height: 23px;
+        vertical-align: middle;
+      }
+      /*分页*/
+      .table-tab{
+        width: 90%;
+        margin: 0 auto;
+        text-align: right;
+        padding: 0;
+      }
+      .table-tab span img{
+        width: 16px;
+        height:16px;
+        vertical-align: middle;
+      }
+      .table-tab span input{
+        width: 35px;
+        text-align: center;
+      }
+      .table-tab span input:first-child{
+        margin-right: 10px;
+      }
+      .table-tab span{
+        width: 16px;
+        font-size: 12px;
+        padding: 0 2px;
+        display: inline-block;
+        border: 1px solid #eee;
+        text-align: center;
+        height: 16px;
+        line-height: 16px;
+        cursor: pointer;
+      }
+      .table-tab span:last-child{
+        margin-right: 0;
+      }
+      .tabnumber{
+        display: inline-block;
+      }
+      .tabnumber span{
+        display: inline-block;
+        height: 16px;
+        line-height: 16px;
+        background: #E5E5E5;
+        border-radius: 4px;
+      }
+      .tabnumber span:hover{
+        border: 1px solid #34495D;
+      }
+      .tabnumber span.om{
+        background: #000;
+        color: #fff;
+      }
+      .table-tab  .table-tab-span4{
+        width: 72px;
+      }
+      .table-tab  .table-tab-span5{
+        width: 90px;
+      }
+
     </style>
   </head>
   <body>
     <div id="example"></div>
+    <script type="text/javascript">
+      function getTableData(params,cb) {
+        //表头
+        var tt = [{name:'date',title:'日期',width:'10%',sort:true}
+        ,{name:'order_no',title:'订单号',width:'10%',sort:true}
+        ,{name:'3',title:'订单人',width:'10%',sort:true}
+        ,{name:'4',title:'门店',sort:true}
+        ,{name:'5',title:'实付(元)',width:'10%',sort:true}
+        ,{name:'6',title:'找零(元)',width:'10%',sort:true}
+        ,{name:'7',title:'抹零(元)',width:'10%',sort:true}
+        ,{name:'8',title:'状态',width:'10%'}];
 
+        //表格内容
+        var tdItems=[{date:"2017-02-13",order_no:"000000009","3":"1000000","4":"宝山呼兰路店","8":"2"}
+                    ,{date:"2017-02-13",order_no:"000000009","3":"1000000","4":"宝山呼兰路店","8":"2"}];
+
+        //分页数据
+
+        cb({tabthitems:tt,tabtritems:tdItems,allNum:1006,everyNum:20})
+      }
+    </script>
     <script type="text/babel">
       // 框架
       class Wrap extends React.Component {
@@ -216,17 +344,16 @@
         }
         // 3
         componentDidMount() {
-          var hh = [{img:'images/shouye1.png',img2:'images/shouye-4.png',word:'首页',child:[
-            {img:'images/shouye-4.png',word:'子节点'},{img:'images/shouye-4.png',word:'子节点'},{img:'images/shouye-4.png',word:'子节点'}
-          ]}
-            ,{img:'images/htshangpin1.png',img2:'images/htshangpin2.png',word:'商品',child:[{img:'images/shouye-4.png',word:'子节点'},{img:'images/shouye-4.png',word:'子节点'}]}
-            ,{img:'images/htkucun1.png',img2:'images/htkucun2.png',word:'库存',child:[{img:'images/shouye-4.png',word:'子节点'}]}
-            ,{img:'images/htwuliu1.png',img2:'images/htwuliu2.png',word:'物流',child:[{img:'images/shouye-4.png',word:'子节点'}]}
-            ,{img:'images/htdingdan1.png',img2:'images/htdingdan2.png',word:'订单',child:[{img:'images/shouye-4.png',word:'子节点'}]}
-            ,{img:'images/htmendian1.png',img2:'images/htmendian2.png',word:'门店',child:[{img:'images/shouye-4.png',word:'子节点'}]}
-            ,{img:'images/htzhanghao1.png',img2:'images/htzhanghao2.png',word:'帐号',child:[{img:'images/shouye-4.png',word:'子节点'}]}
-            ,{img:'images/hthuiyuan1.png',img2:'images/hthuiyuan2.png',word:'会员',child:[{img:'images/shouye-4.png',word:'子节点'}]}];
-          this.setState({items:hh});
+            $.ajax({
+              url: "/menu_list",
+              dataType: 'json',
+              type: 'GET',
+              success: function(data) {
+                  this.setState({items: data.rows});
+              }.bind(this),
+              error: function(xhr, status, err) {
+              }.bind(this)
+          });
         }
 
         // 1
@@ -273,11 +400,13 @@
             };
 
             return (
-              <li className={c} onClick={this.handleClick}>
-                <span><img src={img} alt="" /></span>
-                <span className="wrapLeftNav_word">{this.props.item.word}</span>
+              <div>
+                <li className={c} onClick={this.handleClick}>
+                  <span><img src={img} alt="" /></span>
+                  <span className="wrapLeftNav_word">{this.props.item.word}</span>
+                </li>
                 {d}
-              </li>
+              </div>
             );
         }
       };
@@ -287,10 +416,12 @@
           var img=this.props.item.img;
             return (
               <div className="second_nav">
+              <a href={this.props.item.href}>
                 <div className="second_navInfor">
                   <img src={img} />
                   <p>{this.props.item.word}</p>
                 </div>
+              </a>
               </div>
             );
         }
@@ -323,6 +454,8 @@
             );
         }
       };
+
+
       // 返回到页面
       ReactDOM.render(
         <Wrap/>,
@@ -330,14 +463,5 @@
       );
     </script>
 
-
-    <!-- <script type="text/javascript">
-      $(function(){
-        $(".wrapLeftNav_ul li").click(function(){
-
-          alert("ff");
-        });
-      });
-    </script> -->
   </body>
 </html>
