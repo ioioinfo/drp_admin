@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>商品列表</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/public.css">
+    <script src="js/react.min.js"></script>
+    <script src="js/react-dom.min.js"></script>
+    <script src="js/browser.min.js"></script>
+    <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
+    <style media="screen">
+    /*搜索框样式*/
+    .search{
+      width: 100%;
+      display: flex;
+      margin: 20px auto;
+	  border-radius: 4px;
+	  border-radius: 4px;
+    }
+	.search .searchSubmit{
+		position: relative;
+	}
+    .search .searchSubmit input::-webkit-input-placeholder {
+        font-size: 12px;
+        text-indent: 5px;
+      }
+      .search .searchSubmit input:-moz-placeholder {
+          font-size: 12px;
+          text-indent: 5px;
+      }
+
+	.search .searchImg{
+		position: absolute;
+		top: 6px;
+		right: 15px;
+		width: 20px;
+		height: 20px;
+	}
+	.search .searchImg img{
+		width: 20px;
+		height: 20px;
+		cursor: pointer;
+	}
+    .search input{
+      width: 100%;
+      justify-content:space-between;
+      height: 32px;
+      font-size: 14px;
+      color: #000;
+      margin-right: 10px;
+	  border: none;
+    }
+    .wrapTop{
+        z-index: 9999;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="content" class="container-fluid"></div>
+	<script type="text/javascript">
+	//表头
+	var tt = [{name:'id',title:'id',width:'5%',sort:true}
+		,{name:'title',title:'标题',width:'5%',sort:false}
+		,{name:'pub_date',title:'日期',width:'10%',sort:false}
+		,{name:'headline',title:'内容',width:'5%',sort:false}
+		,{name:'imgs',title:'图片',width:'10%',sort:false}];
+
+      function getTableData(params,cb) {
+		 params.everyNum = 10;
+		 var allNum = 0;
+		 $.get("/list_headline",{params:JSON.stringify(params)},function(data){
+			 if (data.success) {
+				 allNum = data.num;
+				 cb({tabthitems:tt,tabtritems:data.rows,allNum:allNum,everyNum:params.everyNum});
+			 }else {
+				 alert(data.message);
+			 }
+		 });
+	 };
+
+
+	</script>
+    <script type="text/babel">
+      // 框架
+      class Wrap extends React.Component {
+        render() {
+            return (
+              <div className="wrap container-fluid">
+                  <div className="wrapTop">
+                    <Logo/>
+                    <WrapRightHead/>
+                  </div>
+                  <div className="wrapMiddle container-fluid">
+                    <Left/>
+                    <Right/>
+                  </div>
+              </div>
+            );
+        }
+      };
+      // 左边导航
+      class Left extends React.Component {
+        render() {
+            return (
+              <div className="wrapLeft container-fluid col-sm-3 col-md-2 sidebar">
+                <Nav/>
+              </div>
+            );
+        }
+      };
+      // 左边导航头部
+      class Logo extends React.Component {
+        render() {
+            return (
+              <div className="wrapLeftLogo">
+                上海XXX有限公司
+              </div>
+            );
+        }
+      };
+      // 左侧导航具体导航
+      class Nav extends React.Component {
+        // 2
+        constructor(props) {
+            super(props);
+            // 初始化一个空对象
+            this.setSelected = this.setSelected.bind(this);
+            this.state = {items: [],selected:'首页'};
+        }
+
+        setSelected(id){
+          this.setState({selected: id});
+        }
+        // 3
+        componentDidMount() {
+            $.ajax({
+              url: "/menu_list",
+              dataType: 'json',
+              type: 'GET',
+              success: function(data) {
+                  this.setState({items: data.rows});
+              }.bind(this),
+              error: function(xhr, status, err) {
+              }.bind(this)
+          });
+        }
+
+        // 1
+        render() {
+
+            return (
+              <div className="wrapLeftNav">
+                <ul className="wrapLeftNav_ul">
+                  {this.state.items.map(item => (
+                      <Li item={item} setSelected={this.setSelected} selected={this.state.selected} />))
+                  }
+                </ul>
+              </div>
+            );
+        }
+      };
+      class Li extends React.Component {
+        constructor(props) {
+            super(props);
+            // 初始化一个空对象
+            this.handleClick = this.handleClick.bind(this);
+            // 二级导航状态
+            this.state={show:false};
+        }
+
+        handleClick(e){
+          this.props.setSelected(this.props.item.word);
+          this.setState({show:!this.state.show});
+
+        }
+        render() {
+
+            var c = "";
+            var img = this.props.item.img;
+            if(this.props.selected==this.props.item.word){
+              c = "on";
+              img = this.props.item.img2;
+            }
+            var d = (<div>{this.props.item.child.map(item => (
+                <Secondnav item={item}  />))
+            }</div>);
+            if (!this.state.show) {
+              d = <div></div>;
+            };
+
+            return (
+              <div>
+                <li className={c} onClick={this.handleClick}>
+                  <span><img src={img} alt="" /></span>
+                  <span className="wrapLeftNav_word">{this.props.item.word}</span>
+                </li>
+                {d}
+              </div>
+            );
+        }
+      };
+      // 二级导航
+      class Secondnav extends React.Component {
+        render() {
+          var img=this.props.item.img;
+            return (
+              <div className="second_nav">
+              <a href={this.props.item.href}>
+                <div className="second_navInfor">
+                  <img src={img} />
+                  <p>{this.props.item.word}</p>
+                </div>
+              </a>
+              </div>
+            );
+        }
+      };
+      // 右侧
+      class Right extends React.Component {
+        render() {
+            return (
+                <WrapRight/>
+            );
+        }
+      };
+      // 右侧头部
+      class WrapRightHead extends React.Component {
+        render() {
+            return (
+              <div className="wrapRightHead container-fluid">
+                <div className="wrapRightHead_left">
+                  <span><img src="images/houtai_email1.png" alt /></span>
+                  <span><img src="images/houyai_news1.png" alt /></span>
+                  <span className="wrapRightHead_left_sapn1 wrapRightHead_left_sapn2">1</span>
+                  <span className="wrapRightHead_left_sapn1 wrapRightHead_left_sapn3">9</span>
+                </div>
+                <div className="wrapRightHead_right container">
+                    <span><img src="images/houtai_touxiang1.png" alt="" />这小子真帅</span>
+                </div>
+              </div>
+            );
+        }
+      };
+
+      // 右侧下部表格
+     class WrapRight extends React.Component {
+       constructor(props) {
+           super(props);
+           this.setPage=this.setPage.bind(this);
+           this.handleSort=this.handleSort.bind(this);
+           this.loadData=this.loadData.bind(this);
+           // 初始化一个空对象
+           this.state = {tabthitems:[],tabtritems:[],allNum:0,everyNum:20,thisPage:1,sort:{name:"",dir:""}};
+       }
+       loadData(params1) {
+         var params = {thisPage:this.state.thisPage,sort:this.state.sort};
+         $.extend(params,params1);
+
+         getTableData(params,function(data) {
+           $.extend(data,params1);
+           this.setState(data);
+         }.bind(this));
+       }
+       componentDidMount() {
+         this.loadData({});
+       }
+       setPage(thisPage) {
+         this.loadData({thisPage:thisPage});
+       }
+       handleSort(sort){
+           this.loadData({sort:sort});
+       }
+       render() {
+         console.log("a");
+         return (
+           <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div>
+             <Search />
+             <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={       this.state.sort} onSort={this.handleSort} />
+             <Tab setPage={this.setPage} allNum={this.state.allNum} everyNum={this.state.everyNum} thisPage={this.state.thisPage} />
+           </div>
+           </div>
+         );
+       }
+     };
+     class Search extends React.Component {
+
+       render() {
+         return (
+           <div className="search">
+             <div className="searchSubmit"><input type="text" name="" placeholder="查询订单号" /><p className="searchImg"><img src="images/search.png" alt=""/></p></div>
+
+           </div>
+         );
+       }
+     };
+     // 表格
+     class Table extends React.Component {
+       constructor(props) {
+           super(props);
+       }
+       render() {
+           return (
+               <div className="table-responsive">
+             <table cellPadding="0" cellSpacing="0">
+               <tr>
+                 {this.props.tabthitems.map(item => (
+                     <Th item={item} sort={this.props.sort} onSort={this.props.onSort} />))
+                 }
+               </tr>
+               {this.props.tabtritems.map(item => (
+                   <Tr item={item} tabthitems={this.props.tabthitems} />))
+               }
+             </table>
+             </div>
+           );
+       }
+     };
+     class Tr extends React.Component {
+       constructor(props) {
+           super(props);
+
+           // 初始化一个空对象
+           this.state = {};
+       }
+
+       render() {
+           return (
+             <tr>
+             {this.props.tabthitems.map(item => (
+                 <Td item={this.props.item} thitem={item} />))
+             }
+             </tr>
+           );
+       }
+     };
+     class Th extends React.Component {
+       constructor(props) {
+           super(props);
+           this.handleClick=this.handleClick.bind(this);
+       }
+       handleClick(e){
+         var sort = this.props.sort;
+         if (!sort) {
+           sort = {name:"",dir:""};
+         }
+
+         if (sort.name != this.props.item.name) {
+           sort.dir = "";
+         }
+         sort.name = this.props.item.name;
+         //排序顺序
+         if (sort.dir == "asc") {
+           sort.dir = "desc";
+         } else {
+           sort.dir = "asc";
+         }
+
+         this.props.onSort(sort);
+       }
+       render() {
+           var img= <span></span>;
+           if (this.props.item.sort) {
+             var sort = this.props.sort;
+             if (sort && sort.name == this.props.item.name) {
+               if (sort.dir == "desc") {
+                 img = <span><img src="images/htpaixu.png" alt="" onClick={this.handleClick}/></span>;
+               } else {
+                 img = <span><img src="images/htpaixu1.png" alt="" onClick={this.handleClick}/></span>;
+               }
+             } else {
+               img = <span><img src="images/htpaixu2.png" alt="" onClick={this.handleClick}/></span>;
+             }
+           }
+           var thStyle = {
+             width:this.props.item.width
+           };
+           return (
+           <th style={thStyle}>{this.props.item.title} {img}</th>
+           );
+       }
+     };
+     class Td extends React.Component {
+       render() {
+           return (
+           <td>{this.props.item[this.props.thitem.name]}</td>
+           );
+       }
+     };
+
+     // 分页
+     class Tab extends React.Component {
+       constructor(props) {
+           super(props);
+           this.gotoFirst=this.gotoFirst.bind(this);
+           this.gotoPrevious=this.gotoPrevious.bind(this);
+           this.gotoLast=this.gotoLast.bind(this);
+           this.gotoNext=this.gotoNext.bind(this);
+       }
+       gotoFirst(){
+         this.props.setPage(1);
+       }
+       gotoPrevious(){
+         this.props.setPage(this.props.thisPage-1);
+       }
+       gotoLast(){
+         var allNum=this.props.allNum;
+         // 每页显示条数everyNum
+         var everyNum=this.props.everyNum;
+         var allPage=Math.ceil(allNum/everyNum);
+         this.props.setPage(allPage);
+       }
+       gotoNext(){
+         this.props.setPage(this.props.thisPage+1);
+       }
+       render() {
+           var fenitems =[];
+           // 所有条数allNum
+           var allNum=this.props.allNum;
+           // 每页显示条数everyNum
+           var everyNum=this.props.everyNum;
+           // 当前显示页thisPage
+           var thisPage=this.props.thisPage;
+           var allPage=Math.ceil(allNum/everyNum);
+           if(allPage<=7){
+             for(var i=1; i<=allPage; i++){
+               fenitems.push(i);
+             }
+           }else {
+             if(thisPage-3<=1){
+               for(var i=1; i<=7; i++){
+                 fenitems.push(i);
+               }
+             } else if (thisPage+3>=allPage) {
+               for(var i=allPage-6; i<=allPage; i++){
+                 fenitems.push(i);
+               }
+             } else {
+               for(var i=thisPage-3; i<=thisPage+3; i++){
+                 fenitems.push(i);
+               }
+             }
+           }
+           var first = (<span className="table-tab-span1" onClick={this.gotoFirst}><img src="images/httab4.png" alt="" /></span>);
+           var previous=(<span className="table-tab-span1" onClick={this.gotoPrevious}><img src="images/httab1.png" alt="" /></span>);
+           var second=(<span className="table-tab-span1" onClick={this.gotoNext}><img src="images/httab2.png" alt="" /></span>);
+           var next=(<span className="table-tab-span1" onClick={this.gotoLast}><img src="images/httab3.png" alt="" /></span>);
+
+           if (thisPage==1) {
+             var first = (<span className="table-tab-span1" ><img src="images/httab4_1.png" alt="" /></span>);
+             var previous=(<span className="table-tab-span1"><img src="images/httab1_1.png" alt="" /></span>);
+           }
+           if(thisPage==allPage){
+             var second = (<span className="table-tab-span1" ><img src="images/httab2_1.png" alt="" /></span>);
+             var next=(<span className="table-tab-span1"><img src="images/httab3_1.png" alt="" /></span>);
+           }
+           return (
+             <div className="table-tab">
+               {first}
+               {previous}
+               <div className="tabnumber">
+               {fenitems.map(item => (
+                   <Tabnumber setPage={this.props.setPage} item={item} setSelected={this.setSelected} selected={thisPage} />))
+               }
+               </div>
+               {second}
+               {next}
+               <span className="table-tab-span4">共{allPage}页</span>
+               <span className="table-tab-span5">共{allNum}条记录</span>
+             </div>
+           );
+         }
+     };
+     // 分页数字
+     class Tabnumber extends React.Component {
+       constructor(props) {
+           super(props);
+           // 初始化一个空对象
+           this.handleClick = this.handleClick.bind(this);
+       }
+       handleClick(e){
+         this.props.setPage(this.props.item);
+
+       }
+       render() {
+           var e="";
+           if(this.props.selected==this.props.item){
+             e="om";
+           }
+           return (
+               <span className={e} onClick={this.handleClick}>{this.props.item}</span>
+           );
+         }
+     };
+      class WrapBottom extends React.Component {
+        render() {
+            return (
+              <div className="wrapBottom container">@上海佑佑信息科技有限公司</div>
+            );
+        }
+      };
+
+
+
+      // 返回到页面
+      ReactDOM.render(
+        <Wrap/>,
+        document.getElementById("content")
+      );
+    </script>
+
+  </body>
+</html>
