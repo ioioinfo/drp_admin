@@ -54,6 +54,11 @@
     .wrapTop{
         z-index: 9999;
     }
+    td img{
+        width: 40px;
+        height: 40px;
+        margin: 5px;
+    }
     </style>
   </head>
   <body>
@@ -64,7 +69,7 @@
 		,{name:'title',title:'标题',width:'5%',sort:false}
 		,{name:'pub_date',title:'日期',width:'10%',sort:false}
 		,{name:'headline',title:'内容',width:'5%',sort:false}
-		,{name:'imgs',title:'图片',width:'10%',sort:false}];
+		,{name:'imgs',title:'图片',width:'10%',sort:false,type:"image"}];
 
       function getTableData(params,cb) {
 		 params.everyNum = 10;
@@ -382,10 +387,22 @@
        }
      };
      class Td extends React.Component {
+
        render() {
-           return (
-           <td>{this.props.item[this.props.thitem.name]}</td>
-           );
+           if(this.props.thitem.type=="image"){
+               var images = this.props.item[this.props.thitem.name];
+               for (var i = 0; i < images.length; i++) {
+                   images[i] = "images/"+images[i];
+               }
+               return (<td>{images.map(img => (
+                   <a href={img} target="_black"><img src={img} alt="" /></a>))
+               }</td>);
+           }else {
+               return (
+               <td>{this.props.item[this.props.thitem.name]}</td>
+               );
+           }
+
        }
      };
 
