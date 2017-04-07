@@ -29,31 +29,29 @@ li{
     width: 100%;
     display: flex;
     position: fixed;
+    box-shadow: 10px 0 15px #BE1801;
 }
 .wrapMiddle{
-    position: absolute;
-    top: 42px;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    overflow: auto;
+
 }
 /*左边*/
 .wrapLeft{
   width: 13.323572474%;
   box-sizing: border-box;
   background: #1C1C1C;
-  top: 42px;
   position: fixed;
-  bottom: 0;
-  overflow: auto;
+    top: 42px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .wrapRight{
-    position: absolute;
-    left: 180px;
-    right: 0;
-    top: 0;
-    bottom: 0;
+    padding-right: 40px;
+    padding-left: 40px;
+    padding-top: 40px;
 }
 .wrapLeftLogo{
   width: 13.323572474%;
@@ -97,7 +95,7 @@ li{
 .wrapLeftNav_ul li span img{
   width: 20px;
   height: 20px;
-  margin-left: 10px;
+  margin-left: 15px;
   vertical-align: middle;
 }
 .wrapLeftNav_word{
@@ -180,10 +178,11 @@ li{
   color: #fff;
 }
 .second_nav .second_navInfor img{
+  margin-right: 15px;
   margin-left: 20px;
   width: 16px;
   height: 16px;
-  vertical-align: middle;
+  vertical-align: sub;
 }
 
 /*右侧下面部分*/
@@ -195,7 +194,7 @@ li{
 .search{
   width: 90%;
   display: flex;
-  margin: 35px auto;
+  margin: 20px auto;
 }
 .search input{
   width: 20%;

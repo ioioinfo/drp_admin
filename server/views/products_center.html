@@ -14,7 +14,7 @@
     .search{
       width: 90%;
       display: flex;
-      margin: 35px auto;
+      margin: 20px auto;
 	  border-radius: 4px;
 	  border-radius: 4px;
     }
@@ -50,6 +50,9 @@
       color: #000;
       margin-right: 10px;
 	  border: none;
+    }
+    .wrapTop{
+        z-index: 9999;
     }
     </style>
   </head>
@@ -92,7 +95,7 @@
                     <Logo/>
                     <WrapRightHead/>
                   </div>
-                  <div className="wrapMiddle">
+                  <div className="wrapMiddle container-fluid">
                     <Left/>
                     <Right/>
                   </div>
@@ -104,7 +107,7 @@
       class Left extends React.Component {
         render() {
             return (
-              <div className="wrapLeft container-fluid">
+              <div className="wrapLeft container-fluid col-sm-3 col-md-2 sidebar">
                 <Nav/>
               </div>
             );
@@ -275,7 +278,7 @@
        render() {
          console.log("a");
          return (
-           <div className="wrapRight">
+           <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <div>
              <Search />
              <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={       this.state.sort} onSort={this.handleSort} />
@@ -303,6 +306,7 @@
        }
        render() {
            return (
+               <div className="table-responsive">
              <table cellPadding="0" cellSpacing="0">
                <tr>
                  {this.props.tabthitems.map(item => (
@@ -313,6 +317,7 @@
                    <Tr item={item} tabthitems={this.props.tabthitems} />))
                }
              </table>
+             </div>
            );
        }
      };
