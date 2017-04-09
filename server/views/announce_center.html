@@ -2,14 +2,18 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>商品列表</title>
+    <title>公告列表</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/botton.css">
     <link rel="stylesheet" href="css/public.css">
     <script src="js/react.min.js"></script>
     <script src="js/react-dom.min.js"></script>
     <script src="js/browser.min.js"></script>
     <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
     <style media="screen">
+    .wrap{
+        position: relative;
+    }
     /*搜索框样式*/
     .search{
       width: 100%;
@@ -59,6 +63,90 @@
         height: 40px;
         margin: 5px;
     }
+    .operate_edit, .operate_announce{
+        line-height: 20px;
+        height: 20px;
+        padding: 0 10px;
+        font-size: 12px;
+    }
+    .operate_edit{
+        margin-right: 5px;
+    }
+    .operate_announce{
+        margin-left: 5px;
+    }
+
+    .alertWrap{
+        width: 360px;
+        height: 190px;
+        position: fixed;
+        top: 200px;
+        left: 36.6567828%;
+        background: #fff;
+        border-radius: 4px;
+        border: 4px solid #E6E6FA;
+        display: none;
+        z-index: 999999;
+    }
+    .alertWrap p{
+        padding: 0;
+    }
+    .alertTitle{
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        text-indent: 10px;
+        font-size: 14px;
+        color: #666;
+        font-weight: bold;
+        background: #F7F7F7;
+        box-shadow: 1px 1px 7px  #E0EEEE;
+    }
+    .alertInfor{
+        width: 100%;
+        height: 24px;
+        line-height: 24px;
+        font-size: 12px;
+        color: #565656;
+        text-align: center;
+        margin-top: 30px;
+    }
+    .alertSubmit{
+        text-align: center;
+        margin-top: 36px;
+    }
+    .alertSubmit span:first-child{
+        margin-right: 20px;;
+        height: 30px;
+        line-height: 30px;
+        background: #eee;
+        color: #7B6666;
+    }
+    .alertSubmit span:first-child:hover{
+        background-color: #eee;
+        border-color: #1B9AF7;
+        opacity: 0.9;
+        color: #7B6666;
+    }
+    .alertSubmit span:last-child{
+        margin-left: 20px;
+        height: 30px;
+        line-height: 30px;
+    }
+    .layout_toumingceng{
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 100%;
+		width: 100%;
+		background: #808080;
+		opacity: 0.5;
+		z-index: 9;
+		display: none;
+	}
     </style>
   </head>
   <body>
@@ -67,14 +155,17 @@
 	//表头
 	var tt = [{name:'id',title:'id',width:'5%',sort:true}
 		,{name:'title',title:'标题',width:'5%',sort:false}
-		,{name:'pub_date',title:'日期',width:'10%',sort:false}
-		,{name:'headline',title:'内容',width:'5%',sort:false}
-		,{name:'imgs',title:'图片',width:'10%',sort:false,type:"image"}];
+		,{name:'pub_date_text',title:'日期',width:'10%',sort:false}
+		,{name:'imgs',title:'图片',width:'10%',sort:false,type:"image"}
+        ,{name:'state_text',title:'状态',width:'10%',sort:false,type:"state"}
+        ,{name:'operate',title:'操作',width:'10%',sort:false,type:"operate"}];
+
+    var alertChangeState;
 
       function getTableData(params,cb) {
 		 params.everyNum = 10;
 		 var allNum = 0;
-		 $.get("/list_headline",{params:JSON.stringify(params)},function(data){
+		 $.get("/list_announce_by_platform",{params:JSON.stringify(params)},function(data){
 			 if (data.success) {
 				 allNum = data.num;
 				 cb({tabthitems:tt,tabtritems:data.rows,allNum:allNum,everyNum:params.everyNum});
@@ -100,6 +191,8 @@
                     <Left/>
                     <Right/>
                   </div>
+                  <Alert/>
+                  <LayoutToumingceng/>
               </div>
             );
         }
@@ -277,12 +370,11 @@
            this.loadData({sort:sort});
        }
        render() {
-         console.log("a");
          return (
            <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <div>
              <Search />
-             <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={       this.state.sort} onSort={this.handleSort} />
+             <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={this.state.sort} onSort={this.handleSort} />
              <Tab setPage={this.setPage} allNum={this.state.allNum} everyNum={this.state.everyNum} thisPage={this.state.thisPage} />
            </div>
            </div>
@@ -325,16 +417,21 @@
      class Tr extends React.Component {
        constructor(props) {
            super(props);
+           this.changeState=this.changeState.bind(this);
 
            // 初始化一个空对象
-           this.state = {};
+           this.state = {item:this.props.item};
        }
-
+       changeState(state_text){
+           var item = this.state.item;
+           item.state_text=state_text;
+           this.setState({item:item});
+       }
        render() {
            return (
              <tr>
              {this.props.tabthitems.map(item => (
-                 <Td item={this.props.item} thitem={item} />))
+                 <Td item={this.state.item} thitem={item} changeState={this.changeState} />))
              }
              </tr>
            );
@@ -387,17 +484,51 @@
        }
      };
      class Td extends React.Component {
-
+         constructor(props) {
+             super(props);
+             this.handleClick=this.handleClick.bind(this);
+         }
+         handleClick(e) {
+            var id = this.props.item.id;
+            alertChangeState = function() {
+                $.ajax({
+                  url: "/publish_announce",
+                  dataType: 'json',
+                  data: {id:id},
+                  type: 'POST',
+                  success: function(data) {
+                      this.props.changeState("已发布");
+                      $(".alertWrap").hide();
+                      $(".layout_toumingceng").hide();
+                  }.bind(this),
+                  error: function(xhr, status, err) {
+                  }.bind(this)
+              });
+          }.bind(this);
+            $(".alertWrap").show();
+            $(".layout_toumingceng").show();
+         }
        render() {
+           var c = "button button-glow button-rounded button-royal operate_announce";
+           if(this.props.item.state_text=="已发布"){
+               c = "button disabled button-pill button-primary operate_announce";
+           }
+
            if(this.props.thitem.type=="image"){
                var images = this.props.item[this.props.thitem.name];
+               var imgs = [];
                for (var i = 0; i < images.length; i++) {
-                   images[i] = "images/"+images[i];
+                   imgs.push("images/"+images[i]);
                }
-               return (<td>{images.map(img => (
+               return (<td>{imgs.map(img => (
                    <a href={img} target="_blank"><img src={img} alt="" /></a>))
                }</td>);
-           }else {
+           }else if (this.props.thitem.type=="operate") {
+               return (
+               <td><a href="#" className="button button-glow button-rounded button-caution operate_edit">编 辑</a><span className={c} onClick={this.handleClick}>发 布</span></td>
+               );
+           }
+           else {
                return (
                <td>{this.props.item[this.props.thitem.name]}</td>
                );
@@ -405,6 +536,33 @@
 
        }
      };
+    //  发布弹出层
+    class Alert extends React.Component {
+        constructor(props) {
+            super(props);
+            this.handleClick=this.handleClick.bind(this);
+            this.handleClick1=this.handleClick1.bind(this);
+        }
+        handleClick(e) {
+            alertChangeState();
+        }
+        handleClick1(e) {
+            $(".alertWrap").hide();
+            $(".layout_toumingceng").hide();
+        }
+      render() {
+         return(
+             <div className="alertWrap">
+                 <p className="alertTitle">系统提示</p>
+                 <p className="alertInfor">是否确认拒绝？</p>
+                 <p className="alertSubmit">
+                      <span className="button button-action" onClick={this.handleClick1}>取 消</span>
+                      <span className="button button-action" onClick={this.handleClick}>确 认</span>
+                  </p>
+             </div>
+         )
+      }
+    };
 
      // 分页
      class Tab extends React.Component {
@@ -518,7 +676,23 @@
         }
       };
 
-
+    //   透明层
+    class LayoutToumingceng extends React.Component {
+        constructor(props) {
+            super(props);
+            // 初始化一个空对象
+            this.handleClick = this.handleClick.bind(this);
+        }
+        handleClick(e){
+          $(".layout_toumingceng").hide();
+          $(".alertWrap").hide();
+        }
+      render() {
+          return (
+            <div className="layout_toumingceng" onClick={this.handleClick}></div>
+          );
+      }
+    };
 
       // 返回到页面
       ReactDOM.render(
