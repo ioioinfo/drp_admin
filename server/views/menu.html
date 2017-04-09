@@ -54,6 +54,12 @@
 	  查询订单号：
 	  <input type="text" name="" value="" id="search_order">
 	</div>
+	<div>
+		<form action="/upload_inventory" method="post" enctype="multipart/form-data">
+			<input id="file" type="file" name="file" />
+			<input type="submit" value="提交" />
+		</form>
+	</div>
 	<div id="order_table"></div>
 	<script id="order_table_infos" type="text/template">
 		<div>门店：<%- order_infos.order.store.org_store_name %></div>

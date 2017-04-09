@@ -216,6 +216,11 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18002/find_shantao_infos?product_ids="+product_ids;
 		do_get_method(url,cb);
 	};
+	//门店列表
+	var store_list = function(cb){
+		var url = "http://139.196.148.40:18001/store/list_by_org?org_code="+org_code;
+		do_get_method(url,cb);
+	};
 	//查询产品信息
 	var product_info = function(product_id,cb){
 		var url = "http://211.149.248.241:18002/product_info?product_id=";
@@ -224,13 +229,13 @@ exports.register = function(server, options, next){
 	};
 	//通过商品id查找到商品
 	var find_properties_by_product = function(product_id, cb){
-		var url = "http://127.0.0.1:18002/find_properties_by_product?product_id=";
+		var url = "http://211.149.248.241:18002/find_properties_by_product?product_id=";
 		url = url + product_id;
 		do_get_method(url,cb);
 	};
 	//通过商品id找到图片
 	var find_pictures_byId = function(product_id, cb){
-		var url = "http://127.0.0.1:18002/get_product_pictures?product_id=";
+		var url = "http://211.149.248.241:18002/get_product_pictures?product_id=";
 		url = url + product_id;
 		do_get_method(url,cb);
 	};
@@ -239,6 +244,80 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18002/save_product_complex";
 		do_post_method(url,data,cb);
 	}
+	//新增产品
+	var add_product = function(data,cb){
+		var url = "http://127.0.0.1:18002/add_product";
+		do_post_method(url,data,cb);
+	}
+	//保存库存接口
+	var save_product_inventory = function(data,cb){
+		var url = "http://127.0.0.1:18002/save_product_inventory";
+		do_post_method(url,data,cb);
+	}
+	//读取，保存库存
+	var read_inventory_excel = function(path, reply) {
+		var workbook = XLSX.readFile(path);
+		var first_sheet_name = workbook.SheetNames[0];
+		var worksheet = workbook.Sheets[first_sheet_name];
+		var rows = [];
+		for (z in worksheet) {
+			if(z[0] === '!') continue;
+
+			var cell = XLSX.utils.decode_cell(z);
+			var r = cell.r;
+			var c = cell.c;
+
+			var row = {};
+			if (rows.length > r) {
+				row = rows[r];
+			} else {
+				rows.push(row);
+			}
+			row[c] = worksheet[z].v;
+		}
+		console.log(rows);
+		var inventory = [];
+		for (var i = 0; i < rows.length; i++) {
+			var leng = rows.length;
+			if(leng >101){
+				return reply({"success":false,"message":"over 100"});
+			};
+			if (i == 0) {
+				if (rows[i]["16"] != "数量（实际）") {
+					return reply({"success":false,"message":rows[i]["16"]+": form wrong"});
+				}else if (rows[i]["0"] != "货号") {
+					return reply({"success":false,"message":rows[i]["0"]+": form wrong"});
+				}else if (rows[i]["15"] != "尺寸/尺码") {
+					return reply({"success":false,"message":rows[i]["0"]+": form wrong"});
+				}
+			}
+			if (i>0) {
+				var quantity = rows[i]["16"];
+				var product_id = rows[i]["0"];
+				var size_name = rows[i]["15"];
+				var data = {"quantity":quantity,"product_id":product_id,"size_name":size_name};
+				inventory.push(data);
+			}
+			for (var i = 0; i < inventory.length; i++) {
+				if (!inventory[i].product_id || !inventory[i].quantity) {
+					return reply({"success":false,"message":"第"+(i+2)+"行"+" params null!!"});
+				}
+				var re = /^[0-9]*$/;
+				if (!re.test(inventory[i].quantity)) {
+					return reply({"success":false,"message":"第"+(i+2)+"行"+" params null!!"});
+				}
+			}
+		}
+		var data = {"inventory":JSON.stringify(inventory)};
+		save_product_inventory(data,function(err,result){
+			if (!err) {
+				return reply({"success":true,"message":"ok","success_num":result.success_num,"no_products":result.no_products,"fail_num":result.fail_num,"repeat_products":result.repeat_products,"save_fail":result.save_fail});
+			}else {
+				return reply({"success":false,"message":result.message});
+			}
+		});
+
+	};
 	//读取，保存商品
 	var read_product_excel = function(path, reply) {
 		var workbook = XLSX.readFile(path);
@@ -261,9 +340,51 @@ exports.register = function(server, options, next){
 			row[c] = worksheet[z].v;
 		}
 		console.log(rows);
+		var products = [];
 		for (var i = 0; i < rows.length; i++) {
+			//长度
+			var leng = rows.length;
+			if(leng >101){
+				return reply({"success":false,"message":"over 100"});
+			};
+			if (i==0) {
+				if (rows[i]["0"] != "货号") {
+					return reply({"success":false,"message":rows[i]["0"]+": form wrong"});
+				}else if (rows[i]["1"] != "商品名称") {
+					return reply({"success":false,"message":rows[i]["1"]+": form wrong"});
+				}else if (rows[i]["2"] != "价格") {
+					return reply({"success":false,"message":rows[i]["2"]+": form wrong"});
+				}else if (rows[i]["3"] != "原价") {
+					return reply({"success":false,"message":rows[i]["3"]+": form wrong"});
+				}else if (rows[i]["4"] != "分类编号") {
+					return reply({"success":false,"message":rows[i]["4"]+": form wrong"});
+				}else if (rows[i]["5"] != "品牌") {
+					return reply({"success":false,"message":rows[i]["5"]+": form wrong"});
+				}else if (rows[i]["6"] != "描述") {
+					return reply({"success":false,"message":rows[i]["6"]+": form wrong"});
+				}else if (rows[i]["7"] != "上架时间（开始时间）") {
+					return reply({"success":false,"message":rows[i]["7"]+": form wrong"});
+				}else if (rows[i]["8"] != "颜色") {
+					return reply({"success":false,"message":rows[i]["8"]+": form wrong"});
+				}else if (rows[i]["9"] != "重量") {
+					return reply({"success":false,"message":rows[i]["9"]+": form wrong"});
+				}else if (rows[i]["10"] != "有效期") {
+					return reply({"success":false,"message":rows[i]["10"]+": form wrong"});
+				}else if (rows[i]["11"] != "扫码（货号+_字母）") {
+					return reply({"success":false,"message":rows[i]["11"]+": form wrong"});
+				}else if (rows[i]["12"] != "成色") {
+					return reply({"success":false,"message":rows[i]["12"]+": form wrong"});
+				}else if (rows[i]["13"] != "材质") {
+					return reply({"success":false,"message":rows[i]["13"]+": form wrong"});
+				}else if (rows[i]["14"] != "捐赠批次") {
+					return reply({"success":false,"message":rows[i]["14"]+": form wrong"});
+				}else if (rows[i]["15"] != "尺寸/尺码") {
+					return reply({"success":false,"message":rows[i]["15"]+": form wrong"});
+				}
+			}
 			if (i>0) {
-				//3个主要字段
+				//3个主要字段, 1.行一条格式判断，匹配  2.数据长度操作 100条以上报错，2.取出所有数据，存数组，循环判断非空，格式判断，价格，
+				//将所有报错失败的数据，保存到数组，一起提示，已经存在提示，
 				var product_id = rows[i]["0"];
 				var product_name = rows[i]["1"];
 				var product_sale_price = rows[i]["2"];
@@ -298,21 +419,38 @@ exports.register = function(server, options, next){
 					"is_new" : rows[i]["12"],
 					"row_materials" : rows[i]["13"],
 					"batch_code" : rows[i]["14"],
-					"size_name" : rows[i]["15"]
+					"size_name" : rows[i]["15"],
+					"industry_id" : 101
 				};
-				console.log("data:"+JSON.stringify(data));
-				save_product_complex(data,function(err,result){
-					if (!err) {
-						return reply({"success":true,"message":"ok"});
-					}else {
-						return reply({"success":false,"message":result.message});
-					}
-				});
-
+				products.push(data);
 			}
 		}
-
+		for (var i = 0; i < products.length; i++) {
+			var product = products[i];
+			if (!product.product_id || !product.product_name || !product.product_sale_price || !product.sort_id || !product.barcode || !product.product_marketing_price) {
+				return reply({"success":false,"message":"第"+(i+2)+"行"+" params null!!"});
+			}
+			var re = /^[0-9]+(.[0-9]{0,2})?$/;
+			if (!re.test(product.product_sale_price)||!re.test(product.product_marketing_price)) {
+				return reply({"success":false,"message":"第"+(i+2)+"行"+" product_sale_price or product_marketing_price is not float"});
+			}
+			// var re2 = /^[0-9]*$/;
+			// if (!re2.test(product.sort_id)||!re2.test(product.barcode)) {
+			// 	return reply({"success":false,"message":"sort_id or barcode wrong"});
+			// }
+		}
+		var data = {"products":JSON.stringify(products)};
+		console.log("products:"+JSON.stringify(products));
+		// return reply({"success":true,"msc":JSON.stringify(products)});
+		save_product_complex(data,function(err,result){
+			if (!err) {
+				return reply({"success":true,"message":"ok","success_num":result.success_num,"repeat_num":result.repeat_num,"fail_num":result.fail_num,"repeat_products":result.repeat_products,"save_fail":result.save_fail});
+			}else {
+				return reply({"success":false,"message":result.message});
+			}
+		});
 	};
+
 	//头条查看
 	var list_headline = function(cb){
 		var url = "http://139.196.148.40:18005/list_headline_by_platform?platform_code=";
@@ -352,7 +490,7 @@ exports.register = function(server, options, next){
 		url = url + org_code + "&person_id=" + person_id;
 		do_get_method(url,cb);
 	};
-	//门店列表信息
+	//门店账号列表信息
 	var list_store_accounts = function(store_id,cb){
 		var url = "http://139.196.148.40:18666/user/list_store_accounts?org_code=";
 		url = url + org_code + "&store_id=" + store_id;
@@ -368,18 +506,72 @@ exports.register = function(server, options, next){
 		var url = "http://139.196.148.40:18666/user/unbind_store_account";
 		do_post_method(url,data,cb);
 	};
+	//发布消息
+	var publish_announce = function(data,cb){
+		var url = "http://139.196.148.40:18005/publish_announce";
+		do_post_method(url,data,cb);
+	};
 	server.route([
+		//新增商品
+		{
+			method: 'POST',
+			path: '/add_product',
+			handler: function(request, reply){
+				var product = request.payload.product;
+				var data ={"product":product};
+				add_product(data,function(err,result){
+					if (!err) {
+						return reply({"success":true,"message":"ok","success_num":result.success_num,"repeat_num":result.repeat_num,"fail_num":result.fail_num,"repeat_products":result.repeat_products,"save_fail":result.save_fail});
+					}else {
+						return reply({"success":false,"message":result.message});
+					}
+				});
+			}
+		},
+		//处理库存上传文件
+		{
+			method: 'POST',
+			path: '/upload_inventory',
+			config: {
+				payload: {
+				   output: 'file',
+				   maxBytes: 209715200,
+				   parse: true //or just remove this line since true is the default
+				},
+				handler:function (request, reply) {
+					var path = request.payload.file.path;
+					console.log('fileUpload path : ' + path);
+					read_inventory_excel(path, reply);
+				}
+			},
+		},
+		//头条公告发布
+		{
+			method: 'POST',
+			path: '/publish_announce',
+			handler: function(request, reply){
+				var id = request.payload.id;
+				var data = {"id":id};
+				publish_announce(data,function(err,row){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
 		//返回menu菜单列表
 		{
 			method: 'GET',
 			path: '/menu_list',
 			handler: function(request, reply){
 				var menu_list = [{img:'images/shouye1.png',img2:'images/shouye-4.png',word:'首页',child:[]}
-					,{img:'images/htshangpin1.png',img2:'images/htshangpin2.png',word:'商品',child:[{img:'images/shouye-4.png',word:'商品列表',href:'/products_center'},{img:'images/shouye-4.png',word:'添加商品',
+					,{img:'images/htshangpin1.png',img2:'images/htshangpin2.png',word:'商品',child:[{img:'images/htshangpinliebiao.png',word:'商品列表',href:'/products_center'},{img:'images/httianjiashangpin.png',word:'添加商品',
 					href:'/products_add'}]}
 					,{img:'images/htkucun1.png',img2:'images/htkucun2.png',word:'库存',child:[{img:'images/shouye-4.png',word:'子节点'}]}
 					,{img:'images/htwuliu1.png',img2:'images/htwuliu2.png',word:'物流',child:[{img:'images/shouye-4.png',word:'子节点'}]}
-					,{img:'images/htdingdan1.png',img2:'images/htdingdan2.png',word:'订单',child:[{img:'images/shouye-4.png',word:'线上订单',href:'/mp_order_center'},{img:'images/shouye-4.png',word:'线下订单',href:'/order'}]}
+					,{img:'images/htdingdan1.png',img2:'images/htdingdan2.png',word:'订单',child:[{img:'images/htxianshangdingdan.png',word:'线上订单',href:'/mp_order_center'},{img:'images/htxianxiadingdan.png',word:'线下订单',href:'/order'}]}
 					,{img:'images/htmendian1.png',img2:'images/htmendian2.png',word:'门店',child:[{img:'images/shouye-4.png',word:'门店列表',href:'/mendian_center'},{img:'images/shouye-4.png',word:'创建账号',href:'/create_account'}]}
 					,{img:'images/htzhanghao1.png',img2:'images/htzhanghao2.png',word:'公告/头条',child:[{img:'images/shouye-4.png',word:'公告列表',href:'/announce_center'},{img:'images/shouye-4.png',word:'头条列表',href:'/headline_center'}]}
 					,{img:'images/hthuiyuan1.png',img2:'images/hthuiyuan2.png',word:'会员',child:[{img:'images/shouye-4.png',word:'子节点'}]}];
@@ -400,6 +592,22 @@ exports.register = function(server, options, next){
 			path: '/headline_center',
 			handler: function(request, reply){
 				return reply.view("headline_center");
+			}
+		},
+		//头条主页
+		{
+			method: 'GET',
+			path: '/headline_edit',
+			handler: function(request, reply){
+				return reply.view("headline_edit");
+			}
+		},
+		//头条主页
+		{
+			method: 'GET',
+			path: '/announce_edit',
+			handler: function(request, reply){
+				return reply.view("announce_edit");
 			}
 		},
 		//公告主页
@@ -450,13 +658,26 @@ exports.register = function(server, options, next){
 				});
 			}
 		},
-		//门店列表信息
+		//门店接口
+		{
+			method: 'GET',
+			path: '/store_list',
+			handler: function(request, reply){
+				store_list(function(err,rows){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info,"rows":rows.rows});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//门店账号列表信息
 		{
 			method: 'GET',
 			path: '/list_store_accounts',
 			handler: function(request, reply){
 				var store_id = request.query.store_id;
-
 				if (!store_id) {
 					return reply({"success":false,"message":"params wrong"});
 				}
