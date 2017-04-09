@@ -162,7 +162,30 @@
 		,{name:'imgs',title:'图片',width:'10%',sort:false,type:"image"}
         ,{name:'state_text',title:'状态',width:'10%',sort:false,type:"state"}
         ,{name:'operate',title:'操作',width:'10%',sort:false,type:"operate"}];
+
         var alertChangeState;
+
+        // 图片懒加载
+        var docTop = $(document).scrollTop();
+        var height = $(window).height();
+        $(window).scroll(function () {
+            docTop = $(document).scrollTop();
+            img_show();
+        });
+
+        var img_show = function(){
+            $("td a .loading").each(function(index) {
+                var imgHeight = $(this).offset().top;
+                if(height + docTop > imgHeight-100){
+                    var img = $(this).data("src");
+                    $(this).attr("src",img);
+                    $(this).removeClass("loading");
+                }else {
+                    return false;
+                }
+            });
+        };
+
       function getTableData(params,cb) {
 		 params.everyNum = 10;
 		 var allNum = 0;
@@ -364,6 +387,12 @@
        componentDidMount() {
          this.loadData({});
        }
+
+       //    后台请求数据更新组件完成后启动方法
+       componentDidUpdate(prevProps, prevState) {
+           img_show();
+       }
+       
        setPage(thisPage) {
          this.loadData({thisPage:thisPage});
        }
