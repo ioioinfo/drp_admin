@@ -218,7 +218,7 @@ exports.register = function(server, options, next){
 	};
 	//门店列表
 	var store_list = function(cb){
-		var url = "http://139.196.148.40:18001/store/list_by_org?org_code="+org_code;
+		var url = "http://211.149.248.241:19999/store/list"+org_code;
 		do_get_method(url,cb);
 	};
 	//查询产品信息
@@ -511,7 +511,32 @@ exports.register = function(server, options, next){
 		var url = "http://139.196.148.40:18005/publish_announce";
 		do_post_method(url,data,cb);
 	};
+	//上传保存图片
+	var save_product_picture = function(data,cb){
+		var url = "http://127.0.0.1:18002/save_product_picture";
+		do_post_method(url,data,cb);
+	}
 	server.route([
+		//上传保存图片
+		{
+			method: 'POST',
+			path: '/save_product_picture',
+			handler: function(request, reply){
+				var product_id = request.payload.product_id;
+				var imgs = request.payload.imgs;
+				if (!product_id || !imgs) {
+					return reply({"success":false,"message":"params wrong"});
+				}
+				var data = {"product_id":product_id,"imgs":imgs};
+				save_product_picture(data,function(err,result){
+					if (!err) {
+						return reply({"success":true,"message":"ok"});
+					}else {
+						return reply({"success":false,"message":result.message});
+					}
+				});
+			}
+		},
 		//新增商品
 		{
 			method: 'POST',
