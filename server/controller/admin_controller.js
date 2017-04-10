@@ -517,6 +517,22 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	}
 	server.route([
+		//头条新增/编辑
+		{
+			method: 'GET',
+			path: '/headline_update',
+			handler: function(request, reply){
+				return reply.view("announce_update");
+			}
+		},
+		//公告新增/编辑
+		{
+			method: 'GET',
+			path: '/announce_update',
+			handler: function(request, reply){
+				return reply.view("announce_update");
+			}
+		},
 		//上传保存图片
 		{
 			method: 'POST',
@@ -619,7 +635,7 @@ exports.register = function(server, options, next){
 				return reply.view("headline_center");
 			}
 		},
-		//头条主页
+		//头条编辑
 		{
 			method: 'GET',
 			path: '/headline_edit',
@@ -627,7 +643,7 @@ exports.register = function(server, options, next){
 				return reply.view("headline_edit");
 			}
 		},
-		//头条主页
+		//公告编辑
 		{
 			method: 'GET',
 			path: '/announce_edit',
@@ -635,7 +651,7 @@ exports.register = function(server, options, next){
 				return reply.view("announce_edit");
 			}
 		},
-		//公告主页
+		//公告中心
 		{
 			method: 'GET',
 			path: '/announce_center',
