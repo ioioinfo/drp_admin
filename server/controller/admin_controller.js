@@ -246,12 +246,12 @@ exports.register = function(server, options, next){
 	}
 	//新增产品
 	var add_product = function(data,cb){
-		var url = "http://127.0.0.1:18002/add_product";
+		var url = "http://211.149.248.241:18002/add_product";
 		do_post_method(url,data,cb);
 	}
 	//保存库存接口
 	var save_product_inventory = function(data,cb){
-		var url = "http://127.0.0.1:18002/save_product_inventory";
+		var url = "http://211.149.248.241:18002/save_product_inventory";
 		do_post_method(url,data,cb);
 	}
 	//读取，保存库存
@@ -513,10 +513,112 @@ exports.register = function(server, options, next){
 	};
 	//上传保存图片
 	var save_product_picture = function(data,cb){
-		var url = "http://127.0.0.1:18002/save_product_picture";
+		var url = "http://211.149.248.241:18002/save_product_picture";
 		do_post_method(url,data,cb);
 	}
+	//商品上架
+	var product_up = function(data,cb){
+		var url = "http://211.149.248.241:18002/product_up";
+		do_post_method(url,data,cb);
+	}
+	//商品下架
+	var product_down = function(data,cb){
+		var url = "http://211.149.248.241:18002/product_down";
+		do_post_method(url,data,cb);
+	}
+	//运单列表
+	var list_data = function(cb){
+		var url = "http://211.149.248.241:18013/order/list_data?org_code="+ org_code;
+		do_get_method(url,cb);
+	};
+	//开票列表
+	var invoice_list_data = function(cb){
+		var url = "http://139.196.148.40:18006/invoice/list_data?sob_id="+ org_code;
+		do_get_method(url,cb);
+	};
 	server.route([
+		//开票列表页面
+		{
+			method: 'GET',
+			path: '/invoice_list_page',
+			handler: function(request, reply){
+				return reply.view("invoice_list_page");
+			}
+		},
+		//开票列表
+		{
+			method: 'GET',
+			path: '/invoice_list',
+			handler: function(request, reply){
+				invoice_list_data(function(err,rows){
+					if (!err) {
+						return reply ({"success":true,"rows":rows.rows,"service_info":rows.service_info})
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":rows.service_info});
+					}
+				});
+			}
+		},
+		//运单列表页面
+		{
+			method: 'GET',
+			path: '/transport_list_page',
+			handler: function(request, reply){
+				return reply.view("transport_list");
+			}
+		},
+		//运单列表
+		{
+			method: 'GET',
+			path: '/transport_list',
+			handler: function(request, reply){
+				list_data(function(err,rows){
+					if (!err) {
+						return reply ({"success":true,"rows":rows.rows,"service_info":rows.service_info})
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":rows.service_info});
+					}
+				});
+			}
+		},
+		//产品下架
+		{
+			method: 'POST',
+			path: '/product_down',
+			handler: function(request, reply){
+				var product_id = request.payload.product_id;
+				if (!product_id) {
+					return reply({"success":false,"message":"product_id null"});
+				}
+				var data = {"product_id":product_id};
+				product_down(data,function(err,content){
+					if (!err) {
+						return reply({"success":true,"message":"ok"});
+					}else {
+						return reply({"success":false,"message":content.message});
+					}
+				});
+			}
+		},
+		//产品上架
+		{
+			method: 'POST',
+			path: '/product_up',
+			handler: function(request, reply){
+				var product_id = request.payload.product_id;
+				if (!product_id) {
+					return reply({"success":false,"message":"product_id null"});
+				}
+				var data = {"product_id":product_id};
+				product_up(data,function(err,content){
+					if (!err) {
+						return reply({"success":true,"message":"ok"});
+					}else {
+						return reply({"success":false,"message":content.message});
+					}
+				});
+			}
+		},
 		//头条新增/编辑
 		{
 			method: 'GET',
