@@ -536,7 +536,91 @@ exports.register = function(server, options, next){
 		var url = "http://139.196.148.40:18006/invoice/list_data?sob_id="+ org_code;
 		do_get_method(url,cb);
 	};
+	//门店新增
+	var add_store = function(data,cb){
+		var url = "http://139.196.148.40:18001/store/add_store";
+		do_post_method(url,data,cb);
+	}
+	//门店新增==编辑
+	var update_store = function(data,cb){
+		var url = "http://139.196.148.40:18001/store/update_store";
+		do_post_method(url,data,cb);
+	}
+	//门店创建账号
+	var add_login_account = function(data,cb){
+		var url = "http://139.196.148.40:18666/user/add_login_account";
+		do_post_method(url,data,cb);
+	}
 	server.route([
+		//门店创建账号
+		{
+			method: 'POST',
+			path: '/add_login_account',
+			handler: function(request, reply){
+				var person_id = request.payload.person_id;
+				var username = request.payload.username;
+				var password = request.payload.password;
+				if (!person_id|| !username|| !password) {
+					return reply ({"success":false,"message":"params wrong"});
+				}
+				var data = {"person_id":person_id,"username":username,"password":password,"org_code":org_code};
+
+				add_login_account(data,function(err,rows){
+					if (!err) {
+						return reply ({"success":true,"person_login_id":rows.person_login_id,"service_info":rows.service_info})
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":rows.service_info});
+					}
+				});
+			}
+		},
+		//门店编辑
+		{
+			method: 'POST',
+			path: '/update_store',
+			handler: function(request, reply){
+				var store_code = request.payload.store_code;
+				var store_name = request.payload.store_name;
+				var open_date = request.payload.open_date;
+				var remark = request.payload.remark;
+				var id = request.payload.id;
+				if (!store_code|| !store_name|| !open_date|| !remark || !id) {
+					return reply ({"success":false,"message":"params wrong"});
+				}
+				var data = {"store_code":store_code,"store_name":store_name,"open_date":open_date,"org_code":org_code, "id":id};
+
+				update_store(data,function(err,rows){
+					if (!err) {
+						return reply ({"success":true,"service_info":rows.service_info})
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":rows.service_info});
+					}
+				});
+			}
+		},
+		//门店新增
+		{
+			method: 'POST',
+			path: '/add_store',
+			handler: function(request, reply){
+				var store_code = request.payload.store_code;
+				var store_name = request.payload.store_name;
+				var open_date = request.payload.open_date;
+				var remark = request.payload.remark;
+				if (!store_code|| !store_name|| !open_date|| !remark) {
+					return reply ({"success":false,"message":"params wrong"});
+				}
+				var data = {"store_code":store_code,"store_name":store_name,"open_date":open_date,"org_code":org_code};
+
+				add_store(data,function(err,rows){
+					if (!err) {
+						return reply ({"success":true,"id":rows.id,"service_info":rows.service_info})
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":rows.service_info});
+					}
+				});
+			}
+		},
 		//开票列表页面
 		{
 			method: 'GET',
