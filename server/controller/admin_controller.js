@@ -17,6 +17,7 @@ var do_get_method = function(url,cb){
 		}
 	});
 };
+
 //所有post调用接口方法
 var do_post_method = function(url,data,cb){
 	uu_request.request(url, data, function(err, response, body) {
