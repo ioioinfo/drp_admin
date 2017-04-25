@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>商品列表</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/botton.css">
     <link rel="stylesheet" href="css/public.css">
     <script src="js/react.min.js"></script>
     <script src="js/react-dom.min.js"></script>
@@ -54,21 +55,28 @@
     .wrapTop{
         z-index: 9999;
     }
+    tr td:last-child{
+        padding: 7px 2px 3px ;
+    }
+    tr .btn-sm{
+        margin: 0 2px;
+    }
     </style>
   </head>
   <body>
     <div id="content" class="container-fluid"></div>
 	<script type="text/javascript">
 	//表头
-	var tt = [{name:'id',title:'id',width:'5%',sort:true}
-		,{name:'product_name',title:'名称',width:'20%',sort:false}
-		,{name:'product_sale_price',title:'售价',width:'10%',sort:false}
-		,{name:'product_marketing_price',title:'市场价(元)',width:'7.5%',sort:false}
-		,{name:'weight',title:'重量(KG)',width:'7.5%',sort:false}
-		,{name:'code',title:'编码',width:'20%',sort:false}
-		,{name:'is_new',title:'成色',width:'10%',sort:false}
-		,{name:'row_materials',title:'材质',width:'10%',sort:false}
-		,{name:'batch_code',title:'批次',width:'10%',sort:false}];
+	var tt = [{name:'id',title:'id',sort:true}
+		,{name:'product_name',title:'名称',sort:false}
+		,{name:'product_sale_price',title:'售价',sort:false}
+		,{name:'product_marketing_price',title:'市场价(元)',sort:false}
+		,{name:'weight',title:'重量(KG)',sort:false}
+		,{name:'code',title:'编码',sort:false}
+		,{name:'is_new',title:'成色',sort:false}
+		,{name:'row_materials',title:'材质',sort:false}
+		,{name:'batch_code',title:'批次',sort:false}
+        ,{name:'batch_code',title:'操作',type:"operation", sort:false}];
 
       function getTableData(params,cb) {
 		 params.everyNum = 10;
@@ -387,9 +395,16 @@
      };
      class Td extends React.Component {
        render() {
-           return (
-           <td>{this.props.item[this.props.thitem.name]}</td>
-           );
+           if(this.props.thitem.type=="operation"){
+               return (
+                <td><span className="btn btn-primary btn-sm">上 架</span><span className="btn btn-success btn-sm">下 架</span></td>
+               );
+           }else {
+               return (
+               <td>{this.props.item[this.props.thitem.name]}</td>
+               );
+           }
+
        }
      };
 
