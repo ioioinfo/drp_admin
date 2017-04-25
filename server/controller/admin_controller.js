@@ -552,6 +552,14 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	}
 	server.route([
+		//商品导入页面
+		{
+			method: 'GET',
+			path: '/import_products',
+			handler: function(request, reply){
+				return reply.view("import_products");
+			}
+		},
 		//线上订单明细
 		{
 			method: 'GET',
