@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>商品列表</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/botton.css">
+    <link rel="stylesheet" href="css/public.css">
+    <script src="js/react.min.js"></script>
+    <script src="js/react-dom.min.js"></script>
+    <script src="js/browser.min.js"></script>
+    <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
+    <style media="screen">
+    .wrapRight{
+        padding-top: 70px;
+
+    }
+    .wrapRight .row{
+        background: #fff;
+    }
+    .wrapTop{
+        z-index: 9999;
+    }
+    .wrapRight .add_margin_top{
+        margin-top: 17px;
+        background: #E7E8EA;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="content" class="container-fluid"></div>
+
+    <script type="text/babel">
+      // 框架
+      class Wrap extends React.Component {
+        render() {
+            return (
+              <div className="wrap container-fluid">
+                  <div className="wrapTop">
+                    <Logo/>
+                    <WrapRightHead/>
+                  </div>
+                  <div className="wrapMiddle container-fluid">
+                    <Left/>
+                    <Right/>
+                  </div>
+              </div>
+            );
+        }
+      };
+      // 左边导航
+      class Left extends React.Component {
+        render() {
+            return (
+              <div className="wrapLeft container-fluid col-sm-3 col-md-2 sidebar">
+                <Nav/>
+              </div>
+            );
+        }
+      };
+      // 左边导航头部
+      class Logo extends React.Component {
+        render() {
+            return (
+              <div className="wrapLeftLogo">
+                上海XXX有限公司
+              </div>
+            );
+        }
+      };
+      // 左侧导航具体导航
+      class Nav extends React.Component {
+        // 2
+        constructor(props) {
+            super(props);
+            // 初始化一个空对象
+            this.setSelected = this.setSelected.bind(this);
+            this.state = {items: [],selected:'首页'};
+        }
+
+        setSelected(id){
+          this.setState({selected: id});
+        }
+        // 3
+        componentDidMount() {
+            $.ajax({
+              url: "/menu_list",
+              dataType: 'json',
+              type: 'GET',
+              success: function(data) {
+                  this.setState({items: data.rows});
+              }.bind(this),
+              error: function(xhr, status, err) {
+              }.bind(this)
+          });
+        }
+
+        // 1
+        render() {
+
+            return (
+              <div className="wrapLeftNav">
+                <ul className="wrapLeftNav_ul">
+                  {this.state.items.map(item => (
+                      <Li item={item} setSelected={this.setSelected} selected={this.state.selected} />))
+                  }
+                </ul>
+              </div>
+            );
+        }
+      };
+      class Li extends React.Component {
+        constructor(props) {
+            super(props);
+            // 初始化一个空对象
+            this.handleClick = this.handleClick.bind(this);
+            // 二级导航状态
+            this.state={show:false};
+        }
+
+        handleClick(e){
+          this.props.setSelected(this.props.item.word);
+          this.setState({show:!this.state.show});
+
+        }
+        render() {
+
+            var c = "";
+            var img = this.props.item.img;
+            if(this.props.selected==this.props.item.word){
+              c = "on";
+              img = this.props.item.img2;
+            }
+            var d = (<div>{this.props.item.child.map(item => (
+                <Secondnav item={item}  />))
+            }</div>);
+            if (!this.state.show) {
+              d = <div></div>;
+            };
+
+            return (
+              <div>
+                <li className={c} onClick={this.handleClick}>
+                  <span><img src={img} alt="" /></span>
+                  <span className="wrapLeftNav_word">{this.props.item.word}</span>
+                </li>
+                {d}
+              </div>
+            );
+        }
+      };
+      // 二级导航
+      class Secondnav extends React.Component {
+        render() {
+          var img=this.props.item.img;
+            return (
+              <div className="second_nav">
+              <a href={this.props.item.href}>
+                <div className="second_navInfor">
+                  <img src={img} />
+                  <p>{this.props.item.word}</p>
+                </div>
+              </a>
+              </div>
+            );
+        }
+      };
+      // 右侧
+      class Right extends React.Component {
+        render() {
+            return (
+                <WrapRight/>
+            );
+        }
+      };
+      // 右侧头部
+      class WrapRightHead extends React.Component {
+        render() {
+            return (
+              <div className="wrapRightHead container-fluid">
+                <div className="wrapRightHead_left">
+                  <span><img src="images/houtai_email1.png" alt /></span>
+                  <span><img src="images/houyai_news1.png" alt /></span>
+                  <span className="wrapRightHead_left_sapn1 wrapRightHead_left_sapn2">1</span>
+                  <span className="wrapRightHead_left_sapn1 wrapRightHead_left_sapn3">9</span>
+                </div>
+                <div className="wrapRightHead_right container">
+                    <span><img src="images/houtai_touxiang1.png" alt="" />这小子真帅</span>
+                </div>
+              </div>
+            );
+        }
+      };
+
+      // 右侧下部表格
+     class WrapRight extends React.Component {
+       render() {
+         return (
+           <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <div className="row">
+                    <div className="form-group col-md-3 col-md-offset-1">
+                        <label>ID</label>
+                        <input type="text" className="form-control" id="exampleInputName2" />
+                    </div>
+                    <div className="form-group col-md-3 col-md-offset-1">
+                        <label>名称</label>
+                        <input type="text" className="form-control" id="exampleInputEmail2" />
+                    </div>
+                    <div className="form-group col-md-3 col-md-offset-1">
+                        <label>售价</label>
+                        <input type="text" className="form-control" id="exampleInputName2" />
+                    </div>
+                    <div className="form-group col-md-3 col-md-offset-1">
+                        <label>市场价</label>
+                        <input type="text" className="form-control" id="exampleInputEmail2" />
+                    </div>
+                    <div className="form-group col-md-3 col-md-offset-1">
+                        <label>重量</label>
+                        <input type="text" className="form-control" id="exampleInputName2" />
+                    </div>
+                    <div className="form-group col-md-3 col-md-offset-1">
+                        <label>编码</label>
+                        <input type="text" className="form-control" id="exampleInputEmail2" />
+                    </div>
+                    <div className="form-group col-md-3 col-md-offset-1">
+                        <label>成色</label>
+                        <input type="text" className="form-control" id="exampleInputName2" />
+                    </div>
+                    <div className="form-group col-md-3 col-md-offset-1">
+                        <label>材质</label>
+                        <input type="text" className="form-control" id="exampleInputEmail2" />
+                    </div>
+                    <div className="form-group col-md-3 col-md-offset-1">
+                        <label>批次</label>
+                        <input type="text" className="form-control" id="exampleInputEmail2" />
+                    </div>
+                </div>
+                <div className="row">
+                    <input type="file" multiple className="col-md-offset-1" />
+                </div>
+                <div className="row add_margin_top"><p className="button button-glow button-rounded button-royal button-small pull-right ">添加商品</p></div>
+           </div>
+         );
+       }
+     };
+
+      class WrapBottom extends React.Component {
+        render() {
+            return (
+              <div className="wrapBottom container">@上海佑佑信息科技有限公司</div>
+            );
+        }
+      };
+
+
+
+      // 返回到页面
+      ReactDOM.render(
+        <Wrap/>,
+        document.getElementById("content")
+      );
+    </script>
+
+  </body>
+</html>

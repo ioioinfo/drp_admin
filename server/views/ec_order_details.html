@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>商品列表</title>
+    <title>线上订单明细</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/public.css">
     <script src="js/react.min.js"></script>
@@ -60,19 +60,25 @@
     <div id="content" class="container-fluid"></div>
 	<script type="text/javascript">
 	//表头
-	var tt = [{name:'org_store_id',title:'id',width:'25%',sort:true}
-		,{name:'org_store_code',title:'门店序号',width:'25%',sort:false}
-		,{name:'org_store_name',title:'门店名称',width:'25%',sort:false}
-		,{name:'open_date_text',title:'开店时间',width:'25%',sort:false}
-		];
+	var tt = [{name:'id',title:'id',width:'5%',sort:true}
+		,{name:'product_name',title:'名称',width:'20%',sort:false}
+		,{name:'product_sale_price',title:'售价',width:'10%',sort:false}
+		,{name:'product_marketing_price',title:'市场价(元)',width:'7.5%',sort:false}
+		,{name:'weight',title:'重量(KG)',width:'7.5%',sort:false}
+		,{name:'code',title:'编码',width:'20%',sort:false}
+		,{name:'is_new',title:'成色',width:'10%',sort:false}
+		,{name:'row_materials',title:'材质',width:'10%',sort:false}
+		,{name:'batch_code',title:'批次',width:'10%',sort:false}
+        ,{name:'batch_code',title:'会员帐号',width:'10%',sort:false}
+        ,{name:'batch_code',title:'会员名称',width:'10%',sort:false}];
 
       function getTableData(params,cb) {
 		 params.everyNum = 10;
 		 var allNum = 0;
-		 $.get("/store_list",{params:JSON.stringify(params)},function(data){
+		 $.get("/get_products_list",{params:JSON.stringify(params)},function(data){
 			 if (data.success) {
 				 allNum = data.num;
-				 cb({tabthitems:tt,tabtritems:data.rows,allNum:allNum,everyNum:params.everyNum});
+				 cb({tabthitems:tt,tabtritems:data.products,allNum:allNum,everyNum:params.everyNum});
 			 }else {
 				 alert(data.message);
 			 }

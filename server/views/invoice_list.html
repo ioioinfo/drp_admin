@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>商品列表</title>
+    <title>线上订单明细</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/public.css">
     <script src="js/react.min.js"></script>
@@ -60,19 +60,25 @@
     <div id="content" class="container-fluid"></div>
 	<script type="text/javascript">
 	//表头
-	var tt = [{name:'org_store_id',title:'id',width:'25%',sort:true}
-		,{name:'org_store_code',title:'门店序号',width:'25%',sort:false}
-		,{name:'org_store_name',title:'门店名称',width:'25%',sort:false}
-		,{name:'open_date_text',title:'开店时间',width:'25%',sort:false}
-		];
+	var tt = [{name:'id',title:'id',width:'5%',sort:true}
+		,{name:'product_name',title:'名称',width:'20%',sort:false}
+		,{name:'product_sale_price',title:'售价',width:'10%',sort:false}
+		,{name:'product_marketing_price',title:'市场价(元)',width:'7.5%',sort:false}
+		,{name:'weight',title:'重量(KG)',width:'7.5%',sort:false}
+		,{name:'code',title:'编码',width:'20%',sort:false}
+		,{name:'is_new',title:'成色',width:'10%',sort:false}
+		,{name:'row_materials',title:'材质',width:'10%',sort:false}
+		,{name:'batch_code',title:'批次',width:'10%',sort:false}
+        ,{name:'batch_code',title:'会员帐号',width:'10%',sort:false}
+        ,{name:'batch_code',title:'会员名称',width:'10%',sort:false}];
 
       function getTableData(params,cb) {
 		 params.everyNum = 10;
 		 var allNum = 0;
-		 $.get("/store_list",{params:JSON.stringify(params)},function(data){
+		 $.get("/get_products_list",{params:JSON.stringify(params)},function(data){
 			 if (data.success) {
 				 allNum = data.num;
-				 cb({tabthitems:tt,tabtritems:data.rows,allNum:allNum,everyNum:params.everyNum});
+				 cb({tabthitems:tt,tabtritems:data.products,allNum:allNum,everyNum:params.everyNum});
 			 }else {
 				 alert(data.message);
 			 }
@@ -391,106 +397,112 @@
 
      // 分页
      class Tab extends React.Component {
-       constructor(props) {
-           super(props);
-           this.gotoFirst=this.gotoFirst.bind(this);
-           this.gotoPrevious=this.gotoPrevious.bind(this);
-           this.gotoLast=this.gotoLast.bind(this);
-           this.gotoNext=this.gotoNext.bind(this);
-       }
-       gotoFirst(){
-         this.props.setPage(1);
-       }
-       gotoPrevious(){
-         this.props.setPage(this.props.thisPage-1);
-       }
-       gotoLast(){
-         var allNum=this.props.allNum;
-         // 每页显示条数everyNum
-         var everyNum=this.props.everyNum;
-         var allPage=Math.ceil(allNum/everyNum);
-         this.props.setPage(allPage);
-       }
-       gotoNext(){
-         this.props.setPage(this.props.thisPage+1);
-       }
-       render() {
-           var fenitems =[];
-           // 所有条数allNum
-           var allNum=this.props.allNum;
-           // 每页显示条数everyNum
-           var everyNum=this.props.everyNum;
-           // 当前显示页thisPage
-           var thisPage=this.props.thisPage;
-           var allPage=Math.ceil(allNum/everyNum);
-           if(allPage<=7){
-             for(var i=1; i<=allPage; i++){
-               fenitems.push(i);
+         constructor(props) {
+             super(props);
+             this.gotoFirst=this.gotoFirst.bind(this);
+             this.gotoPrevious=this.gotoPrevious.bind(this);
+             this.gotoLast=this.gotoLast.bind(this);
+             this.gotoNext=this.gotoNext.bind(this);
+         }
+         gotoFirst(){
+             this.props.setPage(1);
+         }
+         gotoPrevious(){
+             this.props.setPage(this.props.thisPage-1);
+         }
+         gotoLast(){
+             var allNum=this.props.allNum;
+             // 每页显示条数everyNum
+             var everyNum=this.props.everyNum;
+             var allPage=Math.ceil(allNum/everyNum);
+             this.props.setPage(allPage);
+         }
+         gotoNext(){
+             this.props.setPage(this.props.thisPage+1);
+         }
+         render() {
+             var fenitems =[];
+             // 所有条数allNum
+             var allNum=this.props.allNum;
+             // 每页显示条数everyNum
+             var everyNum=this.props.everyNum;
+             // 当前显示页thisPage
+             var thisPage=this.props.thisPage;
+             var allPage=Math.ceil(allNum/everyNum);
+             if(allPage<=7){
+                 for(var i=1; i<=allPage; i++){
+                     fenitems.push(i);
+                 }
+             }else {
+                 if(thisPage-3<=1){
+                     for(var i=1; i<=7; i++){
+                         fenitems.push(i);
+                     }
+                 } else if (thisPage+3>=allPage) {
+                     for(var i=allPage-6; i<=allPage; i++){
+                         fenitems.push(i);
+                     }
+                 } else {
+                     for(var i=thisPage-3; i<=thisPage+3; i++){
+                         fenitems.push(i);
+                     }
+                 }
              }
-           }else {
-             if(thisPage-3<=1){
-               for(var i=1; i<=7; i++){
-                 fenitems.push(i);
-               }
-             } else if (thisPage+3>=allPage) {
-               for(var i=allPage-6; i<=allPage; i++){
-                 fenitems.push(i);
-               }
-             } else {
-               for(var i=thisPage-3; i<=thisPage+3; i++){
-                 fenitems.push(i);
-               }
-             }
-           }
-           var first = (<span className="table-tab-span1" onClick={this.gotoFirst}><img src="images/httab4.png" alt="" /></span>);
-           var previous=(<span className="table-tab-span1" onClick={this.gotoPrevious}><img src="images/httab1.png" alt="" /></span>);
-           var second=(<span className="table-tab-span1" onClick={this.gotoNext}><img src="images/httab2.png" alt="" /></span>);
-           var next=(<span className="table-tab-span1" onClick={this.gotoLast}><img src="images/httab3.png" alt="" /></span>);
+             var first = (<span className="table-tab-span1" onClick={this.gotoFirst}><img src="images/httab4.png" alt="" /></span>);
+             var previous=(<span className="table-tab-span1" onClick={this.gotoPrevious}><img src="images/httab1.png" alt="" /></span>);
+             var second=(<span className="table-tab-span1" onClick={this.gotoNext}><img src="images/httab2.png" alt="" /></span>);
+             var next=(<span className="table-tab-span1" onClick={this.gotoLast}><img src="images/httab3.png" alt="" /></span>);
 
-           if (thisPage==1) {
-             var first = (<span className="table-tab-span1" ><img src="images/httab4_1.png" alt="" /></span>);
-             var previous=(<span className="table-tab-span1"><img src="images/httab1_1.png" alt="" /></span>);
-           }
-           if(thisPage==allPage){
-             var second = (<span className="table-tab-span1" ><img src="images/httab2_1.png" alt="" /></span>);
-             var next=(<span className="table-tab-span1"><img src="images/httab3_1.png" alt="" /></span>);
-           }
-           return (
-             <div className="table-tab">
-               {first}
-               {previous}
-               <div className="tabnumber">
-               {fenitems.map(item => (
-                   <Tabnumber setPage={this.props.setPage} item={item} setSelected={this.setSelected} selected={thisPage} />))
-               }
-               </div>
-               {second}
-               {next}
-               <span className="table-tab-span4">共{allPage}页</span>
-               <span className="table-tab-span5">共{allNum}条记录</span>
-             </div>
-           );
+             if (thisPage==1) {
+                 var first = (<span className="table-tab-span1" ><img src="images/httab4_1.png" alt="" /></span>);
+                 var previous=(<span className="table-tab-span1"><img src="images/httab1_1.png" alt="" /></span>);
+             }
+             if(thisPage==allPage){
+                 var second = (<span className="table-tab-span1" ><img src="images/httab2_1.png" alt="" /></span>);
+                 var next=(<span className="table-tab-span1"><img src="images/httab3_1.png" alt="" /></span>);
+             }
+             return (
+                 <div>
+                     <nav aria-label="Page navigation" className="nav_text">
+                         <ul className="pagination">
+                             <li className="disabled">
+                               <a href="#" aria-label="Previous">
+                                 <span aria-hidden="true">&laquo;</span>
+                               </a>
+                             </li>
+                             {fenitems.map(item => (
+                                 <PageLi  setPage={this.props.setPage} item={item} setSelected={this.setSelected} selected={thisPage} />))
+                             }
+                             <li className="disabled">
+                               <a href="#" aria-label="Next">
+                                 <span aria-hidden="true">&raquo;</span>
+                               </a>
+                             </li>
+                         </ul>
+                     </nav>
+                     <p className="pull-right">
+                         <span className="table-tab-span4">共{allPage}页</span>
+                         <span className="table-tab-span5">共{allNum}条记录</span>
+                     </p>
+                 </div>
+             );
          }
      };
      // 分页数字
-     class Tabnumber extends React.Component {
-       constructor(props) {
-           super(props);
-           // 初始化一个空对象
-           this.handleClick = this.handleClick.bind(this);
-       }
-       handleClick(e){
-         this.props.setPage(this.props.item);
+     class PageLi extends React.Component {
+         constructor(props) {
+             super(props);
+             // 初始化一个空对象
+             this.handleClick = this.handleClick.bind(this);
+         }
+         handleClick(e){
+             this.props.setPage(this.props.item);
 
-       }
-       render() {
-           var e="";
-           if(this.props.selected==this.props.item){
-             e="om";
-           }
-           return (
-               <span className={e} onClick={this.handleClick}>{this.props.item}</span>
-           );
+         }
+         render() {
+             return (
+                 <li className="active" onClick={this.handleClick}><a>{this.props.item}</a></li>
+             );
          }
      };
       class WrapBottom extends React.Component {
