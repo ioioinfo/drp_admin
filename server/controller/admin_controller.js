@@ -552,6 +552,22 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	}
 	server.route([
+		//线上订单明细
+		{
+			method: 'GET',
+			path: '/ec_order_details',
+			handler: function(request, reply){
+				return reply.view("ec_order_details");
+			}
+		},
+		//线下订单明细
+		{
+			method: 'GET',
+			path: '/order_details',
+			handler: function(request, reply){
+				return reply.view("order_details");
+			}
+		},
 		//门店创建账号
 		{
 			method: 'POST',
