@@ -219,7 +219,7 @@ exports.register = function(server, options, next){
 	};
 	//门店列表
 	var store_list = function(cb){
-		var url = "http://211.149.248.241:19999/store/list"+org_code;
+		var url = "http://211.149.248.241:19999/store/list?org_code="+org_code;
 		do_get_method(url,cb);
 	};
 	//查询产品信息
