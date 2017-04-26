@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>线上订单</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/button.css">
     <link rel="stylesheet" href="css/public.css">
     <script src="js/react.min.js"></script>
     <script src="js/react-dom.min.js"></script>
@@ -54,29 +55,43 @@
     .wrapTop{
         z-index: 9999;
     }
+
+    /*操作按钮样式*/
+    .button_style{
+        padding: 3px 4px;
+        border-radius: 3px;
+        white-space:nowrap;
+        outline: none;
+        border: none;
+        margin: 0 2px;
+    }
+    .button_p{
+        white-space:nowrap;
+    }
     </style>
   </head>
   <body>
     <div id="content" class="container-fluid"></div>
 	<script type="text/javascript">
 	//表头
-	var tt = [{name:'created_at',title:'日期',width:'5%',sort:true}
-		,{name:'order_id',title:'订单号',width:'5%',sort:false}
-		,{name:'person_id',title:'订单人',width:'10%',sort:false}
-		,{name:'gain_point',title:'可获积分',width:'5%',sort:false}
-		,{name:'card_reduce',title:'门店',width:'10%',sort:false}
-		,{name:'actual_price',title:'实付',width:'5%',sort:false}
-		,{name:'total_number',title:'总数',width:'4%',sort:false}
-		,{name:'weight',title:'重量',width:'4%',sort:false}
-		,{name:'logistics_price',title:'运费',width:'5%',sort:false}
-		,{name:'linkname',title:'收货人',width:'5%',sort:false}
-		,{name:'detail_address',title:'收货地址',width:'10%',sort:false}
-		,{name:'mobile',title:'收货人手机',width:'5%',sort:false}
-		,{name:'province',title:'省',width:'4%',sort:false}
-		,{name:'city',title:'市',width:'4%',sort:false}
-		,{name:'district',title:'区',width:'4%',sort:false}
-		,{name:'batch_code',title:'买家留言',width:'10%',sort:false}
-		,{name:'order_status',title:'状态',width:'5%',sort:false}];
+	var tt = [{name:'created_at',title:'日期',sort:true}
+		,{name:'order_id',title:'订单号',sort:false}
+		,{name:'person_id',title:'订单人',sort:false}
+		,{name:'gain_point',title:'可获积分',sort:false}
+		,{name:'card_reduce',title:'门店',sort:false}
+		,{name:'actual_price',title:'实付',sort:false}
+		,{name:'total_number',title:'总数',sort:false}
+		,{name:'weight',title:'重量',sort:false}
+		,{name:'logistics_price',title:'运费',sort:false}
+		,{name:'linkname',title:'收货人',sort:false}
+		,{name:'detail_address',title:'收货地址',sort:false}
+		,{name:'mobile',title:'收货人手机',sort:false}
+		,{name:'province',title:'省',sort:false}
+		,{name:'city',title:'市',sort:false}
+		,{name:'district',title:'区',sort:false}
+		,{name:'batch_code',title:'买家留言',sort:false}
+		,{name:'order_status',title:'状态',sort:false}
+        ,{name:'op',title:'操作',type:'operation', sort:false}];
 
       function getTableData(params,cb) {
 		 params.everyNum = 10;
@@ -395,9 +410,18 @@
      };
      class Td extends React.Component {
        render() {
-           return (
-           <td>{this.props.item[this.props.thitem.name]}</td>
-           );
+           if(this.props.thitem.type=='operation'){
+               return (
+               <td>
+               <p className="button_p"><button className="button_style button-primary">捡 货</button><button className="button_style button-primary">发 货</button></p>
+               <p className="button_p"><button className="button_style button-primary">填写面单</button><button className="button_style button-primary">删除</button></p>
+               </td>
+               );
+           }else {
+               return (
+               <td>{this.props.item[this.props.thitem.name]}</td>
+               );
+           }
        }
      };
 
