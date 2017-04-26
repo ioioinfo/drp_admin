@@ -540,10 +540,6 @@
             $(".layout_toumingceng").show();
          }
        render() {
-           var c = "button button-glow button-rounded button-royal operate_announce";
-           if(this.props.item.state_text=="已发布"){
-               c = "button disabled button-pill button-primary operate_announce";
-           }
 
            if(this.props.thitem.type=="image"){
                var images = this.props.item[this.props.thitem.name];
@@ -555,9 +551,15 @@
                    <a href={img} target="_blank"><img src={img} alt="" /></a>))
                }</td>);
            }else if (this.props.thitem.type=="operate") {
-               return (
-               <td><a href="#" className="button button-glow button-rounded button-caution operate_edit">编 辑</a><span className={c} onClick={this.handleClick}>发 布</span></td>
-               );
+               if(this.props.item.state_text=="已发布"){
+                   return (
+                   <td><a href="#" className="button button-glow button-rounded button-caution operate_edit">编 辑</a><span className="button button-glow button-rounded button-highlight operate_announce" onClick={this.handleClick1}>下 架</span></td>
+                   );
+               }else {
+                   return (
+                   <td><a href="#" className="button button-glow button-rounded button-caution operate_edit">编 辑</a><span className="button button-glow button-rounded button-royal operate_announce" onClick={this.handleClick}>发 布</span></td>
+                   );
+               }
            }
            else {
                return (
