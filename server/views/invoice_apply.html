@@ -2,18 +2,12 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>头条列表</title>
+    <title>发票申请</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/button.css">
     <link rel="stylesheet" href="css/public.css">
-    <script src="js/react.min.js"></script>
-    <script src="js/react-dom.min.js"></script>
-    <script src="js/browser.min.js"></script>
-    <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
+
     <style media="screen">
-    .wrap{
-        position: relative;
-    }
     /*搜索框样式*/
     .search{
       width: 100%;
@@ -58,138 +52,30 @@
     .wrapTop{
         z-index: 9999;
     }
-    td img{
-        width: 40px;
-        height: 40px;
-        margin: 5px;
-    }
-    .operate_edit, .operate_announce{
-        line-height: 20px;
-        height: 20px;
-        padding: 0 10px;
-        font-size: 12px;
-    }
-    .operate_edit{
-        margin-right: 5px;
-    }
-    .operate_announce{
-        margin-left: 5px;
-    }
-
-    .alertWrap{
-        width: 360px;
-        height: 190px;
-        position: fixed;
-        top: 200px;
-        left: 36.6567828%;
-        background: #fff;
-        border-radius: 4px;
-        border: 4px solid #E6E6FA;
-        display: none;
-        z-index: 999999;
-    }
-    .alertWrap p{
-        padding: 0;
-    }
-    .alertTitle{
-        width: 100%;
-        height: 50px;
-        line-height: 50px;
-        text-align: center;
-        text-indent: 10px;
-        font-size: 14px;
-        color: #666;
-        font-weight: bold;
-        background: #F7F7F7;
-        box-shadow: 1px 1px 7px  #E0EEEE;
-    }
-    .alertInfor{
-        width: 100%;
-        height: 24px;
-        line-height: 24px;
-        font-size: 12px;
-        color: #565656;
-        text-align: center;
-        margin-top: 30px;
-    }
-    .alertSubmit{
-        text-align: center;
-        margin-top: 36px;
-    }
-    .alertSubmit span:first-child{
-        margin-right: 20px;;
-        height: 30px;
-        line-height: 30px;
-        background: #eee;
-        color: #7B6666;
-    }
-    .alertSubmit span:first-child:hover{
-        background-color: #eee;
-        border-color: #1B9AF7;
-        opacity: 0.9;
-        color: #7B6666;
-    }
-    .alertSubmit span:last-child{
-        margin-left: 20px;
-        height: 30px;
-        line-height: 30px;
-    }
-    .layout_toumingceng{
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: #808080;
-		opacity: 0.5;
-		z-index: 9;
-		display: none;
-        margin-bottom: -9999px;
-        padding-bottom: 9999px;
-        overflow: hidden;
-
-	}
-
     </style>
   </head>
   <body>
     <div id="content" class="container-fluid"></div>
+
+    <script src="js/react.min.js"></script>
+    <script src="js/react-dom.min.js"></script>
+    <script src="js/browser.min.js"></script>
+    <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
+
 	<script type="text/javascript">
 	//表头
-	var tt = [{name:'id',title:'id',width:'5%',sort:true}
-		,{name:'title',title:'标题',width:'5%',sort:false}
-		,{name:'pub_date_text',title:'发布日期',width:'10%',sort:false}
-		,{name:'imgs',title:'图片',width:'10%',sort:false,type:"image"}
-        ,{name:'state_text',title:'状态',width:'10%',sort:false,type:"state"}
-        ,{name:'operate',title:'操作',width:'10%',sort:false,type:"operate"}];
-
-        var alertChangeState;
-
-        // 图片懒加载
-        var docTop = $(document).scrollTop();
-        var height = $(window).height();
-        $(window).scroll(function () {
-            docTop = $(document).scrollTop();
-            img_show();
-        });
-
-        var img_show = function(){
-            $("td a .loading").each(function(index) {
-                var imgHeight = $(this).offset().top;
-                if(height + docTop > imgHeight-100){
-                    var img = $(this).data("src");
-                    $(this).attr("src",img);
-                    $(this).removeClass("loading");
-                }else {
-                    return false;
-                }
-            });
-        };
+	var tt = [{name:'id',title:'id',sort:false}
+		,{name:'invoice_name',title:'发票名称',sort:false}
+		,{name:'title',title:'抬头',sort:false}
+		,{name:'content',title:'行业',sort:false}
+		,{name:'amount',title:'金额',sort:false}
+		,{name:'billing_date_text',title:'开票日期',sort:false}
+        ,{name:'ss',title:'操作',type:"operation",sort:false}];
 
       function getTableData(params,cb) {
 		 params.everyNum = 10;
 		 var allNum = 0;
-		 $.get("/list_headline",{params:JSON.stringify(params)},function(data){
+		 $.get("/invoice_apply_list_data",{params:JSON.stringify(params)},function(data){
 			 if (data.success) {
 				 allNum = data.num;
 				 cb({tabthitems:tt,tabtritems:data.rows,allNum:allNum,everyNum:params.everyNum});
@@ -215,8 +101,6 @@
                     <Left/>
                     <Right/>
                   </div>
-                  <Alert/>
-                  <LayoutToumingceng/>
               </div>
             );
         }
@@ -387,12 +271,6 @@
        componentDidMount() {
          this.loadData({});
        }
-
-       //    后台请求数据更新组件完成后启动方法
-       componentDidUpdate(prevProps, prevState) {
-           img_show();
-       }
-
        setPage(thisPage) {
          this.loadData({thisPage:thisPage});
        }
@@ -400,7 +278,6 @@
            this.loadData({sort:sort});
        }
        render() {
-         console.log("a");
          return (
            <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <div>
@@ -448,21 +325,16 @@
      class Tr extends React.Component {
        constructor(props) {
            super(props);
-           this.changeState=this.changeState.bind(this);
 
            // 初始化一个空对象
-           this.state = {item:this.props.item};
+           this.state = {};
        }
-       changeState(state_text){
-           var item = this.state.item;
-           item.state_text=state_text;
-           this.setState({item:item});
-       }
+
        render() {
            return (
              <tr>
              {this.props.tabthitems.map(item => (
-                 <Td item={this.state.item} thitem={item} changeState={this.changeState} />))
+                 <Td item={this.props.item} thitem={item} />))
              }
              </tr>
            );
@@ -515,86 +387,17 @@
        }
      };
      class Td extends React.Component {
-         constructor(props) {
-             super(props);
-             this.handleClick=this.handleClick.bind(this);
-         }
-         handleClick(e) {
-            var id = this.props.item.id;
-            alertChangeState = function() {
-                $.ajax({
-                  url: "/publish_announce",
-                  dataType: 'json',
-                  data: {id:id},
-                  type: 'POST',
-                  success: function(data) {
-                      this.props.changeState("已发布");
-                      $(".alertWrap").hide();
-                      $(".layout_toumingceng").hide();
-                  }.bind(this),
-                  error: function(xhr, status, err) {
-                  }.bind(this)
-              });
-          }.bind(this);
-            $(".alertWrap").show();
-            $(".layout_toumingceng").show();
-         }
        render() {
-           var c = "button button-glow button-rounded button-royal operate_announce";
-           if(this.props.item.state_text=="已发布"){
-               c = "button disabled button-pill button-primary operate_announce";
-           }
-
-           if(this.props.thitem.type=="image"){
-               var images = this.props.item[this.props.thitem.name];
-               var imgs = [];
-               for (var i = 0; i < images.length; i++) {
-                   imgs.push("images/"+images[i]);
-               }
-               return (<td>{imgs.map(img => (
-                   <a href={img} target="_blank"><img src={img} alt="" /></a>))
-               }</td>);
-           }else if (this.props.thitem.type=="operate") {
-               return (
-               <td><a href="#" className="button button-glow button-rounded button-caution operate_edit">编 辑</a><span className={c} onClick={this.handleClick}>发 布</span></td>
-               );
-           }
-           else {
-               return (
-               <td>{this.props.item[this.props.thitem.name]}</td>
-               );
+           if(this.props.thitem.type=="operation"){
+               return (<td>
+                       <button className="button button-primary button-square button-small">确 认</button>
+                       </td>);
+           }else {
+               return (<td>{this.props.item[this.props.thitem.name]}</td> );
            }
 
        }
      };
-     //  发布弹出层
-     class Alert extends React.Component {
-         constructor(props) {
-             super(props);
-             this.handleClick=this.handleClick.bind(this);
-             this.handleClick1=this.handleClick1.bind(this);
-         }
-         handleClick(e) {
-             alertChangeState();
-         }
-         handleClick1(e) {
-             $(".alertWrap").hide();
-             $(".layout_toumingceng").hide();
-         }
-       render() {
-          return(
-              <div className="alertWrap">
-                  <p className="alertTitle">系统提示</p>
-                  <p className="alertInfor">是否确认发布？</p>
-                  <p className="alertSubmit">
-                       <span className="button button-action" onClick={this.handleClick1}>取 消</span>
-                       <span className="button button-action" onClick={this.handleClick}>确 认</span>
-                   </p>
-              </div>
-          )
-       }
-     };
-
 
      // 分页
      class Tab extends React.Component {
@@ -706,23 +509,14 @@
              );
          }
      };
-      //   透明层
-      class LayoutToumingceng extends React.Component {
-          constructor(props) {
-              super(props);
-              // 初始化一个空对象
-              this.handleClick = this.handleClick.bind(this);
-          }
-          handleClick(e){
-            $(".layout_toumingceng").hide();
-            $(".alertWrap").hide();
-          }
+      class WrapBottom extends React.Component {
         render() {
             return (
-              <div className="layout_toumingceng" onClick={this.handleClick}></div>
+              <div className="wrapBottom container">@上海佑佑信息科技有限公司</div>
             );
         }
       };
+
 
 
       // 返回到页面

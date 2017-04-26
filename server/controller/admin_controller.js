@@ -532,9 +532,14 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18013/order/list_data?org_code="+ org_code;
 		do_get_method(url,cb);
 	};
-	//开票列表
+	//已开票列表
 	var invoice_list_data = function(cb){
 		var url = "http://139.196.148.40:18006/invoice/list_data?sob_id="+ org_code;
+		do_get_method(url,cb);
+	};
+	//开票申请列表
+	var invoice_apply_list_data = function(cb){
+		var url = "http://139.196.148.40:18006/invoice/apply_list_data?sob_id="+ org_code;
 		do_get_method(url,cb);
 	};
 	//门店新增
@@ -646,22 +651,44 @@ exports.register = function(server, options, next){
 				});
 			}
 		},
-		//开票列表页面
-		{
-			method: 'GET',
-			path: '/invoice_list_page',
-			handler: function(request, reply){
-				return reply.view("invoice_list_page");
-			}
-		},
-		//开票列表
+		//已开票列表页面
 		{
 			method: 'GET',
 			path: '/invoice_list',
 			handler: function(request, reply){
+				return reply.view("invoice_list");
+			}
+		},
+		//已开票列表
+		{
+			method: 'GET',
+			path: '/invoice_list_data',
+			handler: function(request, reply){
 				invoice_list_data(function(err,rows){
 					if (!err) {
-						return reply ({"success":true,"rows":rows.rows,"service_info":rows.service_info})
+						return reply ({"success":true,"rows":rows.rows,"num": rows.num,"service_info":rows.service_info})
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":rows.service_info});
+					}
+				});
+			}
+		},
+		//开票申请列表页面
+		{
+			method: 'GET',
+			path: '/invoice_apply',
+			handler: function(request, reply){
+				return reply.view("invoice_apply");
+			}
+		},
+		//开票申请列表
+		{
+			method: 'GET',
+			path: '/invoice_apply_list_data',
+			handler: function(request, reply){
+				invoice_apply_list_data(function(err,rows){
+					if (!err) {
+						return reply ({"success":true,"rows":rows.rows,"num": rows.num,"service_info":rows.service_info})
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":rows.service_info});
 					}

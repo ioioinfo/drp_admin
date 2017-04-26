@@ -301,3 +301,13 @@ th img{
     left: 0;
     bottom: 0;
 }
+
+
+
+/*==========分页数字样式===================*/
+.nav_text{
+    text-align: right;
+}
+tr td:last-child{
+    padding: 7px 0;
+}
