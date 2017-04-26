@@ -561,6 +561,14 @@ exports.register = function(server, options, next){
 		//商品导入页面
 		{
 			method: 'GET',
+			path: '/import_inventory',
+			handler: function(request, reply){
+				return reply.view("import_inventory");
+			}
+		},
+		//商品导入页面
+		{
+			method: 'GET',
 			path: '/import_products',
 			handler: function(request, reply){
 				return reply.view("import_products");
