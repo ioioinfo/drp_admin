@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>头条编辑</title>
+    <title>添加商品</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/button.css">
     <link rel="stylesheet" href="css/public.css">
@@ -24,6 +24,10 @@
     .wrapRight .add_margin_top{
         margin-top: 17px;
         background: #E7E8EA;
+    }
+
+    .show-grid{
+        overflow: hidden;
     }
     </style>
   </head>
@@ -197,14 +201,31 @@
        render() {
          return (
            <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <div className="row">
-                    <div className="col-md-8 col-md-offset-2">
-                        <div className="form-group">
-                            <label>ID</label>
-                            <input type="text" className="form-control" id="exampleInputName2" />
+               <div className="row">
+                   <div className="col-md-8 col-md-offset-2">
+                       <div className="form-group show-grid">
+                            <label  className="col-sm-2 control-label">标题</label>
+                            <div className="col-sm-10">
+                              <input type="text" className="form-control" id="inputPassword3" />
+                            </div>
                         </div>
-                    </div>
-                <div>
+                        <div className="form-group show-grid">
+                             <label  className="col-sm-2 control-label">内容</label>
+                             <div className="col-sm-10">
+                               <textarea className="form-control" rows="12"></textarea>
+                             </div>
+                         </div>
+
+                        <div className="form-group show-grid">
+                             <label  className="col-sm-2 control-label">上传图片</label>
+                             <div className="col-sm-10">
+                               <input type="file" name="files" value="" className="four image" id="fileupload" multiple />
+                             </div>
+                         </div>
+
+                   </div>
+               </div>
+               <div className="row add_margin_top"><p className="button button-glow button-rounded button-royal button-small pull-right ">保存</p></div>
            </div>
          );
        }
