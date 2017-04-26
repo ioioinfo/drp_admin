@@ -558,6 +558,22 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	}
 	server.route([
+		//announce add
+		{
+			method: 'GET',
+			path: '/add_announce',
+			handler: function(request, reply){
+				return reply.view("add_announce");
+			}
+		},
+		//announce edit
+		{
+			method: 'GET',
+			path: '/edit_announce',
+			handler: function(request, reply){
+				return reply.view("edit_announce");
+			}
+		},
 		//商品导入页面
 		{
 			method: 'GET',
