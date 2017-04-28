@@ -1259,6 +1259,9 @@ exports.register = function(server, options, next){
 							for (var i = 0; i < products.length; i++) {
 								product_ids.push(products[i].id);
 							}
+							if (products.length ==0) {
+								return reply({"success":true,"message":"ok","products":[],"service_info":service_info});
+							}
 							find_shantao_infos(JSON.stringify(product_ids),function(err,content){
 								if (!err) {
 									if (content.success) {
