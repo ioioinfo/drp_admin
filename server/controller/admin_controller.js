@@ -1376,6 +1376,9 @@ exports.register = function(server, options, next){
 					if (!err) {
 						for (var i = 0; i < rows.rows.length; i++) {
 							var order = rows.rows[i];
+						}
+						for (var i = 0; i < rows.rows.length; i++) {
+							var order = rows.rows[i];
 							order.status_name = order_status[order.order_status];
 						}
 						return reply({"success":true,"message":"ok","orders":rows.rows,"num":rows.num,"service_info":service_info});
