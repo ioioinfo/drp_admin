@@ -34,8 +34,8 @@ exports.register = function(server, options, next) {
                     user_id = "1";
                 }
                 var url = "http://139.196.148.40:18666/menu_list?user_id="+user_id;
-                uu_request.do_get_method(url,function(err,rows){
-                    return reply({"success":true,"rows":rows,"message":"ok"});
+                uu_request.do_get_method(url,function(err,content){
+                    return reply({"success":true,"rows":content.rows,"message":"ok"});
                 });
             }
         },
