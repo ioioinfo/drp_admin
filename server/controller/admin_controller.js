@@ -6,6 +6,19 @@ var service_info = "drp admin service";
 var org_code = "ioio";
 var platform_code = "ioio";
 if(typeof require !== 'undefined') XLSX = require('xlsjs');
+var order_status ={
+	"-1": "等待买家付款",
+	"0" : "付款确认中",
+	"1" : "买家已付款",
+	"2" : "等待卖家发货",
+	"3" : "等待快递员揽货",
+	"4" : "卖家已发货",
+	"5" : "等待买家收货",
+	"6" : "交易成功",
+	"7" : "交易关闭",
+	"8" : "退款中订单",
+	"9" : "等待买家评价"
+};
 
 var do_get_method = function(url,cb){
 	uu_request.get(url, function(err, response, body){
@@ -1252,9 +1265,10 @@ exports.register = function(server, options, next){
 			path: '/get_products_list',
 			handler: function(request, reply){
 				get_products_list(function(err,rows){
+					console.log("content:"+JSON.stringify(rows));
 					if (!err) {
 						if (rows.success) {
-							var products = rows.products;
+							var products = rows.rows;
 							var product_ids = [];
 							for (var i = 0; i < products.length; i++) {
 								product_ids.push(products[i].id);
@@ -1262,13 +1276,19 @@ exports.register = function(server, options, next){
 							if (products.length ==0) {
 								return reply({"success":true,"message":"ok","products":[],"service_info":service_info});
 							}
+							var num = rows.num;
 							find_shantao_infos(JSON.stringify(product_ids),function(err,content){
-								console.log("content:"+JSON.stringify(content));
+
 								if (!err) {
 									if (content.success) {
 										var shantaos = content.rows;
 										for (var i = 0; i < products.length; i++) {
 											var product = products[i];
+											if (product.is_down == 0) {
+												product.status_name = "上架";
+											}else {
+												product.status_name = "下架";
+											}
 											for (var j = 0; j < shantaos.length; j++) {
 												if (shantaos[j].product_id == product.id) {
 													product.is_new = shantaos[j].is_new;
@@ -1278,7 +1298,7 @@ exports.register = function(server, options, next){
 												}
 											}
 										}
-										return reply({"success":true,"message":"ok","products":products,"service_info":service_info});
+										return reply({"success":true,"message":"ok","products":products,"num":num,"service_info":service_info});
 									}else {
 										return reply({"success":false,"message":content.message,"service_info":service_info});
 									}
@@ -1354,7 +1374,11 @@ exports.register = function(server, options, next){
 			handler: function(request, reply){
 				mp_orders_list(function(err,rows){
 					if (!err) {
-						return reply({"success":true,"message":"ok","orders":rows.orders,"service_info":service_info});
+						for (var i = 0; i < rows.rows.length; i++) {
+							var order = rows.rows[i];
+							order.status_name = order_status[order.order_status];
+						}
+						return reply({"success":true,"message":"ok","orders":rows.rows,"num":rows.num,"service_info":service_info});
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":service_info});
 					}
