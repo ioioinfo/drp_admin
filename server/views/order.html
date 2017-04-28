@@ -45,7 +45,7 @@
 		,{name:'actual_price',title:'实付(元)',sort:false}
 		,{name:'changes',title:'找零(元)',sort:false}
 		,{name:'small_change',title:'抹零(元)',sort:false}
-		,{name:'order_status',title:'状态'}
+		,{name:'status_name',title:'状态'}
         ,{name:'operation',title:'操作',type:"operation"}];
 
 
@@ -463,35 +463,27 @@
                  }
              }
              var first = (<span className="table-tab-span1" onClick={this.gotoFirst}><img src="images/httab4.png" alt="" /></span>);
-             var previous=(<span className="table-tab-span1" onClick={this.gotoPrevious}><img src="images/httab1.png" alt="" /></span>);
-             var second=(<span className="table-tab-span1" onClick={this.gotoNext}><img src="images/httab2.png" alt="" /></span>);
-             var next=(<span className="table-tab-span1" onClick={this.gotoLast}><img src="images/httab3.png" alt="" /></span>);
+             var previous=(<li className="" onClick={this.gotoPrevious}><span aria-hidden="true">&laquo;</span></li>);
+             var last=(<span className="table-tab-span1" onClick={this.gotoLast}><img src="images/httab2.png" alt="" /></span>);
+             var next=(<li className="" onClick={this.gotoNext}><span aria-hidden="true">&raquo;</span></li>);
 
              if (thisPage==1) {
                  var first = (<span className="table-tab-span1" ><img src="images/httab4_1.png" alt="" /></span>);
-                 var previous=(<span className="table-tab-span1"><img src="images/httab1_1.png" alt="" /></span>);
+                 var previous=(<li className="disabled"><span aria-hidden="true">&laquo;</span></li>);
              }
              if(thisPage==allPage){
-                 var second = (<span className="table-tab-span1" ><img src="images/httab2_1.png" alt="" /></span>);
-                 var next=(<span className="table-tab-span1"><img src="images/httab3_1.png" alt="" /></span>);
+                 var last = (<span className="table-tab-span1" ><img src="images/httab2_1.png" alt="" /></span>);
+                 var next=(<li className="disabled"><span aria-hidden="true">&raquo;</span></li>);
              }
              return (
                  <div>
                      <nav aria-label="Page navigation" className="nav_text">
                          <ul className="pagination">
-                             <li className="disabled">
-                               <a href="#" aria-label="Previous">
-                                 <span aria-hidden="true">&laquo;</span>
-                               </a>
-                             </li>
+                             {previous}
                              {fenitems.map(item => (
                                  <PageLi  setPage={this.props.setPage} item={item} setSelected={this.setSelected} selected={thisPage} />))
                              }
-                             <li className="disabled">
-                               <a href="#" aria-label="Next">
-                                 <span aria-hidden="true">&raquo;</span>
-                               </a>
-                             </li>
+                             {next}
                          </ul>
                      </nav>
                      <p className="pull-right">
@@ -511,11 +503,14 @@
          }
          handleClick(e){
              this.props.setPage(this.props.item);
-
          }
          render() {
+             var c = "";
+             if (this.props.item == this.props.selected) {
+                c = "active";
+             }
              return (
-                 <li className="active" onClick={this.handleClick}><a>{this.props.item}</a></li>
+                 <li className={c} onClick={this.handleClick}><a>{this.props.item}</a></li>
              );
          }
      };

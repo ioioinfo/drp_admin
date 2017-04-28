@@ -27,10 +27,11 @@
 
 	<script type="text/javascript">
 	//表头
-	var tt = [{name:'org_store_id',title:'id',sort:true}
-		,{name:'org_store_code',title:'门店序号',sort:false}
+	var tt = [{name:'org_store_code',title:'门店序号',sort:false}
 		,{name:'org_store_name',title:'门店名称',sort:false}
 		,{name:'open_date_text',title:'开店时间',sort:false}
+        ,{name:'open_date_text',title:'开店时间',sort:false}
+        ,{name:'operation',title:'操作',type:"operation"}
 		];
 
       function getTableData(params,cb) {
@@ -386,9 +387,16 @@
      };
      class Td extends React.Component {
        render() {
-           return (
-           <td>{this.props.item[this.props.thitem.name]}</td>
-           );
+           if(this.props.thitem.type=='operation'){
+               return (
+               <td><span className="btn btn-primary btn-xs operate_announce">编辑</span><span className="btn btn-info btn-xs operate_announce">查看</span></td>
+
+               );
+           }else {
+               return (
+               <td>{this.props.item[this.props.thitem.name]}</td>
+               );
+           };
        }
      };
 
@@ -446,35 +454,27 @@
                  }
              }
              var first = (<span className="table-tab-span1" onClick={this.gotoFirst}><img src="images/httab4.png" alt="" /></span>);
-             var previous=(<span className="table-tab-span1" onClick={this.gotoPrevious}><img src="images/httab1.png" alt="" /></span>);
-             var second=(<span className="table-tab-span1" onClick={this.gotoNext}><img src="images/httab2.png" alt="" /></span>);
-             var next=(<span className="table-tab-span1" onClick={this.gotoLast}><img src="images/httab3.png" alt="" /></span>);
+             var previous=(<li className="" onClick={this.gotoPrevious}><span aria-hidden="true">&laquo;</span></li>);
+             var last=(<span className="table-tab-span1" onClick={this.gotoLast}><img src="images/httab2.png" alt="" /></span>);
+             var next=(<li className="" onClick={this.gotoNext}><span aria-hidden="true">&raquo;</span></li>);
 
              if (thisPage==1) {
                  var first = (<span className="table-tab-span1" ><img src="images/httab4_1.png" alt="" /></span>);
-                 var previous=(<span className="table-tab-span1"><img src="images/httab1_1.png" alt="" /></span>);
+                 var previous=(<li className="disabled"><span aria-hidden="true">&laquo;</span></li>);
              }
              if(thisPage==allPage){
-                 var second = (<span className="table-tab-span1" ><img src="images/httab2_1.png" alt="" /></span>);
-                 var next=(<span className="table-tab-span1"><img src="images/httab3_1.png" alt="" /></span>);
+                 var last = (<span className="table-tab-span1" ><img src="images/httab2_1.png" alt="" /></span>);
+                 var next=(<li className="disabled"><span aria-hidden="true">&raquo;</span></li>);
              }
              return (
                  <div>
                      <nav aria-label="Page navigation" className="nav_text">
                          <ul className="pagination">
-                             <li className="disabled">
-                               <a href="#" aria-label="Previous">
-                                 <span aria-hidden="true">&laquo;</span>
-                               </a>
-                             </li>
+                             {previous}
                              {fenitems.map(item => (
                                  <PageLi  setPage={this.props.setPage} item={item} setSelected={this.setSelected} selected={thisPage} />))
                              }
-                             <li className="disabled">
-                               <a href="#" aria-label="Next">
-                                 <span aria-hidden="true">&raquo;</span>
-                               </a>
-                             </li>
+                             {next}
                          </ul>
                      </nav>
                      <p className="pull-right">
@@ -494,11 +494,14 @@
          }
          handleClick(e){
              this.props.setPage(this.props.item);
-
          }
          render() {
+             var c = "";
+             if (this.props.item == this.props.selected) {
+                c = "active";
+             }
              return (
-                 <li className="active" onClick={this.handleClick}><a>{this.props.item}</a></li>
+                 <li className={c} onClick={this.handleClick}><a>{this.props.item}</a></li>
              );
          }
      };
