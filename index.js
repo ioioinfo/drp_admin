@@ -1,4 +1,4 @@
-﻿var Hapi = require('hapi');
+var Hapi = require('hapi');
 // Create a server with a host and port
 var server = new Hapi.Server();
 
@@ -73,6 +73,9 @@ server.register([
 	{
 	  register: require('./server/controller/admin_controller.js')
 	},
+	{
+	  register: require('./server/controller/system_controller.js')
+    },
 ], function () {
     //Start the server
     server.start(function() {
