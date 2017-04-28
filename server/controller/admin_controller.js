@@ -558,6 +558,30 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	}
 	server.route([
+		//announce edit
+		{
+			method: 'GET',
+			path: '/add_mendian',
+			handler: function(request, reply){
+				return reply.view("add_mendian");
+			}
+		},
+		//announce edit
+		{
+			method: 'GET',
+			path: '/edit_headline',
+			handler: function(request, reply){
+				return reply.view("edit_headline");
+			}
+		},
+		//announce add
+		{
+			method: 'GET',
+			path: '/add_headline',
+			handler: function(request, reply){
+				return reply.view("add_headline");
+			}
+		},
 		//announce add
 		{
 			method: 'GET',
@@ -1234,6 +1258,9 @@ exports.register = function(server, options, next){
 							var product_ids = [];
 							for (var i = 0; i < products.length; i++) {
 								product_ids.push(products[i].id);
+							}
+							if (products.length ==0) {
+								return reply({"success":true,"message":"ok","products":[],"service_info":service_info});
 							}
 							find_shantao_infos(JSON.stringify(product_ids),function(err,content){
 								if (!err) {
