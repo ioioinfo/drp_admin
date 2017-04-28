@@ -888,23 +888,6 @@ exports.register = function(server, options, next){
 				});
 			}
 		},
-		//返回menu菜单列表
-		{
-			method: 'GET',
-			path: '/menu_list',
-			handler: function(request, reply){
-				var menu_list = [{img:'images/shouye1.png',img2:'images/shouye-4.png',word:'首页',child:[]}
-					,{img:'images/htshangpin1.png',img2:'images/htshangpin2.png',word:'商品',child:[{img:'images/htshangpinliebiao.png',word:'商品列表',href:'/products_center'},{img:'images/httianjiashangpin.png',word:'添加商品',
-					href:'/products_add'}]}
-					,{img:'images/htkucun1.png',img2:'images/htkucun2.png',word:'库存',child:[{img:'images/shouye-4.png',word:'子节点'}]}
-					,{img:'images/htwuliu1.png',img2:'images/htwuliu2.png',word:'物流',child:[{img:'images/shouye-4.png',word:'子节点'}]}
-					,{img:'images/htdingdan1.png',img2:'images/htdingdan2.png',word:'订单',child:[{img:'images/htxianshangdingdan.png',word:'线上订单',href:'/mp_order_center'},{img:'images/htxianxiadingdan.png',word:'线下订单',href:'/order'}]}
-					,{img:'images/htmendian1.png',img2:'images/htmendian2.png',word:'门店',child:[{img:'images/shouye-4.png',word:'门店列表',href:'/mendian_center'},{img:'images/shouye-4.png',word:'创建账号',href:'/create_account'}]}
-					,{img:'images/htzhanghao1.png',img2:'images/htzhanghao2.png',word:'公告/头条',child:[{img:'images/shouye-4.png',word:'公告列表',href:'/announce_center'},{img:'images/shouye-4.png',word:'头条列表',href:'/headline_center'}]}
-					,{img:'images/hthuiyuan1.png',img2:'images/hthuiyuan2.png',word:'会员',child:[{img:'images/shouye-4.png',word:'子节点'}]}];
-				return reply({"rows":menu_list});
-			}
-		},
 		//登入账号创建
 		{
 			method: 'GET',
