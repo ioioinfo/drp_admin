@@ -79,8 +79,9 @@
 		,{name:'product_name',title:'名称',sort:false}
 		,{name:'product_sale_price',title:'售价',sort:false}
 		,{name:'product_marketing_price',title:'市场价(元)',sort:false}
-		,{name:'weight',title:'状态',sort:false}
-		,{name:'code',title:'上架时间',sort:false}];
+		,{name:'status_name',title:'状态',sort:false}
+		,{name:'up_to_marketing',title:'上架时间',sort:false}
+        ,{name:'operation',title:'操作',type:"operation"}];
 
       function getTableData(params,cb) {
 		 params.everyNum = 10;
@@ -345,7 +346,7 @@
              <div className="row search_margin_botton">
                  <div className="col-lg-3 col-sm-3 show-grid">
                      <div className="input-group">
-                         <input type="text" className="form-control apply_name" placeholder="ID..." />
+                         <input type="text" className="form-control apply_name" placeholder="编号..." />
                          <span className="input-group-btn">
                          </span>
                      </div>
@@ -473,7 +474,7 @@
        render() {
            if(this.props.thitem.type=="operation"){
                return (
-                <td><span className="btn btn-primary btn-sm">上 架</span><span className="btn btn-success btn-sm">下 架</span></td>
+                <td><span className="btn btn-primary btn-xs operate_announce">编辑</span><span className="btn btn-info btn-xs operate_announce">查看</span></td>
                );
            }else {
                return (

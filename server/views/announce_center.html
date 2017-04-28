@@ -151,6 +151,8 @@
 		z-index: 9;
 		display: none;
 	}
+
+
     </style>
   </head>
   <body>
@@ -588,11 +590,11 @@
            }else if (this.props.thitem.type=="operate") {
                if(this.props.item.state_text=="已发布"){
                    return (
-                   <td><a href="#" className="button button-glow button-rounded button-caution operate_edit">编 辑</a><span className="button button-glow button-rounded button-highlight operate_announce" onClick={this.handleClick1}>下 架</span></td>
+                   <td><a href="#" className="btn btn-primary btn-xs operate_announce">编 辑</a><span className="btn btn-info btn-xs operate_announce" onClick={this.handleClick1}>下 架</span></td>
                    );
                }else {
                    return (
-                   <td><a href="#" className="button button-glow button-rounded button-caution operate_edit">编 辑</a><span className="button button-glow button-rounded button-royal operate_announce" onClick={this.handleClick}>发 布</span></td>
+                   <td><a href="#" className="btn btn-primary btn-xs operate_announce">编 辑</a><span className="btn btn-success btn-xs operate_announce" onClick={this.handleClick}>发 布</span></td>
                    );
                }
 

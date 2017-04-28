@@ -195,3 +195,17 @@
   color: #000;
   margin-right: 10px;
 }
+
+/*按钮大小边距*/
+.operate_edit, .operate_announce{
+    line-height: 20px;
+    height: 20px;
+    padding: 0 10px;
+    font-size: 12px;
+}
+.operate_edit{
+    margin-right: 5px;
+}
+.operate_announce{
+    margin-left: 5px;
+}
