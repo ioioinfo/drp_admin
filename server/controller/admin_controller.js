@@ -1263,6 +1263,7 @@ exports.register = function(server, options, next){
 								return reply({"success":true,"message":"ok","products":[],"service_info":service_info});
 							}
 							find_shantao_infos(JSON.stringify(product_ids),function(err,content){
+								console.log("content:"+JSON.stringify(content));
 								if (!err) {
 									if (content.success) {
 										var shantaos = content.rows;
@@ -1276,8 +1277,8 @@ exports.register = function(server, options, next){
 													product.batch_code = shantaos[j].batch_code;
 												}
 											}
-											return reply({"success":true,"message":"ok","products":products,"service_info":service_info});
 										}
+										return reply({"success":true,"message":"ok","products":products,"service_info":service_info});
 									}else {
 										return reply({"success":false,"message":content.message,"service_info":service_info});
 									}
