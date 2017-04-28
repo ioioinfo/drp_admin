@@ -988,7 +988,7 @@ exports.register = function(server, options, next){
 			handler: function(request, reply){
 				store_list(function(err,rows){
 					if (!err) {
-						return reply({"success":true,"service_info":service_info,"rows":rows.rows});
+						return reply({"success":true,"service_info":service_info,"rows":rows.rows,"num":rows.num});
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":service_info});
 					}
@@ -1063,7 +1063,7 @@ exports.register = function(server, options, next){
 			handler: function(request, reply){
 				list_announce_by_platform(function(err,rows){
 					if (!err) {
-						return reply({"success":true,"service_info":service_info,"rows":rows.rows});
+						return reply({"success":true,"service_info":service_info,"rows":rows.rows,"num":rows.num});
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":service_info});
 					}
@@ -1159,7 +1159,7 @@ exports.register = function(server, options, next){
 			handler: function(request, reply){
 				list_headline(function(err,rows){
 					if (!err) {
-						return reply({"success":true,"service_info":service_info,"rows":rows.rows});
+						return reply({"success":true,"service_info":service_info,"rows":rows.rows,"num":rows.num});
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":service_info});
 					}
@@ -1597,6 +1597,7 @@ exports.register = function(server, options, next){
 							var person_ids = [];
 							for (var i = 0; i < orders.length; i++) {
 								person_ids.push(orders[i].person_id);
+								orders.status_name = order_status[orders[i].order_status];
 							}
 							get_person_avatar(JSON.stringify(person_ids),function(err,content){
 								if (!err) {
