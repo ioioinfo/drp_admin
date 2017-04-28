@@ -558,6 +558,30 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	}
 	server.route([
+		//announce edit
+		{
+			method: 'GET',
+			path: '/add_mendian',
+			handler: function(request, reply){
+				return reply.view("add_mendian");
+			}
+		},
+		//announce edit
+		{
+			method: 'GET',
+			path: '/edit_headline',
+			handler: function(request, reply){
+				return reply.view("edit_headline");
+			}
+		},
+		//announce add
+		{
+			method: 'GET',
+			path: '/add_headline',
+			handler: function(request, reply){
+				return reply.view("add_headline");
+			}
+		},
 		//announce add
 		{
 			method: 'GET',
