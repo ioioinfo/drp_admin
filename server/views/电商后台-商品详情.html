@@ -280,7 +280,7 @@
         }
 
         handleClick(e){
-          this.props.setSelected(this.props.item.word);
+          this.props.setSelected(this.props.item.name);
           this.setState({show:!this.state.show});
 
         }
@@ -288,7 +288,7 @@
 
             var c = "";
             var img = this.props.item.img;
-            if(this.props.selected==this.props.item.word){
+            if(this.props.selected==this.props.item.name){
               c = "on";
               img = this.props.item.img2;
             }
@@ -302,7 +302,7 @@
             return (
               <li className={c} onClick={this.handleClick}>
                 <span><img src={img} alt="" /></span>
-                <span className="wrapLeftNav_word">{this.props.item.word}</span>
+                <span className="wrapLeftNav_word">{this.props.item.name}</span>
                 {d}
               </li>
             );
@@ -316,7 +316,7 @@
               <div className="second_nav">
                 <div className="second_navInfor">
                   <img src={img} />
-                  <p>{this.props.item.word}</p>
+                  <p>{this.props.item.name}</p>
                 </div>
               </div>
             );
