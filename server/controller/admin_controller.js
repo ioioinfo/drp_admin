@@ -19,6 +19,12 @@ var order_status ={
 	"8" : "退款中订单",
 	"9" : "等待买家评价"
 };
+var pos_order_status = {
+	"1":"未付款",
+	"2":"付款确认中",
+	"3":"付款完成",
+	"4":"交易完成"
+};
 
 var do_get_method = function(url,cb){
 	uu_request.get(url, function(err, response, body){
@@ -1376,9 +1382,6 @@ exports.register = function(server, options, next){
 					if (!err) {
 						for (var i = 0; i < rows.rows.length; i++) {
 							var order = rows.rows[i];
-						}
-						for (var i = 0; i < rows.rows.length; i++) {
-							var order = rows.rows[i];
 							order.status_name = order_status[order.order_status];
 						}
 						return reply({"success":true,"message":"ok","orders":rows.rows,"num":rows.num,"service_info":service_info});
@@ -1600,7 +1603,7 @@ exports.register = function(server, options, next){
 							var person_ids = [];
 							for (var i = 0; i < orders.length; i++) {
 								person_ids.push(orders[i].person_id);
-								orders.status_name = order_status[orders[i].order_status];
+								orders[i].status_name = pos_order_status[orders[i].order_status];
 							}
 							get_person_avatar(JSON.stringify(person_ids),function(err,content){
 								if (!err) {
