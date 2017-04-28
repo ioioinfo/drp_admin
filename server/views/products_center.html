@@ -2,8 +2,10 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>商品列表</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/button.css">
     <link rel="stylesheet" href="css/public.css">
     <link rel="stylesheet" href="css/layout.css">
@@ -73,16 +75,12 @@
 	</script>
 	<script type="text/javascript">
 	//表头
-	var tt = [{name:'id',title:'id',sort:true}
+	var tt = [{name:'id',title:'编号',sort:true}
 		,{name:'product_name',title:'名称',sort:false}
 		,{name:'product_sale_price',title:'售价',sort:false}
 		,{name:'product_marketing_price',title:'市场价(元)',sort:false}
-		,{name:'weight',title:'重量(KG)',sort:false}
-		,{name:'code',title:'编码',sort:false}
-		,{name:'is_new',title:'成色',sort:false}
-		,{name:'row_materials',title:'材质',sort:false}
-		,{name:'batch_code',title:'批次',sort:false}
-        ,{name:'batch_code',title:'操作',type:"operation", sort:false}];
+		,{name:'weight',title:'状态',sort:false}
+		,{name:'code',title:'上架时间',sort:false}];
 
       function getTableData(params,cb) {
 		 params.everyNum = 10;
@@ -162,7 +160,7 @@
                     <li><a  data-toggle="modal" data-target=".bs-example-modal-sm">管理员1</a></li>
                 </ul>
                 <form className="navbar-form navbar-right">
-                  <input type="text" className="form-control" placeholder="Search..." />
+                  <input type="text" className="form-control" placeholder="搜索..." />
                 </form>
             </div>
 
@@ -331,27 +329,62 @@
          console.log("a");
          return (
            <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <div>
+             <ol className="breadcrumb"><li>商品</li><li className="active">商品列表</li></ol>
+             <SearchList/>
              <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={       this.state.sort} onSort={this.handleSort} />
              <Tab setPage={this.setPage} allNum={this.state.allNum} everyNum={this.state.everyNum} thisPage={this.state.thisPage} />
-           </div>
+
            </div>
          );
        }
      };
-
+    //  搜索框
+    class SearchList extends React.Component {
+     render() {
+         return (
+             <div className="row search_margin_botton">
+                 <div className="col-lg-3 col-sm-3 show-grid">
+                     <div className="input-group">
+                         <input type="text" className="form-control apply_name" placeholder="ID..." />
+                         <span className="input-group-btn">
+                         </span>
+                     </div>
+                 </div>
+                 <div className="col-lg-3 col-sm-3 show-grid">
+                     <div className="input-group">
+                         <input type="text" className="form-control vice_apply_name" placeholder="名称..." />
+                         <span className="input-group-btn">
+                         </span>
+                     </div>
+                 </div>
+                 <div className="col-lg-3 col-sm-3 show-grid">
+                     <div className="input-group">
+                         <input type="text" className="form-control host_name" placeholder="编码..." />
+                         <span className="input-group-btn">
+                         </span>
+                     </div>
+                 </div>
+                 <div className="col-lg-2 col-sm-2 show-grid">
+                     <div className="input-group">
+                         <input type="text" className="form-control ip_address" placeholder="批次..." />
+                     </div>
+                 </div>
+                 <div className="col-lg-1 col-sm-1 show-grid">
+                     <div className="input-group">
+                         <span className="input-group-btn">
+                             <button className="btn btn-default" id="search_botton_left" type="button">查询</button>
+                         </span>
+                     </div>
+                 </div>
+             </div>
+         )
+      }
+    };
      // 表格
      class Table extends React.Component {
-       constructor(props) {
-           super(props);
-       }
        render() {
            return (
                <div className="table-responsive">
-               <ol className="breadcrumb">
-               <li>商品</li>
-               <li className="active">商品列表</li>
-               </ol>
                <div className="form-inline-wrap">
                <table className="table table-striped table-hover">
                <thead>

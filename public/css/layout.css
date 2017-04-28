@@ -177,6 +177,10 @@
 
   overflow: auto;
 }
+
+.breadcrumb{
+    margin-top: 20px;
+}
 /*搜索框样式*/
 .search{
   width: 100%;
