@@ -227,8 +227,8 @@ exports.register = function(server, options, next){
 		do_get_method(url,cb);
 	};
 	// 商品列表
-	var get_products_list = function(cb){
-		var url = "http://211.149.248.241:18002/get_products_list";
+	var get_products_list = function(params,cb){
+		var url = "http://211.149.248.241:18002/get_products_list?params="+params;
 		do_get_method(url,cb);
 	};
 	// 商品列表
@@ -1270,7 +1270,11 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/get_products_list',
 			handler: function(request, reply){
-				get_products_list(function(err,rows){
+				var params = request.query.params;
+				if (!params) {
+					return reply({"success":false,"message":"params wrong","service_info":service_info});
+				}
+				get_products_list(params,function(err,rows){
 					console.log("content:"+JSON.stringify(rows));
 					if (!err) {
 						if (rows.success) {
@@ -1280,7 +1284,7 @@ exports.register = function(server, options, next){
 								product_ids.push(products[i].id);
 							}
 							if (products.length ==0) {
-								return reply({"success":true,"message":"ok","products":[],"service_info":service_info});
+								return reply({"success":true,"message":"ok","products":[],"service_info":service_info,"num":0});
 							}
 							var num = rows.num;
 							find_shantao_infos(JSON.stringify(product_ids),function(err,content){
