@@ -327,3 +327,9 @@ tr td:last-child{
     height: 20px;
     vertical-align: middle;
 }
+
+
+/*========商品查看==============*/
+.font_color_h5{
+    color: #3DA5B0;
+}

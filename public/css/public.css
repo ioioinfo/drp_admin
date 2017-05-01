@@ -186,3 +186,19 @@ tr td:last-child{
     height: 15px;
     width: 100%;
 }
+/*========商品查看==============*/
+.font_color_h5{
+    color: #3DA5B0;
+}
+.margin_bottom{
+    margin-bottom: 20px;
+}
+.button_background1{
+    background: #337AB7;
+}
+.button_white{
+    color: #fff;
+}
+.text_align_right{
+    text-align: right;
+}
