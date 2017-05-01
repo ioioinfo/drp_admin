@@ -121,6 +121,15 @@ exports.register = function(server, options, next) {
             }
         },
         
+        //系统设置页面
+        {
+            method: 'GET',
+            path: '/setting',
+            handler: function(request, reply) {
+                return reply.view(get_view("setting"), {});
+            },
+        },
+        
         //系统信息页面
         {
             method: 'GET',
