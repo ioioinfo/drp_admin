@@ -25,13 +25,45 @@
     .show-grid{
         overflow: hidden;
     }
+    p,h6{
+        font-size: 12px
+    }
+    .font_color_h5{
+        color: #3DA5B0;
+    }
+    .border_style{
+        border: 1px solid #d2d2d2;
+        border-radius: 4px;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+    .line_color{
+        margin-top: 20px;
+        margin-bottom: 20px;
+        border: 0;
+        border-top: 1px solid #d2d2d2;
+    }
+    .zhanwei_height{
+        height: 75px;
+    }
+    .font_color{
+        color: #AFAFAF;
+    }
+    .height_h5{
+        height: 40px;
+    }
+    .height_h5 img{
+        width: 40px;
+        height: 30px;
+        margin-right: 7px;
+    }
     </style>
   </head>
   <body>
     <div id="content" class="container-fluid"></div>
 
     <script type="text/javascript">
-	   var default_selected = "07";
+	   var default_selected = "10";
 	</script>
 
     <script type="text/babel">
@@ -236,48 +268,77 @@
     //   ====================右侧下部from表单==============
 
     class WrapRightFrom extends React.Component {
+        constructor(props) {
+            super(props);
+
+            // 初始化一个空对象
+            this.state = {items: []};
+        }
+        componentDidMount() {
+            var hh = [{version:"1. 0. 0.0",time:"05 月 01 日",infor:"本可视化布局程序在HTML5浏览器上运行更加完美, 能实现自动本地化保存, 即使关闭了网页, 下一次打开仍然能恢复上一次的操作." }
+                     ,{version:"1. 0. 0.0",time:"05 月 01 日",infor:"本可视化布局程序在HTML5浏览器上运行更加完美, 能实现自动本地化保存, 即使关闭了网页, 下一次打开仍然能恢复上一次的操作." }]
+            this.setState({items:hh});
+        }
+
      render() {
          return (
             <div className="wrapRight wrapRight_form col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <ol className="breadcrumb">
-              <li>公告头条</li>
-              <li className="active">关于我们</li>
-            </ol>
-              <WrapRight/>
+                <ol className="breadcrumb">
+                  <li>系统</li>
+                  <li className="active">关于我们</li>
+                </ol>
+                <div className="container-fluid">
+                   <div className="row-fluid">
+                   <div className="col-sm-9 col-md-9 border_style">
+                    {this.state.items.map(item => (
+                        <WrapRightLeft item={item}  />))
+                    }
+                   </div>
+                    <WrapRightRight/>
+                   </div>
+                </div>
             </div>
          );
       }
     };
       // 右侧下部表格
-     class WrapRight extends React.Component {
+     class WrapRightLeft extends React.Component {
        render() {
          return (
-           <div>
-               <div className="row">
-                   <div className="col-md-8 col-md-offset-2">
-                       <div className="form-group show-grid">
-                            <label  className="col-sm-2 control-label">标题</label>
-                            <div className="col-sm-10">
-                              <input type="text" className="form-control" id="inputPassword3" />
-                            </div>
-                        </div>
-                        <div className="form-group show-grid">
-                             <label  className="col-sm-2 control-label">内容</label>
-                             <div className="col-sm-10">
-                               <textarea className="form-control" rows="12"></textarea>
-                             </div>
-                         </div>
-
-
-
-                   </div>
-               </div>
-               <div className="row add_margin_top"><p className="btn btn-primary active pull-right ">保  存</p></div>
-           </div>
+              		<div className="span12">
+              			<h5 className="font_color_h5">
+              				版本：{this.props.item.version}
+              			</h5>
+                        <h6>{this.props.item.time}</h6>
+              			<p>
+              				本可视化布局程序在HTML5浏览器上运行更加完美, 能实现自动本地化保存, 即使关闭了网页, 下一次打开仍然能恢复上一次的操作.
+              			</p>
+                        <hr/>
+              		</div>
          );
        }
      };
-
+     class WrapRightRight extends React.Component {
+       render() {
+           return (
+               <div className="span12 col-sm-2 col-md-2 col-sm-offset-1 col-md-offset-1">
+                   <h5>
+                       信息
+                   </h5>
+                   <p className="line_color"></p>
+                   <h5><span className="font_color">更新时间</span>: 05 月 01 日</h5>
+                   <h5><span className="font_color">版本</span>: 1. 0. 0.0</h5>
+                    <p className="zhanwei_height"></p>
+                   <h5>
+                       更多佑佑产品
+                   </h5>
+                   <p className="line_color"></p>
+                   <h5 className="height_h5"><img alt="40x40" src="images/htmendianliebiao.png" />产品一</h5>
+                   <h5 className="height_h5"><img alt="40x40" src="images/htmendianliebiao.png" />产品二</h5>
+               </div>
+           );
+       }
+     };
       class WrapBottom extends React.Component {
         render() {
             return (
