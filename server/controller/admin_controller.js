@@ -1207,6 +1207,14 @@ exports.register = function(server, options, next){
 				return reply.view("homePage");
 			}
 		},
+		//商品详情页面
+		{
+			method: 'GET',
+			path: '/product_view',
+			handler: function(request, reply){
+				return reply.view("product_view");
+			}
+		},
 		//查询商品属性,图片
 		{
 			method: 'GET',
