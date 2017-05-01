@@ -33,6 +33,13 @@ exports.register = function(server, options, next){
         },
         {
             method: 'GET',
+            path: '/fonts/{path*}',
+            handler: {
+                directory: { path: './public/fonts' }
+            }
+        },
+        {
+            method: 'GET',
             path: '/bower_components/{path*}',
             handler: {
                 directory: { path: './public/bower_components' }
