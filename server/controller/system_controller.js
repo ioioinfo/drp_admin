@@ -121,6 +121,15 @@ exports.register = function(server, options, next) {
             }
         },
         
+        //系统信息页面
+        {
+            method: 'GET',
+            path: '/about',
+            handler: function(request, reply) {
+                return reply.view(get_view("about"), {});
+            },
+        },
+        
     ]);
 
     next();
