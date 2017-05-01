@@ -476,11 +476,12 @@
      class Td extends React.Component {
        render() {
            var id = this.props.item.id;
-           var href = "product_view?product_id="+id;
+           var href = "product_edit?product_id="+id;
+           var href1 = "product_view?product_id="+id;
            if(this.props.thitem.type=="operation"){
                return (
-                <td><span className="btn btn-primary btn-xs operate_announce">编辑</span>
-                <span className="btn btn-info btn-xs operate_announce"><a href={href}>查看</a></span></td>
+                <td><span className="btn btn-primary btn-xs operate_announce"><a href={href}>编辑</a></span>
+                <span className="btn btn-info btn-xs operate_announce"><a href={href1}>查看</a></span></td>
                );
            }else {
                return (
