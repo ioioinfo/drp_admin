@@ -236,6 +236,11 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18002/find_shantao_infos?product_ids="+product_ids;
 		do_get_method(url,cb);
 	};
+	// 商品信息
+	var find_product_info = function(product_id,cb){
+		var url = "http://211.149.248.241:18002/product_info?product_id="+product_id;
+		do_get_method(url,cb);
+	};
 	//门店列表
 	var store_list = function(cb){
 		var url = "http://211.149.248.241:19999/store/list?org_code="+org_code;
@@ -1212,7 +1217,8 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/product_view',
 			handler: function(request, reply){
-				return reply.view("product_view");
+				var product_id = request.query.product_id;
+				return reply.view("product_view",{"product_id":product_id});
 			}
 		},
 		//查询商品属性,图片
@@ -1225,9 +1231,9 @@ exports.register = function(server, options, next){
 					return reply({"success":false,"message":"params null","service_info":service_info});
 				}
 
-				var ep =  eventproxy.create("pictures","properties",
-					function(pictures,properties){
-						return reply({"success":true,"message":"ok","pictures":pictures,"properties":properties,"service_info":service_info});
+				var ep =  eventproxy.create("pictures","properties","product",
+					function(pictures,properties,product){
+						return reply({"success":true,"message":"ok","pictures":pictures,"properties":properties,"product":product,"service_info":service_info});
 				});
 
 				find_pictures_byId(product_id,function(err,rows){
@@ -1245,6 +1251,14 @@ exports.register = function(server, options, next){
 					}else {
 						console.log(rows.message);
 						ep.emit("properties", []);
+					}
+				});
+
+				find_product_info(product_id,function(err,row){
+					if (!err) {
+						ep.emit("product", row.row);
+					}else {
+						ep.emit("product", {});
 					}
 				});
 			}
