@@ -1212,7 +1212,8 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/product_view',
 			handler: function(request, reply){
-				return reply.view("product_view");
+				var product_id = request.query.product_id;
+				return reply.view("product_view",{"product_id":product_id});
 			}
 		},
 		//查询商品属性,图片
