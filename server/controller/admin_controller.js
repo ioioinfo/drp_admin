@@ -582,6 +582,22 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	}
 	server.route([
+		//线下详细页面
+		{
+			method: 'GET',
+			path: '/orderDetail_view',
+			handler: function(request, reply){
+				return reply.view("orderDetail_view");
+			}
+		},
+		//线上详细页面
+		{
+			method: 'GET',
+			path: '/mp_orderDetail_view',
+			handler: function(request, reply){
+				return reply.view("mp_orderDetail_view");
+			}
+		},
 		//announce edit
 		{
 			method: 'GET',
@@ -1557,7 +1573,7 @@ exports.register = function(server, options, next){
 	            }
 			},
 		},
-		//根据订单号查询订单商品
+		//根据订单号查询订单商品 线下
 		{
 			method: 'GET',
 			path: '/search_order_infos',
