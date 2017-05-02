@@ -521,10 +521,21 @@ exports.register = function(server, options, next){
 		url = url + org_code + "&store_id=" + store_id;
 		do_get_method(url,cb);
 	};
+	//查询物流信息
+	var get_logistics_info = function(order_id,cb){
+		var url = "http://127.0.0.1:18010/search_laster_logistics?order_id="+order_id;
+		do_get_method(url,cb);
+	};
 	//绑定
 	var bind_store_account = function(data,cb){
 		var url = "http://139.196.148.40:18666/user/bind_store_account";
 		do_post_method(url,data,cb);
+	};
+	//开票信息
+	var get_invoice_info = function(person_id,order_ids,cb){
+		var url = "http://127.0.0.1:18010/search_ec_invoices?order_id=";
+		url = url + order_ids + "&person_id=" + person_id;
+		do_get_method(url,cb);
 	};
 	//解绑
 	var unbind_store_account = function(data,cb){
@@ -546,6 +557,11 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18002/product_up";
 		do_post_method(url,data,cb);
 	}
+	//得到单个订单
+	var get_ec_order = function(order_id,cb){
+		var url = "http://211.149.248.241:18010/get_ec_order?order_id="+order_id;
+		do_get_method(url,cb);
+	};
 	//商品下架
 	var product_down = function(data,cb){
 		var url = "http://211.149.248.241:18002/product_down";
@@ -588,9 +604,6 @@ exports.register = function(server, options, next){
 			path: '/orderDetail_view',
 			handler: function(request, reply){
 				var order_id = request.query.order_id;
-				if (!order_id || order_id =="") {
-					return reply({"success":false,"message":"订单id 没有"});
-				}
 				return reply.view("orderDetail_view",{"order_id":order_id});
 			}
 		},
@@ -600,9 +613,6 @@ exports.register = function(server, options, next){
 			path: '/mp_orderDetail_view',
 			handler: function(request, reply){
 				var order_id = request.query.order_id;
-				if (!order_id || order_id =="") {
-					return reply({"success":false,"message":"订单id 没有"});
-				}
 				return reply.view("mp_orderDetail_view",{"order_id":order_id});
 			}
 		},
@@ -1405,13 +1415,37 @@ exports.register = function(server, options, next){
 				if (!order_id) {
 					return reply({"success":false,"message":"params null","service_info":service_info});
 				}
-				get_mp_order_details(order_id,function(err,row){
+				var ep =  eventproxy.create("order","details","products","logistics_info",
+					function(order,details,products,logistics_info){
+					return reply({"success":true,"order":order,"details":details,"products":products,"logistics_info":logistics_info});
+				});
+
+				get_ec_order(order_id,function(err,results){
 					if (!err) {
-						return reply({"success":true,"message":"ok","details":row.details,"products":row.products,"service_info":service_info});
+						ep.emit("order", results.orders[0]);
+						ep.emit("details", results.details);
+						ep.emit("products", results.products);
 					}else {
-						return reply({"success":false,"message":row.message,"service_info":service_info});
+						ep.emit("order", {});
+						ep.emit("details", {});
+						ep.emit("products", {});
 					}
 				});
+				get_logistics_info(order_id,function(err,results){
+					if (!err) {
+						ep.emit("logistics_info", results.row);
+					}else {
+						ep.emit("logistics_info", {});
+					}
+				});
+
+				// get_mp_order_details(order_id,function(err,row){
+				// 	if (!err) {
+				// 		return reply({"success":true,"message":"ok","details":row.details,"products":row.products,"service_info":service_info});
+				// 	}else {
+				// 		return reply({"success":false,"message":row.message,"service_info":service_info});
+				// 	}
+				// });
 			}
 		},
 		//mp订单号查询
