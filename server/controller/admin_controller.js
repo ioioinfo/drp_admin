@@ -587,7 +587,11 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/orderDetail_view',
 			handler: function(request, reply){
-				return reply.view("orderDetail_view");
+				var order_id = request.query.order_id;
+				if (!order_id || order_id =="") {
+					return reply({"success":false,"message":"订单id 没有"});
+				}
+				return reply.view("orderDetail_view",{"order_id":order_id});
 			}
 		},
 		//线上详细页面
@@ -595,7 +599,11 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/mp_orderDetail_view',
 			handler: function(request, reply){
-				return reply.view("mp_orderDetail_view");
+				var order_id = request.query.order_id;
+				if (!order_id || order_id =="") {
+					return reply({"success":false,"message":"订单id 没有"});
+				}
+				return reply.view("mp_orderDetail_view",{"order_id":order_id});
 			}
 		},
 		//announce edit
