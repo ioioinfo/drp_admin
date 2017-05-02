@@ -789,6 +789,15 @@ exports.register = function(server, options, next){
 				});
 			}
 		},
+		//编辑商品属性
+		{
+			method: 'GET',
+			path: '/product_edit',
+			handler: function(request, reply){
+				var product_id = request.query.product_id;
+				return reply.view("product_edit",{"product_id":product_id});
+			}
+		},
 		//产品下架
 		{
 			method: 'POST',
