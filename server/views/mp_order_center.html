@@ -28,6 +28,9 @@
     .button_p{
         white-space:nowrap;
     }
+    .operate_announce a{
+        color: #fff;
+    }
     </style>
   </head>
   <body>
@@ -444,10 +447,13 @@
      };
      class Td extends React.Component {
        render() {
+           var order_id = this.props.item.order_id;
+           var href = "mp_orderDetail_view?order_id="+order_id;
            if(this.props.thitem.type=='operation'){
                return (
+
                <td>
-               <button className="btn btn-primary btn-xs operate_announce">查看</button>
+               <span className="btn btn-primary btn-xs operate_announce"><a href={href}>查看</a></span>
                </td>
                );
            }else {

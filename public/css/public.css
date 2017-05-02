@@ -191,7 +191,7 @@ tr td:last-child{
     color: #3DA5B0;
 }
 .margin_bottom{
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 .button_background1{
     background: #337AB7;
@@ -201,4 +201,20 @@ tr td:last-child{
 }
 .text_align_right{
     text-align: right;
+}
+.overflow{
+    overflow: hidden;
+}
+.border_bottom{
+    border-bottom: 1px solid #eee;
+    margin-bottom: 7px;
+}
+.padding_left{
+    padding-left: 0;
+}
+.font_size12{
+    font-size: 12px;
+}
+..overflow-x{
+    overflow-x: auto;
 }

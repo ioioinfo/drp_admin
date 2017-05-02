@@ -1,0 +1,63 @@
+.deliver{
+    width: 652px;
+    height: 360px;
+    background: url(../images/yunda.jpg)no-repeat 0 0;
+    background-size: cover;
+    position: relative;
+    font-size: 12px;
+}
+.deliver_name{
+    position: absolute;
+    top: 64px;
+    left: 88px;
+}
+.deliver_address{
+    position: absolute;
+    top: 64px;
+    left: 205px;
+}
+.deliver_company{
+    position: absolute;
+    top: 86px;
+    left: 100px;
+}
+.deliver_address1{
+    position: absolute;
+    top: 104px;
+    left: 86px;
+}
+.deliver_name1{
+    position: absolute;
+    top: 295px;
+    left: 86px;
+}
+.deliver_address2{
+    position: absolute;
+    top: 64px;
+    left: 353px;
+}
+.deliver_mobile{
+    position: absolute;
+    top: 64px;
+    left: 517px;
+}
+.deliver_address3{
+    position: absolute;
+    top: 86px;
+    left: 371px;
+}
+.deliver_address4{
+    position: absolute;
+    top: 104px;
+    left: 353px;
+}
+.deliver_name2{
+    position: absolute;
+    top: 181px;
+    left:362px;
+}
+.deliver_name3{
+    position: absolute;
+    top: 290px;
+    left:362px;
+}
