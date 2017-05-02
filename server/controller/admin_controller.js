@@ -598,6 +598,23 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	}
 	server.route([
+		//快递模板明细
+		{
+			method: 'GET',
+			path: '/deliver_view',
+			handler: function(request, reply){
+				var deliver_id = request.query.deliver_id;
+				return reply.view("deliver_view",{"deliver_id":deliver_id});
+			}
+		},
+		//快递列表页面
+		{
+			method: 'GET',
+			path: '/deliver_center',
+			handler: function(request, reply){
+				return reply.view("deliver_center");
+			}
+		},
 		//线下详细页面
 		{
 			method: 'GET',
