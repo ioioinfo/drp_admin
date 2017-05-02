@@ -210,8 +210,8 @@ exports.register = function(server, options, next){
 		do_get_method(url,cb);
 	};
 	//查询mp订单列表
-	var mp_orders_list = function(cb){
-		var url = "http://211.149.248.241:18010/mp_orders_list";
+	var mp_orders_list = function(params,cb){
+		var url = "http://211.149.248.241:18010/mp_orders_list?params="+params;
 		do_get_method(url,cb);
 	};
 	//mp 单条
@@ -1413,7 +1413,11 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/mp_orders_list',
 			handler: function(request, reply){
-				mp_orders_list(function(err,rows){
+				var params = request.query.params;
+				if (!params) {
+					return reply({"success":false,"message":"params wrong","service_info":service_info});
+				}
+				mp_orders_list(params,function(err,rows){
 					if (!err) {
 						for (var i = 0; i < rows.rows.length; i++) {
 							var order = rows.rows[i];
