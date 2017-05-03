@@ -28,6 +28,9 @@
     .button_p{
         white-space:nowrap;
     }
+    .button-primary a{
+        color: #fff;
+    }
     </style>
   </head>
   <body>
@@ -292,7 +295,6 @@
            this.loadData({sort:sort});
        }
        render() {
-         console.log("a");
          return (
            <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
              <ol className="breadcrumb">
@@ -444,7 +446,7 @@
      };
      class Td extends React.Component {
        render() {
-           var order_id = this.props.item .order_id;
+           var order_id = this.props.item.order_id;
            var href = "orderDetail_view?order_id="+order_id;
            if(this.props.thitem.type=='operation'){
                return (

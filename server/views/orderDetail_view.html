@@ -279,17 +279,17 @@
          constructor(props) {
              super(props);
              // 初始化一个空对象
-             this.state = {order:{},items:[],product:{}};
+             this.state = {order:{store:{}},items:[],product:{}};
          }
          // 3
          componentDidMount() {
              $.ajax({
-               url: "/get_mp_order_details",
+               url: "/search_order_infos",
                dataType: 'json',
                type: 'GET',
                data:{"order_id":"{{order_id}}"},
                success: function(data) {
-                   this.setState({order:data.order,items: data.details[data.order.order_id],product:data.products});
+                   this.setState({order:data.order,items: data.order_details});
                }.bind(this),
                error: function(xhr, status, err) {
                }.bind(this)
@@ -304,19 +304,20 @@
                     {this.state.items.map(item => (
                         <div className="row border_bottom font_size12">
                             <div className="span12  col-sm-2">
-                                <img alt="" src={this.state.product[item.product_id].img.location} className="img-polaroid " />
+                                <img alt="" src={item.product.img.location} className="img-polaroid " />
                             </div>
                             <div className="col-sm-10">
                                 <div className="margin_bottom overflow font_size12">
-                                    <div className="col-sm-12 border_style">{this.state.product[item.product_id].product_name}</div>
+                                    <div className="col-sm-12 border_style">{item.product.product_name}</div>
                                 </div>
                                 <div className="margin_bottom overflow font_size12">
-                                    <div className="col-sm-12">商品ID : {item.product_id}</div>
+                                    <div className="col-sm-12">商品ID : {item.product.id}</div>
                                 </div>
                                 <div className="margin_bottom overflow font_size12">
-                                    <div className="col-sm-4">数量 : {item.number}</div>
-                                    <div className="col-sm-4">市场价 : {item.marketing_price}</div>
-                                    <div className="col-sm-4">销售价 : {item.price}</div>
+                                    <div className="col-sm-3">数量 : {item.number}</div>
+                                    <div className="col-sm-3">市场价 : {item.product.product_marketing_price}</div>
+                                    <div className="col-sm-3">销售价 : {item.price}</div>
+                                    <div className="col-sm-3">总价 : {item.total_price}</div>
                                 </div>
                             </div>
                         </div>
@@ -324,16 +325,24 @@
                     </div>
                  <div className="col-sm-4">
                         <div className="margin_bottom overflow">
-                            <div className="col-sm-3">姓名</div>
-                            <div className="col-sm-9 border_style">{this.state.order.linkname}</div>
+                            <div className="col-sm-3">门店</div>
+                            <div className="col-sm-9 border_style">{this.state.order.store.org_store_name}</div>
                         </div>
                         <div className="margin_bottom overflow">
-                            <div className="col-sm-3">手机</div>
-                            <div className="col-sm-9 border_style">{this.state.order.mobile}</div>
+                            <div className="col-sm-3">实付</div>
+                            <div className="col-sm-9 border_style">{this.state.order.actual_price}</div>
                         </div>
                         <div className="margin_bottom overflow">
-                            <div className="col-sm-3">地址</div>
-                            <div className="col-sm-9 border_style">{this.state.order.detail_address}</div>
+                            <div className="col-sm-3">件数</div>
+                            <div className="col-sm-9 border_style">{this.state.order.actual_price}</div>
+                        </div>
+                        <div className="margin_bottom overflow">
+                            <div className="col-sm-3">找零</div>
+                            <div className="col-sm-9 border_style">{this.state.order.actual_price}</div>
+                        </div>
+                        <div className="margin_bottom overflow">
+                            <div className="col-sm-3">折扣</div>
+                            <div className="col-sm-9 border_style">{this.state.order.actual_price}</div>
                         </div>
                  </div>
                 </div>

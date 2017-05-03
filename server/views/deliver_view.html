@@ -40,9 +40,13 @@
     }
     .span12 img{
         width: 100%;
-
     }
-
+    .vertical_align{
+        vertical-align: middle;
+    }
+    .margin_top{
+        margin-top: 9px;
+    }
     </style>
   </head>
   <body>
@@ -272,19 +276,54 @@
        render() {
          return (
              <div className="container-fluid">
-                <div className="deliver">
-                    <p className="deliver_name">金正恩</p>
-                    <p className="deliver_address">朝鲜 平壤</p>
-                    <p className="deliver_company">平壤市中区南山洞劳动党1号大楼</p>
-                    <p className="deliver_address1">平壤市中区南山洞劳动党1号大楼</p>
-                    <p className="deliver_name1">金正恩</p>
-                    <p className="deliver_address2">华盛顿</p>
-                    <p className="deliver_mobile">12345678901</p>
-                    <p className="deliver_address3">白宫</p>
-                    <p className="deliver_address4">华盛顿宾夕法尼亚大街1600号</p>
-                    <p className="deliver_name2">特朗普</p>
-                    <p className="deliver_name3">特朗普</p>
+                <div className="row">
+                    <div className="deliver col-sm-8">
+                        <p className="deliver_name">金正恩</p>
+                        <p className="deliver_address">朝鲜 平壤</p>
+                        <p className="deliver_company">平壤市中区南山洞劳动党1号大楼</p>
+                        <p className="deliver_address1">平壤市中区南山洞劳动党1号大楼</p>
+                        <p className="deliver_name1">金正恩</p>
+                        <p className="deliver_address2">华盛顿</p>
+                        <p className="deliver_mobile">12345678901</p>
+                        <p className="deliver_address3">白宫</p>
+                        <p className="deliver_address4">华盛顿宾夕法尼亚大街1600号</p>
+                        <p className="deliver_name2">特朗普</p>
+                        <p className="deliver_name3">特朗普</p>
+                    </div>
+                    <div className="col-sm-4">
+                        <div className="row .margin_bottom">
+                            <label className="radio-inline col-sm-1 margin_top">
+                            <input type="radio" name="inlineRadioOptions" className="vertical_align" id="inlineRadio1" value="option1" />
+                            </label>
+                            <div className="col-sm-9">
+                                <select className="form-control">
+                                  <option>韵达快递</option>
+                                  <option>2</option>
+                                  <option>3</option>
+                                  <option>4</option>
+                                  <option>5</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div className="row .margin_bottom">
+                            <label className="radio-inline col-sm-1 margin_top">
+                            <input type="radio" name="inlineRadioOptions" className="vertical_align" id="inlineRadio1" value="option1" />
+                            </label>
+                            <div className="col-sm-9">
+                                <select className="form-control">
+                                  <option>顺风快递</option>
+                                  <option>2</option>
+                                  <option>3</option>
+                                  <option>4</option>
+                                  <option>5</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
+
             </div>
          );
        }
