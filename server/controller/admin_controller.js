@@ -258,6 +258,11 @@ exports.register = function(server, options, next){
 		url = url + product_id;
 		do_get_method(url,cb);
 	};
+	//得到所有运送方式
+	var get_logistics_type = function(cb){
+		var url = "http://211.149.248.241:18013/freightage/type";
+		do_get_method(url,cb);
+	};
 	//通过商品id找到图片
 	var find_pictures_byId = function(product_id, cb){
 		var url = "http://211.149.248.241:18002/get_product_pictures?product_id=";
@@ -1432,8 +1437,13 @@ exports.register = function(server, options, next){
 				if (!order_id) {
 					return reply({"success":false,"message":"params null","service_info":service_info});
 				}
-				var ep =  eventproxy.create("order","details","products","logistics_info",
-					function(order,details,products,logistics_info){
+				var ep =  eventproxy.create("order","details","products","logistics_info","logistics_type",
+					function(order,details,products,logistics_info,logistics_type){
+						for (var i = 0; i < logistics_type.length; i++) {
+							if (logistics_type[i].id == order.type) {
+								order.type = logistics_type[i].name;
+							}
+						}
 					return reply({"success":true,"order":order,"details":details,"products":products,"logistics_info":logistics_info});
 				});
 
@@ -1453,6 +1463,14 @@ exports.register = function(server, options, next){
 						ep.emit("logistics_info", results.row);
 					}else {
 						ep.emit("logistics_info", {});
+					}
+				});
+
+				get_logistics_type(function(err,results){
+					if (!err) {
+						ep.emit("logistics_type", results.rows);
+					}else {
+						ep.emit("logistics_type", []);
 					}
 				});
 
