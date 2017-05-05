@@ -9,7 +9,7 @@ if(typeof require !== 'undefined') XLSX = require('xlsjs');
 var order_status ={
 	"-1": "等待买家付款",
 	"0" : "付款确认中",
-	"1" : "买家已付款",
+	"1" : "等待卖家拣货",
 	"2" : "等待卖家发货",
 	"3" : "等待快递员揽货",
 	"4" : "卖家已发货",
@@ -231,6 +231,11 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18002/get_products_list?params="+params;
 		do_get_method(url,cb);
 	};
+	//更新订单状态
+	var update_order_status = function(data,cb){
+		var url = "http://211.149.248.241:18010/update_order_status_pay";
+		do_post_method(url,data,cb);
+	}
 	// 商品列表
 	var find_shantao_infos = function(product_ids,cb){
 		var url = "http://211.149.248.241:18002/find_shantao_infos?product_ids="+product_ids;
@@ -577,6 +582,11 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18013/order/list_data?org_code="+ org_code;
 		do_get_method(url,cb);
 	};
+	//物流公司查询 http://211.149.248.241:18013/logistics/companies
+	var companies = function(cb){
+		var url = "http://211.149.248.241:18013/logistics/companies";
+		do_get_method(url,cb);
+	};
 	//已开票列表
 	var invoice_list_data = function(cb){
 		var url = "http://139.196.148.40:18006/invoice/list_data?sob_id="+ org_code;
@@ -597,12 +607,99 @@ exports.register = function(server, options, next){
 		var url = "http://139.196.148.40:18001/store/update_store";
 		do_post_method(url,data,cb);
 	}
+	//生成运单
+	var logistics_order = function(data,cb){
+		var url = "http://211.149.248.241:18013/order/add";
+		do_post_method(url,data,cb);
+	}
+	//创建运单步骤
+	var add_new_step = function(data,cb){
+		var url = "http://211.149.248.241:18013/logistics/add_new_step";
+		do_post_method(url,data,cb);
+	}
+	//查询运单号
+	var get_logistics_id = function(order_id,cb){
+		var url = "http://211.149.248.241:18013/order/list_data?org_code=ioio&order_id="+order_id;
+		do_get_method(url,cb);
+	}
 	//门店创建账号
 	var add_login_account = function(data,cb){
 		var url = "http://139.196.148.40:18666/user/add_login_account";
 		do_post_method(url,data,cb);
 	}
 	server.route([
+
+		//新建物流步骤
+		{
+			method: 'POST',
+			path: '/add_new_step',
+			handler: function(request, reply){
+				var logistics_id = request.payload.logistics_id;
+				var step_name = request.payload.step_name;
+				var point_id = request.payload.point_id;
+				var detail_desc = request.payload.detail_desc;
+				var operator_id = request.payload.operator_id;
+				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				var data = {"logistics_id":logistics_id,"step_name":step_name,"point_id":point_id,"detail_desc":detail_desc,"operator_id":operator_id};
+				add_new_step(data,function(err,content){
+					if (!err) {
+						reply({"success":true,"service_info":service_info});
+					}else {
+						reply({"success":false,"message":content.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//选择快递方式 并生成运单
+		{
+			method: 'POST',
+			path: '/choose_delivery',
+			handler: function(request, reply){
+				var order_id = request.payload.order_id;
+				var logi_id = request.payload.logi_id;
+				var logi_no = request.payload.logi_no;
+				if (!order_id || !logi_id || !logi_no) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				get_order(order_id,function(err,row){
+					if (!err) {
+						var order = row.rows[0];
+						var data = {"order_id":order_id,"order_status":4};
+						update_order_status(data,function(err,content){
+							if (!err) {
+								var info = {
+									"order_id" :order_id,
+									"logi_id" : logi_id,
+									"org_code" : "ioio",
+									"logi_no" : logi_no,
+									"to_province" : order.province,
+									"to_city" : order.city,
+									"to_district" : order.district,
+									"to_detail_address" : order.detail_address,
+									"linkname" : order.linkname,
+									"mobile" : order.mobile
+								};
+								logistics_order(info,function(err,content){
+									if (!err) {
+
+										return reply({"success":true,"id":content.id,"service_info":service_info});
+									}else {
+										return reply({"success":false,"message":row.message,"service_info":service_info});
+									}
+								});
+							}else {
+								return reply({"success":false,"message":content.message,"service_info":service_info});
+							}
+						});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+
 		//快递模板明细
 		{
 			method: 'GET',
@@ -635,7 +732,14 @@ exports.register = function(server, options, next){
 			path: '/mp_orderDetail_view',
 			handler: function(request, reply){
 				var order_id = request.query.order_id;
-				return reply.view("mp_orderDetail_view",{"order_id":order_id});
+				companies(function(err,rows){
+					if (!err) {
+						var rows = rows.rows;
+						return reply.view("mp_orderDetail_view",{"order_id":order_id,"rows":rows});
+					}else {
+						return reply.view("mp_orderDetail_view",{"order_id":order_id,"rows":[]});
+					}
+				});
 			}
 		},
 		//announce edit
@@ -1494,7 +1598,7 @@ exports.register = function(server, options, next){
 				}
 				get_order(order_id,function(err,row){
 					if (!err) {
-						return reply({"success":true,"message":"ok","orders":row.order,"service_info":service_info});
+						return reply({"success":true,"message":"ok","orders":row.rows,"service_info":service_info});
 					}else {
 						return reply({"success":false,"message":row.message,"service_info":service_info});
 					}
