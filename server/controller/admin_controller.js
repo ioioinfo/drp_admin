@@ -1014,6 +1014,14 @@ exports.register = function(server, options, next){
 				return reply.view("product_edit",{"product_id":product_id});
 			}
 		},
+		//商品分类
+		{
+			method: 'GET',
+			path: '/products_sorts',
+			handler: function(request, reply){
+				return reply.view("products_sorts");
+			}
+		},
 		//产品下架
 		{
 			method: 'POST',

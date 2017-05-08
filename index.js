@@ -78,7 +78,8 @@ server.register([
     },
 	{
 	  register: require('./server/controller/full_text_controller.js')
-  },
+   },
+
 ], function () {
     //Start the server
     server.start(function() {
