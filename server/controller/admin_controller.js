@@ -627,8 +627,64 @@ exports.register = function(server, options, next){
 		var url = "http://139.196.148.40:18666/user/add_login_account";
 		do_post_method(url,data,cb);
 	}
+	//高手版分类
+	var update_sort_id = function(data,cb){
+		var url = "http://211.149.248.241:18002/update_sort_id";
+		do_post_method(url,data,cb);
+	}
+	//分类查询
+	var get_level_one = function(parent,cb){
+		var url = "http://211.149.248.241:18002/get_level_one?id="+parent;
+		do_get_method(url,cb);
+	}
 	server.route([
-
+		//分类查询
+		{
+			method: 'GET',
+			path: '/get_level_one',
+			handler: function(request, reply){
+				console.log("id:"+request.query.id);
+				var parent = 0;
+                if (request.query.id) {
+                    parent = request.query.id;
+                }
+				get_level_one(parent,function(err,rows){
+					if (!err) {
+						return reply({"success":true,"rows":rows.rows,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//高手版分类
+		{
+			method: 'POST',
+			path: '/update_sort_id',
+			handler: function(request, reply){
+				var product_id = request.payload.product_id;
+				var sort_id = request.payload.sort_id;
+				if (!product_id || !sort_id) {
+					return reply({"success":false,"message":"params wrong"});
+				}
+				var data = {"product_id":product_id,"sort_id":sort_id};
+				update_sort_id(data,function(err,rows){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//订单导出
+		{
+			method: 'GET',
+			path: '/export_ec_order',
+			handler: function(request, reply){
+				return reply.view("deliver_center");
+			}
+		},
 		//新建物流步骤
 		{
 			method: 'POST',
