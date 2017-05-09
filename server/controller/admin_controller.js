@@ -870,6 +870,22 @@ exports.register = function(server, options, next){
 				return reply.view("order_details");
 			}
 		},
+		//退货列表
+		{
+			method: 'GET',
+			path: '/return_list',
+			handler: function(request, reply){
+				return reply.view("return_list");
+			}
+		},
+		//退货列表
+		{
+			method: 'GET',
+			path: '/return_view',
+			handler: function(request, reply){
+				return reply.view("return_view");
+			}
+		},
 		//门店创建账号
 		{
 			method: 'POST',
