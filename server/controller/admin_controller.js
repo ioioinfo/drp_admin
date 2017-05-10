@@ -931,7 +931,7 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/return_view',
 			handler: function(request, reply){
-				return reply({"success":true});
+				return reply.view("return_view");
 			}
 		},
 		//退货列表明细数据
