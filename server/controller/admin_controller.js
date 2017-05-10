@@ -241,6 +241,11 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18002/find_shantao_infos?product_ids="+product_ids;
 		do_get_method(url,cb);
 	};
+	//退货列表
+	var search_return_list = function(cb){
+		var url = "http://211.149.248.241:18010/search_return_list";
+		do_get_method(url,cb);
+	};
 	// 商品信息
 	var find_product_info = function(product_id,cb){
 		var url = "http://211.149.248.241:18002/product_info?product_id="+product_id;
@@ -261,6 +266,11 @@ exports.register = function(server, options, next){
 	var find_properties_by_product = function(product_id, cb){
 		var url = "http://211.149.248.241:18002/find_properties_by_product?product_id=";
 		url = url + product_id;
+		do_get_method(url,cb);
+	};
+	//退单明细
+	var search_return_order = function(id, cb){
+		var url = "http://211.149.248.241:18010/search_return_order?id="+id;
 		do_get_method(url,cb);
 	};
 	//得到所有运送方式
@@ -708,6 +718,29 @@ exports.register = function(server, options, next){
 				});
 			}
 		},
+		//发货
+		{
+			method: 'POST',
+			path: '/send_goods',
+			handler: function(request, reply){
+				var logistics_id = request.payload.logistics_id;
+				var step_name = "sorted_delivery";
+				var point_id = 1;
+				var detail_desc = "订单发货";
+				var operator_id = 1;
+				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				var data = {"logistics_id":logistics_id,"step_name":step_name,"point_id":point_id,"detail_desc":detail_desc,"operator_id":operator_id};
+				add_new_step(data,function(err,content){
+					if (!err) {
+						reply({"success":true,"service_info":service_info});
+					}else {
+						reply({"success":false,"message":content.message,"service_info":service_info});
+					}
+				});
+			}
+		},
 		//选择快递方式 并生成运单
 		{
 			method: 'POST',
@@ -878,12 +911,45 @@ exports.register = function(server, options, next){
 				return reply.view("return_list");
 			}
 		},
-		//退货列表
+		//退货列表数据
+		{
+			method: 'GET',
+			path: '/return_list_data',
+			handler: function(request, reply){
+				search_return_list(function(err,rows){
+					if (!err) {
+						return reply({"success":true,"rows":rows.rows});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":rows.service_info});
+					}
+				});
+
+			}
+		},
+		//退货列表明细
 		{
 			method: 'GET',
 			path: '/return_view',
 			handler: function(request, reply){
-				return reply.view("return_view");
+				return reply({"success":true});
+			}
+		},
+		//退货列表明细数据
+		{
+			method: 'GET',
+			path: '/return_view_data',
+			handler: function(request, reply){
+				var id = request.query.id;
+				if (!id) {
+					return reply({"success":false,"message":"id is null"});
+				}
+				search_return_order(id,function(err,row){
+					if (!err) {
+						return reply({"success":true,"row":row.row});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":row.service_info});
+					}
+				});
 			}
 		},
 		//门店创建账号
