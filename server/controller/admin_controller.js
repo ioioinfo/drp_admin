@@ -166,12 +166,13 @@ exports.register = function(server, options, next){
 	};
 	//获取所有订单
 	var get_all_orders = function(params,cb){
-		var url = "http://211.149.248.241:18010/get_all_orders?params="+params;
+		var url = "http://211.149.248.241:18010/get_all_orders?params="+encodeURI(params);
 		do_get_method(url,cb);
 	};
 	//获取所有订单数量
 	var get_all_num = function(params,cb){
-		var url = "http://211.149.248.241:18010/get_all_num?params="+params;
+		console.log("order_id:"+params.order_id);
+		var url = "http://211.149.248.241:18010/get_all_num?params="+encodeURI(params);
 		do_get_method(url,cb);
 	};
 	//获取所有门店
@@ -211,7 +212,7 @@ exports.register = function(server, options, next){
 	};
 	//查询mp订单列表
 	var mp_orders_list = function(params,cb){
-		var url = "http://211.149.248.241:18010/mp_orders_list?params="+params;
+		var url = "http://211.149.248.241:18010/mp_orders_list?params="+encodeURI(params);
 		do_get_method(url,cb);
 	};
 	//mp 单条
@@ -228,7 +229,7 @@ exports.register = function(server, options, next){
 	};
 	// 商品列表
 	var get_products_list = function(params,cb){
-		var url = "http://211.149.248.241:18002/get_products_list?params="+params;
+		var url = "http://211.149.248.241:18002/get_products_list?params="+encodeURI(params);
 		do_get_method(url,cb);
 	};
 	//更新订单状态
@@ -543,7 +544,7 @@ exports.register = function(server, options, next){
 	};
 	//查询物流信息
 	var get_logistics_info = function(order_id,cb){
-		var url = "http://127.0.0.1:18010/search_laster_logistics?order_id="+order_id;
+		var url = "http://211.149.248.241:18010/search_laster_logistics?order_id="+order_id;
 		do_get_method(url,cb);
 	};
 	//绑定
@@ -1867,7 +1868,6 @@ exports.register = function(server, options, next){
 					return reply({"success":false,"message":"params wrong","service_info":service_info});
 				}
 				get_products_list(params,function(err,rows){
-					console.log("content:"+JSON.stringify(rows));
 					if (!err) {
 						if (rows.success) {
 							var products = rows.rows;
@@ -2166,7 +2166,6 @@ exports.register = function(server, options, next){
 				}
 				var ep = eventproxy.create("order","order_details","pay_infos",
 					function(order,order_details,pay_infos){
-						console.log("123");
 						return reply({"success":true,"order":order,"order_details":order_details,"pay_infos":pay_infos,"service_info":service_info});
 				});
 				search_order_products(order_id, function(err,row){
