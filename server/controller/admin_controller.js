@@ -647,7 +647,32 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18002/get_level_one?id="+parent;
 		do_get_method(url,cb);
 	}
+	//商品名称模糊查询
+	var search_pos_product = function(product_name,cb){
+		var url = "http://211.149.248.241:18002/search_pos_product?product_name="+product_name;
+		console.log("url:"+url);
+		do_get_method(url,cb);
+	};
 	server.route([
+		//商品名称模糊查询
+		{
+			method: 'GET',
+			path: '/search_pos_product',
+			handler: function(request, reply){
+				var product_name = request.query.product_name;
+				if (!product_name) {
+					return reply({"success":false,"message":"param null"});
+				}
+				product_name = encodeURI(product_name);
+				search_pos_product(product_name,function(err,rows){
+					if (!err) {
+						return reply({"success":true,"rows":rows.rows,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
 		//分类查询
 		{
 			method: 'GET',
@@ -727,6 +752,236 @@ exports.register = function(server, options, next){
 				var step_name = "sorted_delivery";
 				var point_id = 1;
 				var detail_desc = "订单发货";
+				var operator_id = 1;
+				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				var data = {"logistics_id":logistics_id,"step_name":step_name,"point_id":point_id,"detail_desc":detail_desc,"operator_id":operator_id};
+				add_new_step(data,function(err,content){
+					if (!err) {
+						reply({"success":true,"service_info":service_info});
+					}else {
+						reply({"success":false,"message":content.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//提交订单
+		{
+			method: 'POST',
+			path: '/commit_order',
+			handler: function(request, reply){
+				var logistics_id = request.payload.logistics_id;
+				var step_name = "commit_order";
+				var point_id = 1;
+				var detail_desc = "提交订单";
+				var operator_id = 1;
+				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				var data = {"logistics_id":logistics_id,"step_name":step_name,"point_id":point_id,"detail_desc":detail_desc,"operator_id":operator_id};
+				add_new_step(data,function(err,content){
+					if (!err) {
+						reply({"success":true,"service_info":service_info});
+					}else {
+						reply({"success":false,"message":content.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//进入仓库
+		{
+			method: 'POST',
+			path: '/send_to_warehouse',
+			handler: function(request, reply){
+				var logistics_id = request.payload.logistics_id;
+				var step_name = "send_to_warehouse";
+				var point_id = 1;
+				var detail_desc = "进入仓库";
+				var operator_id = 1;
+				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				var data = {"logistics_id":logistics_id,"step_name":step_name,"point_id":point_id,"detail_desc":detail_desc,"operator_id":operator_id};
+				add_new_step(data,function(err,content){
+					if (!err) {
+						reply({"success":true,"service_info":service_info});
+					}else {
+						reply({"success":false,"message":content.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//计划送达日期
+		{
+			method: 'POST',
+			path: '/plan_date',
+			handler: function(request, reply){
+				var logistics_id = request.payload.logistics_id;
+				var step_name = "plan_date";
+				var point_id = 1;
+				var detail_desc = "计划送达日期";
+				var operator_id = 1;
+				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				var data = {"logistics_id":logistics_id,"step_name":step_name,"point_id":point_id,"detail_desc":detail_desc,"operator_id":operator_id};
+				add_new_step(data,function(err,content){
+					if (!err) {
+						reply({"success":true,"service_info":service_info});
+					}else {
+						reply({"success":false,"message":content.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//打印完成
+		{
+			method: 'POST',
+			path: '/print_complete',
+			handler: function(request, reply){
+				var logistics_id = request.payload.logistics_id;
+				var step_name = "print_complete";
+				var point_id = 1;
+				var detail_desc = "打印完成";
+				var operator_id = 1;
+				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				var data = {"logistics_id":logistics_id,"step_name":step_name,"point_id":point_id,"detail_desc":detail_desc,"operator_id":operator_id};
+				add_new_step(data,function(err,content){
+					if (!err) {
+						reply({"success":true,"service_info":service_info});
+					}else {
+						reply({"success":false,"message":content.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//拣货完成
+		{
+			method: 'POST',
+			path: '/pickup_complete',
+			handler: function(request, reply){
+				var logistics_id = request.payload.logistics_id;
+				var step_name = "pickup_complete";
+				var point_id = 1;
+				var detail_desc = "拣货完成";
+				var operator_id = 1;
+				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				var data = {"logistics_id":logistics_id,"step_name":step_name,"point_id":point_id,"detail_desc":detail_desc,"operator_id":operator_id};
+				add_new_step(data,function(err,content){
+					if (!err) {
+						reply({"success":true,"service_info":service_info});
+					}else {
+						reply({"success":false,"message":content.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//已扫描
+		{
+			method: 'POST',
+			path: '/scaned',
+			handler: function(request, reply){
+				var logistics_id = request.payload.logistics_id;
+				var step_name = "scaned";
+				var point_id = 1;
+				var detail_desc = "已扫描";
+				var operator_id = 1;
+				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				var data = {"logistics_id":logistics_id,"step_name":step_name,"point_id":point_id,"detail_desc":detail_desc,"operator_id":operator_id};
+				add_new_step(data,function(err,content){
+					if (!err) {
+						reply({"success":true,"service_info":service_info});
+					}else {
+						reply({"success":false,"message":content.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//打包成功
+		{
+			method: 'POST',
+			path: '/pack_complete',
+			handler: function(request, reply){
+				var logistics_id = request.payload.logistics_id;
+				var step_name = "pack_complete";
+				var point_id = 1;
+				var detail_desc = "打包成功";
+				var operator_id = 1;
+				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				var data = {"logistics_id":logistics_id,"step_name":step_name,"point_id":point_id,"detail_desc":detail_desc,"operator_id":operator_id};
+				add_new_step(data,function(err,content){
+					if (!err) {
+						reply({"success":true,"service_info":service_info});
+					}else {
+						reply({"success":false,"message":content.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//分拣
+		{
+			method: 'POST',
+			path: '/sorted',
+			handler: function(request, reply){
+				var logistics_id = request.payload.logistics_id;
+				var step_name = "sorted";
+				var point_id = 1;
+				var detail_desc = "分拣";
+				var operator_id = 1;
+				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				var data = {"logistics_id":logistics_id,"step_name":step_name,"point_id":point_id,"detail_desc":detail_desc,"operator_id":operator_id};
+				add_new_step(data,function(err,content){
+					if (!err) {
+						reply({"success":true,"service_info":service_info});
+					}else {
+						reply({"success":false,"message":content.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//验货
+		{
+			method: 'POST',
+			path: '/inspect',
+			handler: function(request, reply){
+				var logistics_id = request.payload.logistics_id;
+				var step_name = "inspect";
+				var point_id = 1;
+				var detail_desc = "验货";
+				var operator_id = 1;
+				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
+					return reply({"success":false,"message":"params null","service_info":service_info});
+				}
+				var data = {"logistics_id":logistics_id,"step_name":step_name,"point_id":point_id,"detail_desc":detail_desc,"operator_id":operator_id};
+				add_new_step(data,function(err,content){
+					if (!err) {
+						reply({"success":true,"service_info":service_info});
+					}else {
+						reply({"success":false,"message":content.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//投递
+		{
+			method: 'POST',
+			path: '/delivery',
+			handler: function(request, reply){
+				var logistics_id = request.payload.logistics_id;
+				var step_name = "delivery";
+				var point_id = 1;
+				var detail_desc = "投递";
 				var operator_id = 1;
 				if (!logistics_id || !step_name || !point_id || !detail_desc || !operator_id) {
 					return reply({"success":false,"message":"params null","service_info":service_info});
