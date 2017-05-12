@@ -310,6 +310,7 @@
            this.setPage=this.setPage.bind(this);
            this.handleSort=this.handleSort.bind(this);
            this.loadData=this.loadData.bind(this);
+           this.refresh=this.refresh.bind(this);
            // 初始化一个空对象
            this.state = {tabthitems:[],tabtritems:[],allNum:0,everyNum:20,thisPage:1,sort:{name:"",dir:""}};
        }
@@ -331,12 +332,27 @@
        handleSort(sort){
            this.loadData({sort:sort});
        }
+        refresh(id,status_name){
+            var tritems = this.state.tabtritems;
+            var st = "上架";
+            if (status_name == "上架") {
+                st = "下架";
+            }else if (status_name == "下架") {
+                st = "上架";
+            }
+            for(var i=0;i<tritems.length;i++){
+                if(id==tritems[i].id){
+                    tritems[i].status_name=st;
+                }
+            }
+            this.setState({tabtritems:tritems});
+        }
        render() {
          return (
            <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
              <ol className="breadcrumb"><li>商品</li><li className="active">商品列表</li></ol>
              <SearchList loadData={this.loadData}/>
-             <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={       this.state.sort} onSort={this.handleSort} />
+             <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={this.state.sort} onSort={this.handleSort} refresh={this.refresh} />
              <Tab setPage={this.setPage} allNum={this.state.allNum} everyNum={this.state.everyNum} thisPage={this.state.thisPage} />
 
            </div>
@@ -415,7 +431,7 @@
                </thead>
                <tbody>
                {this.props.tabtritems.map(item => (
-                   <Tr item={item} tabthitems={this.props.tabthitems} />))
+                   <Tr item={item} tabthitems={this.props.tabthitems} refresh={this.props.refresh} />))
                }
                </tbody>
                </table>
@@ -431,12 +447,11 @@
            // 初始化一个空对象
            this.state = {};
        }
-
        render() {
            return (
              <tr>
              {this.props.tabthitems.map(item => (
-                 <Td item={this.props.item} thitem={item} />))
+                 <Td item={this.props.item} thitem={item} refresh={this.props.refresh} />))
              }
              </tr>
            );
@@ -489,15 +504,76 @@
        }
      };
      class Td extends React.Component {
+         constructor(props) {
+             super(props);
+             this.handleClick=this.handleClick.bind(this);
+             this.handleClick1=this.handleClick1.bind(this);
+         }
+        //  点击下架
+        handleClick(e){
+            var  product_id = this.props.item.id;
+            $.ajax({
+                url: "/product_down",
+                dataType: 'json',
+                type: 'POST',
+                data: {"product_id":product_id},
+                success: function(data) {
+                    if (data.success) {
+                        this.props.refresh(product_id,this.props.item.status_name);
+                        alert("保存成功！");
+                    }else {
+                        alert("保存失败！");
+                    }
+
+                }.bind(this),
+                error: function(xhr, status, err) {
+                }.bind(this)
+            });
+        }
+        // 点击上架
+        handleClick1(e){
+            var  product_id = this.props.item.id;
+            $.ajax({
+                url: "/product_up",
+                dataType: 'json',
+                type: 'POST',
+                data: {"product_id":product_id},
+                success: function(data) {
+                    if (data.success) {
+                        this.props.refresh(product_id,this.props.item.status_name);
+                        alert("保存成功！");
+                    }else {
+                        alert("保存失败！");
+                    }
+
+                }.bind(this),
+                error: function(xhr, status, err) {
+                }.bind(this)
+            });
+        }
        render() {
            var id = this.props.item.id;
            var href = "product_edit?product_id="+id;
            var href1 = "product_view?product_id="+id;
            if(this.props.thitem.type=="operation"){
-               return (
-                <td><span className="btn btn-primary btn-xs operate_announce"><a href={href}>编辑</a></span>
-                <span className="btn btn-info btn-xs operate_announce"><a href={href1}>查看</a></span></td>
-               );
+               if(this.props.item.status_name=="上架"){
+                   return (
+                    <td>
+                    <span className="btn btn-primary btn-xs operate_announce"><a href={href}>编辑</a></span>
+                    <span className="btn btn-info btn-xs operate_announce"><a href={href1}>查看</a></span>
+                    <span className="btn btn-info btn-xs operate_announce" onClick={this.handleClick}><a>下架</a></span>
+                    </td>
+                   );
+               }else {
+                   return (
+                    <td>
+                    <span className="btn btn-primary btn-xs operate_announce"><a href={href}>编辑</a></span>
+                    <span className="btn btn-info btn-xs operate_announce"><a href={href1}>查看</a></span>
+                    <span className="btn btn-info btn-xs operate_announce" onClick={this.handleClick1}><a>上架</a></span>
+                    </td>
+                   );
+               }
+
            }else {
                return (
                <td>{this.props.item[this.props.thitem.name]}</td>
