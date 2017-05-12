@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>编辑头条</title>
+    <title>编辑公告</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/button.css">
@@ -239,6 +239,26 @@
       };
         // 右侧下部表格
      class WrapRight extends React.Component {
+         constructor(props) {
+             super(props);
+             // 初始化一个空对象
+             this.handleClick = this.handleClick.bind(this);
+         }
+         componentDidMount() {
+             $.ajax({
+               url: "/menu_list",
+               dataType: 'json',
+               type: 'GET',
+               success: function(data) {
+                   this.setState({items: data.rows});
+               }.bind(this),
+               error: function(xhr, status, err) {
+               }.bind(this)
+           });
+         }
+         handleClick(e){
+           this.props.setSelected(this.props.item.code);
+         }
        render() {
          return (
            <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -260,13 +280,25 @@
                         <div className="form-group show-grid">
                              <label  className="col-sm-2 control-label">上传图片</label>
                              <div className="col-sm-10">
-                               <input type="file" name="files" value="" className="four image" id="fileupload" multiple />
+                               <input type="file" name="files" className="four image" id="fileupload" multiple />
                              </div>
                          </div>
 
                    </div>
                </div>
-               <div className="row add_margin_top"><p className="button button-glow button-rounded button-royal button-small pull-right ">保存</p></div>
+               <div className="row add_margin_top">
+               <span className="checkbox checkbox_style">
+                    <label>
+                     <input type="checkbox"/> 头条
+                    </label>
+                </span>
+                <span className="checkbox checkbox_style">
+                     <label>
+                      <input type="checkbox"/> 公告
+                     </label>
+                 </span>
+                    <p className="button button-glow button-rounded button-royal button-small pull-right " onClick={this.handleClick}>保存</p>
+               </div>
            </div>
          );
        }
