@@ -250,41 +250,69 @@
     };
       // 右侧下部表格
      class WrapRight extends React.Component {
+         constructor(props) {
+           super(props);
+           this.handleClick = this.handleClick.bind(this);
+       }
+       handleClick(e){
+
+           var store_code = $(".store_code").val();
+           var store_name = $(".store_name").val();
+           var open_date = $(".open_date").val();
+           var remark = $(".remark").val();
+
+           $.ajax({
+               url: "/add_store",
+               dataType: 'json',
+               type: 'POST',
+               data: {"store_code":store_code,"store_name":store_name,"open_date":open_date,"remark":remark},
+               success: function(data) {
+                   if (data.success) {
+                       location.href = "/mendian_center";
+                   }else {
+                       alert(data.message);
+                   }
+               }.bind(this),
+               error: function(xhr, status, err) {
+               }.bind(this)
+           });
+
+       };
        render() {
          return (
            <div>
                <div className="row">
                    <div className="col-md-8 col-md-offset-2">
                        <div className="form-group show-grid">
-                            <label  className="col-sm-2 control-label">门店序号</label>
+                            <label  className="col-sm-2 control-label ">门店序号</label>
                             <div className="col-sm-10">
-                              <input type="text" className="form-control" id="inputPassword3" />
+                              <input type="text" className="form-control store_code" id="inputPassword3" />
                             </div>
                         </div>
                         <div className="form-group show-grid">
                              <label  className="col-sm-2 control-label">门店名称</label>
                              <div className="col-sm-10">
-                               <input type="text" className="form-control" id="inputPassword3" />
+                               <input type="text" className="form-control store_name" id="inputPassword3" />
                              </div>
                          </div>
                          <div className="form-group show-grid">
-                              <label  className="col-sm-2 control-label">开店时间</label>
+                              <label  className="col-sm-2 control-label ">开店时间</label>
                               <div className="col-sm-10">
-                                <input type="text" className="form-control" id="inputPassword3" />
+                                <input type="text" className="form-control open_date" id="inputPassword3" />
                               </div>
                           </div>
 
                         <div className="form-group show-grid">
-                             <label  className="col-sm-2 control-label">上传图片</label>
-                             <div className="col-sm-10">
-                               <input type="file" name="files" value="" className="four image" id="fileupload" multiple />
-                             </div>
+                            <label  className="col-sm-2 control-label">描述</label>
+                            <div className="col-sm-10">
+                              <input type="text" className="form-control remark" id="inputPassword3" />
+                            </div>
                          </div>
 
 
                    </div>
                </div>
-               <div className="row add_margin_top"><p className="btn btn-primary active  pull-right ">保  存</p></div>
+               <div className="row add_margin_top"><p className="btn btn-primary active  pull-right " onClick={this.handleClick}>保  存</p></div>
            </div>
          );
        }

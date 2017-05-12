@@ -250,6 +250,34 @@
     };
       // 右侧下部表格
      class WrapRight extends React.Component {
+         constructor(props) {
+           super(props);
+           this.handleClick = this.handleClick.bind(this);
+       }
+       handleClick(e){
+
+           var title = $(".title").val();
+           var content = $(".content").val();
+           var img = "11.png";
+        //    imgs.push("11.png");
+
+           $.ajax({
+               url: "/save_announce2",
+               dataType: 'json',
+               type: 'POST',
+               data: {"title":title,"content":content,"img":img},
+               success: function(data) {
+                   if (data.success) {
+                       location.href = "/announce_center";
+                   }else {
+                       alert(data.message);
+                   }
+               }.bind(this),
+               error: function(xhr, status, err) {
+               }.bind(this)
+           });
+
+       };
        render() {
          return (
            <div>
@@ -258,27 +286,27 @@
                        <div className="form-group show-grid">
                             <label  className="col-sm-2 control-label">标题</label>
                             <div className="col-sm-10">
-                              <input type="text" className="form-control" id="inputPassword3" />
+                              <input type="text" className="form-control title" id="inputPassword3" />
                             </div>
                         </div>
                         <div className="form-group show-grid">
                              <label  className="col-sm-2 control-label">内容</label>
                              <div className="col-sm-10">
-                               <textarea className="form-control" rows="12"></textarea>
+                               <textarea className="form-control content" rows="12"></textarea>
                              </div>
                          </div>
 
                         <div className="form-group show-grid">
                              <label  className="col-sm-2 control-label">上传图片</label>
                              <div className="col-sm-10">
-                               <input type="file" name="files" value="" className="four image" id="fileupload" multiple />
+                               <input type="file" name="files" value="" className="four image imgs" id="fileupload" multiple />
                              </div>
                          </div>
 
 
                    </div>
                </div>
-               <div className="row add_margin_top"><p className="btn btn-primary active pull-right ">保  存</p></div>
+               <div className="row add_margin_top"><p className="btn btn-primary active pull-right " onClick={this.handleClick}>保  存</p></div>
            </div>
          );
        }

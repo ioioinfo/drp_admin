@@ -1623,11 +1623,13 @@ exports.register = function(server, options, next){
 				var title = request.payload.title;
 				var content = request.payload.content;
 				var headline = 0;
-				var imgs = request.payload.imgs;
-				if (!title || !content || !headline || !imgs) {
+				var img = request.payload.img;
+				var imgs = [];
+				imgs.push(img);
+				if (!title || !content || !imgs) {
 					return reply({"success":false,"message":"params wrong"});
 				}
-				var data = {"title":title,"content":content,"headline":headline,"imgs":imgs,"platform_code":platform_code};
+				var data = {"title":title,"content":content,"headline":headline,"imgs":JSON.stringify(imgs),"platform_code":platform_code};
 				save_announce(data,function(err,row){
 					if (!err) {
 						return reply({"success":true,"service_info":service_info,"id":row.id});
@@ -1719,11 +1721,14 @@ exports.register = function(server, options, next){
 				var title = request.payload.title;
 				var content = request.payload.content;
 				var headline = 1;
-				var imgs = request.payload.imgs;
-				if (!title || !content || !headline || !imgs) {
+				var img = request.payload.img;
+				var imgs = [];
+				imgs.push(img);
+
+				if (!title || !content || !imgs) {
 					return reply({"success":false,"message":"params wrong"});
 				}
-				var data = {"title":title,"content":content,"headline":headline,"imgs":imgs,"platform_code":platform_code};
+				var data = {"title":title,"content":content,"headline":headline,"imgs":JSON.stringify(imgs),"platform_code":platform_code};
 				save_announce(data,function(err,row){
 					if (!err) {
 						return reply({"success":true,"service_info":service_info,"id":row.id});
