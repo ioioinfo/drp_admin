@@ -655,6 +655,25 @@ exports.register = function(server, options, next){
 		do_get_method(url,cb);
 	};
 	server.route([
+		//高手
+		{
+			method: 'GET',
+			path: '/master',
+			handler: function(request, reply){
+				var product_id = request.query.product_id;
+				return reply.view("master",{"product_id":product_id});
+			}
+		},
+		//菜鸟
+		{
+			method: 'GET',
+			path: '/noob_sort',
+			handler: function(request, reply){
+				var product_id = request.query.product_id;
+				return reply.view("noob_sort",{"product_id":product_id});
+			}
+		},
+
 		//商品名称模糊查询
 		{
 			method: 'GET',
