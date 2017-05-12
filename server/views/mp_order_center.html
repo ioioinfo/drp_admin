@@ -322,8 +322,9 @@
            var order_id = $(".order_id").val();
            var linkname = $(".linkname").val();
            var mobile = $(".mobile").val();
+           var status_name = $(".status_name").val();
 
-             var params1 = {"order_id":order_id,"linkname":linkname,"mobile":mobile};
+             var params1 = {"order_id":order_id,"linkname":linkname,"mobile":mobile,"status_name":status_name};
 
              this.props.loadData(params1);
 
@@ -354,7 +355,7 @@
                   </div>
                   <div className="col-lg-2 col-sm-2 show-grid">
                       <div className="input-group">
-                          <input type="text" className="form-control ip_address" placeholder="批次..." />
+                          <input type="text" className="form-control status_name" placeholder="状态..." />
                       </div>
                   </div>
                   <div className="col-lg-1 col-sm-1 show-grid">
