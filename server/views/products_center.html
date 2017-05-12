@@ -352,8 +352,8 @@
       handleClick(e){
           var product_name = $(".product_name").val();
           var product_id = $(".product_id").val();
-
-            var params1 = {"product_name":product_name,"product_id":product_id};
+          var is_down = 1 ;
+            var params1 = {"product_name":product_name,"product_id":product_id,"is_down":is_down};
 
             this.props.loadData(params1);
 
