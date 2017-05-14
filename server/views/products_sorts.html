@@ -83,7 +83,7 @@
 		,{name:'product_name',title:'名称',sort:false}
 		,{name:'product_sale_price',title:'售价',sort:false}
 		,{name:'product_marketing_price',title:'市场价',sort:false}
-        ,{name:'product_marketing_price',title:'分类',sort:false}
+        ,{name:'short_name',title:'分类',sort:false}
         ,{name:'operation',title:'操作',type:"operation"}];
 
       function getTableData(params,cb) {
@@ -332,7 +332,7 @@
        render() {
          return (
            <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-             <ol className="breadcrumb margin_top20"><li>商品</li><li className="active">商品分类</li></ol>
+             <ol className="breadcrumb margin_top20"><li>商品</li><li>商品分类</li><li className="active">高手</li></ol>
              <SearchList loadData={this.loadData}/>
              <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={this.state.sort} onSort={this.handleSort} />
              <Tab setPage={this.setPage} allNum={this.state.allNum} everyNum={this.state.everyNum} thisPage={this.state.thisPage} />
@@ -530,6 +530,9 @@
              this.props.setPage(this.props.thisPage+1);
          }
          render() {
+             //分页显示页数
+             var display_page = 11;
+             var mid_page =(display_page - 1)/2;
              var fenitems =[];
              // 所有条数allNum
              var allNum=this.props.allNum;
@@ -538,21 +541,21 @@
              // 当前显示页thisPage
              var thisPage=this.props.thisPage;
              var allPage=Math.ceil(allNum/everyNum);
-             if(allPage<=7){
+             if(allPage<=display_page){
                  for(var i=1; i<=allPage; i++){
                      fenitems.push(i);
                  }
              }else {
-                 if(thisPage-3<=1){
-                     for(var i=1; i<=7; i++){
+                 if(thisPage-mid_page<=1){
+                     for(var i=1; i<=display_page; i++){
                          fenitems.push(i);
                      }
-                 } else if (thisPage+3>=allPage) {
-                     for(var i=allPage-6; i<=allPage; i++){
+                 } else if (thisPage+mid_page>=allPage) {
+                     for(var i=allPage-mid_page*2; i<=allPage; i++){
                          fenitems.push(i);
                      }
                  } else {
-                     for(var i=thisPage-3; i<=thisPage+3; i++){
+                     for(var i=thisPage-mid_page; i<=thisPage+mid_page; i++){
                          fenitems.push(i);
                      }
                  }

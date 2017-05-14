@@ -336,19 +336,23 @@
             });
          }
          handChange(e){
-             sort_id = $(".sort_id").val();
+             var id = $(".sort_id").val();
+             if(!id) {
+                 $(".sort_name").html("");
+                 return;
+             }
              $.ajax({
              url: "/search_sort",
-             data:{id:sort_id},
+             data:{id:id},
              dataType: 'json',
              type: 'GET',
              success: function(data) {
                  if(data.row){
+                    sort_id = id;
                     $(".sort_name").html(data.row.sort_name);
                 }else {
                     sort_id = null;
-                    $(".sort_name").html("");
-                    alert("分类不存在");
+                    $(".sort_name").html("<span class=\"red_color\">分类不存在</span>");
                 }
              }.bind(this),
              error: function(xhr, status, err) {

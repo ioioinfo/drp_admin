@@ -609,6 +609,9 @@
              this.props.setPage(this.props.thisPage+1);
          }
          render() {
+             //分页显示页数
+             var display_page = 11;
+             var mid_page =(display_page - 1)/2;
              var fenitems =[];
              // 所有条数allNum
              var allNum=this.props.allNum;
@@ -617,21 +620,21 @@
              // 当前显示页thisPage
              var thisPage=this.props.thisPage;
              var allPage=Math.ceil(allNum/everyNum);
-             if(allPage<=7){
+             if(allPage<=display_page){
                  for(var i=1; i<=allPage; i++){
                      fenitems.push(i);
                  }
              }else {
-                 if(thisPage-3<=1){
-                     for(var i=1; i<=7; i++){
+                 if(thisPage-mid_page<=1){
+                     for(var i=1; i<=display_page; i++){
                          fenitems.push(i);
                      }
-                 } else if (thisPage+3>=allPage) {
-                     for(var i=allPage-6; i<=allPage; i++){
+                 } else if (thisPage+mid_page>=allPage) {
+                     for(var i=allPage-mid_page*2; i<=allPage; i++){
                          fenitems.push(i);
                      }
                  } else {
-                     for(var i=thisPage-3; i<=thisPage+3; i++){
+                     for(var i=thisPage-mid_page; i<=thisPage+mid_page; i++){
                          fenitems.push(i);
                      }
                  }
