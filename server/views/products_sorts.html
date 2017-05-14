@@ -83,11 +83,11 @@
 		,{name:'product_name',title:'名称',sort:false}
 		,{name:'product_sale_price',title:'售价',sort:false}
 		,{name:'product_marketing_price',title:'市场价',sort:false}
-        ,{name:'short_name',title:'分类',sort:false}
+        ,{name:'sort_name',title:'分类',sort:false}
         ,{name:'operation',title:'操作',type:"operation"}];
 
       function getTableData(params,cb) {
-		 params.everyNum = 10;
+		 params.everyNum = 50;
 		 var allNum = 0;
 		 $.get("/get_products_list",{params:JSON.stringify(params)},function(data){
 			 if (data.success) {

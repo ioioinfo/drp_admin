@@ -88,7 +88,7 @@
         ,{name:'operation',title:'操作',type:"operation"}];
 
       function getTableData(params,cb) {
-		 params.everyNum = 10;
+		 params.everyNum = 50;
 		 var allNum = 0;
 		 $.get("/get_products_list",{params:JSON.stringify(params)},function(data){
              console.log("params:"+JSON.stringify(params));

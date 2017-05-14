@@ -633,6 +633,12 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18013/order/list_data?org_code=ioio&order_id="+order_id;
 		do_get_method(url,cb);
 	}
+	//查询产品分类
+	var search_product_sort = function(product_id,cb){
+		var url = "http://211.149.248.241:18002/search_product_sort?product_id="+product_id;
+		do_get_method(url,cb);
+	}
+
 	//门店创建账号
 	var add_login_account = function(data,cb){
 		var url = "http://139.196.148.40:18666/user/add_login_account";
@@ -657,6 +663,12 @@ exports.register = function(server, options, next){
 	//商品名称模糊查询
 	var search_sort = function(id,cb){
 		var url = "http://211.149.248.241:18002/search_sort?id="+id;
+		console.log("url:"+url);
+		do_get_method(url,cb);
+	};
+	//商品名称模糊查询
+	var search_sorts = function(ids,cb){
+		var url = "http://211.149.248.241:18002/search_sorts?sort_ids="+ids;
 		console.log("url:"+url);
 		do_get_method(url,cb);
 	};
@@ -691,7 +703,7 @@ exports.register = function(server, options, next){
 				}
 				product_name = encodeURI(product_name);
 				search_pos_product(product_name,function(err,rows){
-					if (!err) {
+					if(!err){
 						return reply({"success":true,"rows":rows.rows,"service_info":service_info});
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":service_info});
@@ -710,7 +722,11 @@ exports.register = function(server, options, next){
                 }
 				search_sort(id,function(err,rows){
 					if (!err) {
-						return reply({"success":true,"rows":rows.rows,"service_info":service_info});
+						if (rows.rows.length == 0) {
+							return reply({"success":true,"service_info":service_info});
+						}else {
+							return reply({"success":true,"row":rows.rows[0],"service_info":service_info});
+						}
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":service_info});
 					}
@@ -1755,6 +1771,25 @@ exports.register = function(server, options, next){
 				});
 			}
 		},
+		//得到产品分类
+		{
+			method: 'GET',
+			path: '/search_product_sort',
+			handler: function(request, reply){
+				var product_id = request.query.product_id;
+				search_product_sort(product_id,function(err,rows){
+					if (!err) {
+						if (rows.rows.length==0) {
+							return reply({"success":false,"service_info":service_info});
+						}else {
+							return reply({"success":true,"row":rows.rows[0],"service_info":service_info});
+						}
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
 
 		//头条新增
 		{
@@ -1920,40 +1955,57 @@ exports.register = function(server, options, next){
 						if (rows.success) {
 							var products = rows.rows;
 							var product_ids = [];
+							var sort_ids = [];
 							for (var i = 0; i < products.length; i++) {
 								product_ids.push(products[i].id);
+								sort_ids.push(products[i].sort_id);
 							}
 							if (products.length ==0) {
 								return reply({"success":true,"message":"ok","products":[],"service_info":service_info,"num":0});
 							}
 							var num = rows.num;
-							find_shantao_infos(JSON.stringify(product_ids),function(err,content){
-
+							search_sorts(JSON.stringify(sort_ids),function(err,rows){
 								if (!err) {
-									if (content.success) {
-										var shantaos = content.rows;
-										for (var i = 0; i < products.length; i++) {
-											var product = products[i];
-											if (product.is_down == 0) {
-												product.status_name = "上架";
-											}else {
-												product.status_name = "下架";
-											}
-											for (var j = 0; j < shantaos.length; j++) {
-												if (shantaos[j].product_id == product.id) {
-													product.is_new = shantaos[j].is_new;
-													product.row_materials = shantaos[j].row_materials;
-													product.size_name = shantaos[j].size_name;
-													product.batch_code = shantaos[j].batch_code;
-												}
-											}
-										}
-										return reply({"success":true,"message":"ok","products":products,"num":num,"service_info":service_info});
-									}else {
-										return reply({"success":false,"message":content.message,"service_info":service_info});
+									var sorts = rows.rows;
+									var sorts_map = {};
+									for (var i = 0; i < sorts.length; i++) {
+										sorts_map[sorts[i].id] = sorts[i].sort_name;
 									}
+									for (var i = 0; i < products.length; i++) {
+										if (products[i].sort_id) {
+											products[i].sort_name = sorts_map[products[i].sort_id];
+										}
+									}
+									find_shantao_infos(JSON.stringify(product_ids),function(err,content){
+										if (!err) {
+											if (content.success) {
+												var shantaos = content.rows;
+												for (var i = 0; i < products.length; i++) {
+													var product = products[i];
+													if (product.is_down == 0) {
+														product.status_name = "上架";
+													}else {
+														product.status_name = "下架";
+													}
+													for (var j = 0; j < shantaos.length; j++) {
+														if (shantaos[j].product_id == product.id) {
+															product.is_new = shantaos[j].is_new;
+															product.row_materials = shantaos[j].row_materials;
+															product.size_name = shantaos[j].size_name;
+															product.batch_code = shantaos[j].batch_code;
+														}
+													}
+												}
+												return reply({"success":true,"message":"ok","products":products,"num":num,"service_info":service_info,"sorts_map":sorts_map});
+											}else {
+												return reply({"success":false,"message":content.message,"service_info":service_info});
+											}
+										}else {
+											return reply({"success":false,"message":content.message,"service_info":service_info});
+										}
+									});
 								}else {
-									return reply({"success":false,"message":content.message,"service_info":service_info});
+									return reply({"success":false,"message":rows.message,"service_info":service_info});
 								}
 							});
 						}else {
