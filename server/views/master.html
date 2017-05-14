@@ -295,31 +295,8 @@
     class WrapRightFrom extends React.Component {
         constructor(props) {
             super(props);
-            this.handleClick = this.handleClick.bind(this);
         }
 
-        handleClick(e){
-            if(!sort_id){
-                alert("请选择分类");
-                return;
-            }
-            $.ajax({
-                    url: "/update_sort_id",
-                    dataType: 'json',
-                    type: 'POST',
-                    data: {"product_id":"{{product_id}}","sort_id":sort_id},
-                    success: function(data) {
-                        if (data.success) {
-                            alert("保存成功！");
-                        }else {
-                            alert("保存失败！");
-                        }
-                    }.bind(this),
-                    error: function(xhr, status, err) {
-                    }.bind(this)
-                });
-
-        }
      render() {
          return (
             <div className="wrapRight wrapRight_form col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -329,122 +306,94 @@
                   <li className="active">编辑</li>
                 </ol>
                 <WrapRight/>
-        		<div className="span12 text_align_right">
-                  <button className="btn button_background2 button_white" type="button" onClick={this.handleClick}>保 存</button>
-        		</div>
             </div>
          );
       }
     };
-      // 右侧下部图片
+      // 右侧下部
      class WrapRight extends React.Component {
          constructor(props) {
              super(props);
-             this.handleClick = this.handleClick.bind(this);
-             this.handleClick2 = this.handleClick2.bind(this);
-             this.handleClick3 = this.handleClick3.bind(this);
-
-             // 初始化一个空对象
-
-             this.state = {sortitemsOne:[],sortitemsTwo:[],sortitemsThree:[]};
+             this.handChange=this.handChange.bind(this);
+             this.handleClick=this.handleClick.bind(this);
+             this.state={sortitem:{}};
          }
-
          componentDidMount(e){
              $.ajax({
-             url: "/get_level_one",
+             url: "/search_product_sort",
+             data:{product_id:"{{product_id}}"},
              dataType: 'json',
              type: 'GET',
              success: function(data) {
-                this.setState({sortitemsOne:data.rows});
-
+                 if(data.row){
+                     sort_id = data.row.id;
+                     $(".sort_name").html(data.row.sort_name);
+                     $(".sort_id").val(data.row.id);
+                 }
              }.bind(this),
              error: function(xhr, status, err) {
              }.bind(this)
             });
-
          }
-        //  取二级分类
-        handleClick(e){
-            var id = e.target.id;
-            $(".btn_liOne .btn_liOne_span").html($("#"+id).html());
-
-            $.ajax({
-            url: "/get_level_one",
-            data:{id:id},
-            dataType: 'json',
-            type: 'GET',
-            success: function(data) {
-               this.setState({sortitemsTwo:data.rows});
-            }.bind(this),
-            error: function(xhr, status, err) {
-            }.bind(this)
-           });
-        }
-
-        //  取三级分类
-        handleClick2(e){
-            var id = e.target.id;
-            sort_id = id;
-            $(".btn_liTwo .btn_liTwo_span").html($("#"+id).html());
-            $.ajax({
-            url: "/get_level_one",
-            data:{id:id},
-            dataType: 'json',
-            type: 'GET',
-            success: function(data) {
-               this.setState({sortitemsThree:data.rows});
-            }.bind(this),
-            error: function(xhr, status, err) {
-            }.bind(this)
-           });
-        }
-
-        handleClick3(e){
-            var id = e.target.id;
-            $(".btn_liThree .btn_liThree_span").html($("#"+id).html());
-        }
+         handChange(e){
+             sort_id = $(".sort_id").val();
+             $.ajax({
+             url: "/search_sort",
+             data:{id:sort_id},
+             dataType: 'json',
+             type: 'GET',
+             success: function(data) {
+                 if(data.row){
+                    $(".sort_name").html(data.row.sort_name);
+                }else {
+                    sort_id = null;
+                    $(".sort_name").html("");
+                    alert("分类不存在");
+                }
+             }.bind(this),
+             error: function(xhr, status, err) {
+             }.bind(this)
+            });
+         }
+        //  保存、
+         handleClick(e){
+             if(!sort_id){
+                 alert("请设置分类");
+                 return;
+             }
+             $.ajax({
+                     url: "/update_sort_id",
+                     dataType: 'json',
+                     type: 'POST',
+                     data: {"product_id":"{{product_id}}","sort_id":sort_id},
+                     success: function(data) {
+                         if (data.success) {
+                             alert("保存成功！");
+                         }else {
+                             alert("保存失败！");
+                         }
+                     }.bind(this),
+                     error: function(xhr, status, err) {
+                     }.bind(this)
+                 });
+         }
        render() {
          return (
              <div className="container-fluid">
-    			<div className="row-fluid">
-    				<div className="col-sm-2 kindOne">
-                        <div className="btn-group">
-                            <button className="btn btn_liOne btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span className="btn_liOne_span">一级分类</span><span className="caret"></span>
-                            </button>
-                            <ul className="dropdown-menu">
+            	<div className="row-fluid overflow">
+                    <div className="col-lg-6 col-sm-offset-3">
+                    <div className="input-group">
+                      <input type="text" className="form-control sort_id" placeholder="分类编号..." onBlur={this.handChange} />
 
-                            {this.state.sortitemsOne.map(item => (
-                                <li className="liOne" id={item.id} onClick={this.handleClick}>{item.sort_name}</li>))
-                            }
-                            </ul>
-                        </div>
-    				</div>
-                    <div className="col-sm-2 kindTwo">
-                        <div className="btn-group">
-                            <button className="btn btn_liTwo btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span className="btn_liTwo_span">二级分类</span> <span className="caret"></span>
-                            </button>
-                            <ul className="dropdown-menu">
-                            {this.state.sortitemsTwo.map(item => (
-                                <li className="liTwo" id={item.id} onClick={this.handleClick2}>{item.sort_name}</li>))
-                            }
-                            </ul>
-                        </div>
-    				</div>
-                    <div className="col-sm-2 kindThree">
-                        <div className="btn-group">
-                            <button className="btn btn_liThree btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span className="btn_liThree_span">三级分类</span><span className="caret"></span>
-                            </button>
-                            <ul className="dropdown-menu">
-                            {this.state.sortitemsThree.map(item => (
-                                <li className="liThree" id={item.id} onClick={this.handleClick3}>{item.sort_name}</li>))
-                            }
-                            </ul>
-                        </div>
-    				</div>
-    			</div>
+                    </div>
+                    <p className="margin_top20">分类名称 : <span className="sort_name"></span></p>
+                    </div>
+            	</div>
+                <div className="row-fluid overflow">
+                    <div className="col-lg-6 col-sm-offset-3 text_align_right">
+                      <button className="btn button_background2 button_white" type="button" onClick={this.handleClick}>保 存</button>
+                    </div>
+                </div>
             </div>
          );
        }

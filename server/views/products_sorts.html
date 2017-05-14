@@ -488,8 +488,8 @@
      class Td extends React.Component {
        render() {
            var id = this.props.item.id;
-           var href = "noob_sort";
-           var href1 = "product_view?product_id="+id;
+           var href = "noob_sort?product_id="+id;
+           var href1 = "master?product_id="+id;
            if(this.props.thitem.type=="operation"){
                return (
                 <td><span className="btn btn-primary btn-xs operate_announce"><a href={href}>菜鸟</a></span>
