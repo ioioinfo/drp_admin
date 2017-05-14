@@ -384,7 +384,6 @@
         //  取三级分类
         handleClick2(e){
             var id = e.target.id;
-            sort_id = id;
             $(".btn_liTwo .btn_liTwo_span").html($("#"+id).html());
             $.ajax({
             url: "/get_level_one",
@@ -401,6 +400,7 @@
 
         handleClick3(e){
             var id = e.target.id;
+            sort_id = id;
             $(".btn_liThree .btn_liThree_span").html($("#"+id).html());
         }
        render() {
