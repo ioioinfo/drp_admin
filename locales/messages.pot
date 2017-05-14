@@ -1,0 +1,11 @@
+#: system_controller
+msgid "Enter a comma separated list of user names."
+msgstr ""
+
+#: full_text_controller
+msgid "Unable to find user: @users"
+msgid_plural "Unable to find users: @users"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin_controller

@@ -1,14 +1,26 @@
+/**
+ ┌──────────────────────────────────────────────────────────────┐
+ │               ___ ___ ___ ___ ___ _  _ ___ ___               │
+ │              |_ _/ _ \_ _/ _ \_ _| \| | __/ _ \              │
+ │               | | (_) | | (_) | || .` | _| (_) |             │
+ │              |___\___/___\___/___|_|\_|_| \___/              │
+ │                                                              │
+ │                                                              │
+ │                       set up in 2015.2                       │
+ │                                                              │
+ │   committed to the intelligent transformation of the world   │
+ │                                                              │
+ └──────────────────────────────────────────────────────────────┘
+*/
+
 var Hapi = require('hapi');
-// Create a server with a host and port
 var server = new Hapi.Server();
 
-// Setup the server with a host and port
 server.connection({
     port: parseInt(process.env.PORT, 10) || 18000,
     host: '0.0.0.0'
 });
 
-// Setup the views engine and folder
 server.register(require('vision'), (err) => {
     if (err) {
         throw err;
@@ -37,16 +49,10 @@ server.state('cookie', {
     strictHeader: true // don't allow violations of RFC 6265
 });
 
-// Export the server to be required elsewhere.
 module.exports = server;
 
-/*
-    Load all plugins and then start the server.
-    First: community/npm plugins are loaded
-    Second: project specific plugins are loaded
- */
 server.register([
-	{
+    {
         register: require("good"),
         options: {
             ops: {interval: 5000},
@@ -56,34 +62,26 @@ server.register([
                 }, 'stdout']
             }
         }
-    },
-    {
-      register: require('./server/db/db_mysql.js')
-    },
-	{
-      register: require('./server/assets/index.js')
-    },
-	{
-		register: require('./server/utils/g.js'),
-		options: require('./view_globals.js')
-	},
-	{
-      register: require('./server/models/models.js')
-    },
-	{
-	  register: require('./server/controller/admin_controller.js')
-	},
-	{
-	  register: require('./server/controller/system_controller.js')
-    },
-	{
-	  register: require('./server/controller/full_text_controller.js')
-   },
-
+    }, {
+        register: require('./server/db/db_mysql.js')
+    }, {
+        register: require('./server/assets/index.js')
+    }, {
+        register: require('./server/utils/g.js'),
+        options: require('./view_globals.js')
+    }, {
+        register: require('./server/models/models.js')
+    }, {
+        register: require('./server/utils/i18n.js')
+    }, {
+        register: require('./server/controller/admin_controller.js')
+    }, {
+        register: require('./server/controller/system_controller.js')
+    }, {
+        register: require('./server/controller/full_text_controller.js')
+    }
 ], function () {
-    //Start the server
     server.start(function() {
-        //Log to the console the host and port info
         console.log('Server started at: ' + server.info.uri);
     });
 });
