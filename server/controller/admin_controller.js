@@ -654,6 +654,12 @@ exports.register = function(server, options, next){
 		console.log("url:"+url);
 		do_get_method(url,cb);
 	};
+	//商品名称模糊查询
+	var search_sort = function(id,cb){
+		var url = "http://211.149.248.241:18002/search_sort?id="+id;
+		console.log("url:"+url);
+		do_get_method(url,cb);
+	};
 	server.route([
 		//高手
 		{
@@ -685,6 +691,24 @@ exports.register = function(server, options, next){
 				}
 				product_name = encodeURI(product_name);
 				search_pos_product(product_name,function(err,rows){
+					if (!err) {
+						return reply({"success":true,"rows":rows.rows,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//分类查询
+		{
+			method: 'GET',
+			path: '/search_sort',
+			handler: function(request, reply){
+				var id = request.query.id;
+                if (!id) {
+					return reply({"success":false,"message":"id null","service_info":service_info});
+                }
+				search_sort(id,function(err,rows){
 					if (!err) {
 						return reply({"success":true,"rows":rows.rows,"service_info":service_info});
 					}else {
