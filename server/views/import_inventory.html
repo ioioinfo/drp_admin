@@ -80,18 +80,18 @@
 		,{name:'amount',title:'金额',sort:false}
 		,{name:'billing_date_text',title:'开票日期',sort:false}];
 
-      function getTableData(params,cb) {
-		 params.everyNum = 10;
-		 var allNum = 0;
-		 $.get("/invoice_list_data",{params:JSON.stringify(params)},function(data){
-			 if (data.success) {
-				 allNum = data.num;
-				 cb({tabthitems:tt,tabtritems:data.rows,allNum:allNum,everyNum:params.everyNum});
-			 }else {
-				 alert(data.message);
-			 }
-		 });
-	 };
+    //   function getTableData(params,cb) {
+	// 	 params.everyNum = 10;
+	// 	 var allNum = 0;
+	// 	 $.get("/invoice_list_data",{params:JSON.stringify(params)},function(data){
+	// 		 if (data.success) {
+	// 			 allNum = data.num;
+	// 			 cb({tabthitems:tt,tabtritems:data.rows,allNum:allNum,everyNum:params.everyNum});
+	// 		 }else {
+	// 			 alert(data.message);
+	// 		 }
+	// 	 });
+	//  };
 
 
 	</script>
