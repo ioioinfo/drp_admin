@@ -80,18 +80,16 @@
 		,{name:'amount',title:'金额',sort:false}
 		,{name:'billing_date_text',title:'开票日期',sort:false}];
 
-    //   function getTableData(params,cb) {
-	// 	 params.everyNum = 10;
-	// 	 var allNum = 0;
-	// 	 $.get("/invoice_list_data",{params:JSON.stringify(params)},function(data){
-	// 		 if (data.success) {
-	// 			 allNum = data.num;
-	// 			 cb({tabthitems:tt,tabtritems:data.rows,allNum:allNum,everyNum:params.everyNum});
-	// 		 }else {
-	// 			 alert(data.message);
-	// 		 }
-	// 	 });
-	//  };
+      function getTableData(params,cb) {
+		 params.everyNum = 10;
+		 var allNum = 0;
+		 $.get("/invoice_list_data",{params:JSON.stringify(params)},function(data){
+			 if (data.success) {
+				 allNum = data.num;
+				 cb({tabthitems:tt,tabtritems:data.rows,allNum:allNum,everyNum:params.everyNum});
+			 }
+		 });
+	 };
 
 
 	</script>
@@ -349,12 +347,26 @@
 
     //  导入功能
      class Import extends React.Component {
+        constructor(props) {
+           super(props);
+        }
+       componentDidMount(){
+            $('#fileupload').fileupload({
+                url: "/upload_product",
+                dataType: 'json',
+                done: function (e, data) {
+                    if (data.success) {
+                        alert("上传成功！");
+                    }
+                }
+            });
+       }
+
        render() {
          return (
            <div className="import_product">
                 <div className="row">
-                    <div className="col-md-2"><input type="file" multiple /></div>
-                    <div className="col-md-2 col-md-offset-1"><button className="button button-raised button-royal button-small">导入</button></div>
+                <div className="col-md-2"><input id="fileupload" type="file" name="file" multiple /></div>
                 </div>
            </div>
          );

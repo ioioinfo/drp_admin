@@ -287,7 +287,7 @@ exports.register = function(server, options, next){
 	};
 	//复杂的产品保存
 	var save_product_complex = function(data,cb){
-		var url = "http://211.149.248.241:18002/save_product_complex";
+		var url = "http://127.0.0.1:18002/save_product_complex";
 		do_post_method(url,data,cb);
 	}
 	//新增产品
@@ -304,6 +304,7 @@ exports.register = function(server, options, next){
 	var read_inventory_excel = function(path, reply) {
 		var workbook = XLSX.readFile(path);
 		var first_sheet_name = workbook.SheetNames[0];
+
 		var worksheet = workbook.Sheets[first_sheet_name];
 		var rows = [];
 		for (z in worksheet) {
@@ -321,7 +322,7 @@ exports.register = function(server, options, next){
 			}
 			row[c] = worksheet[z].v;
 		}
-		console.log(rows);
+		console.log("rows:"+rows);
 		var inventory = [];
 		for (var i = 0; i < rows.length; i++) {
 			var leng = rows.length;
@@ -1522,6 +1523,7 @@ exports.register = function(server, options, next){
 				handler:function (request, reply) {
 					var path = request.payload.file.path;
 					console.log('fileUpload path : ' + path);
+
 					read_inventory_excel(path, reply);
 				}
 			},
