@@ -1234,7 +1234,7 @@ exports.register = function(server, options, next){
 			handler: function(request, reply){
 				search_return_list(function(err,rows){
 					if (!err) {
-						return reply({"success":true,"rows":rows.rows});
+						return reply({"success":true,"rows":rows.rows,"products":rows.products});
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":rows.service_info});
 					}
