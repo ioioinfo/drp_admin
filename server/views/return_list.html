@@ -183,6 +183,7 @@
 		 var allNum = 0;
 		 $.get("/return_list_data",{params:JSON.stringify(params)},function(data){
 			 if (data.success) {
+                 
 				 allNum = data.num;
 				 cb({tabthitems:tt,tabtritems:data.rows,tabtritems1:data.products,allNum:allNum,everyNum:params.everyNum});
 			 }else {
