@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>商品分类 -- 统一备份平台</title>
+    <title>商品分类</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/button.css">
@@ -331,7 +331,7 @@
        }
        render() {
          return (
-           <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+           <div className="wrapRight wrapRight_form col-sm-12 col-md-12" id="wrapRight">
              <ol className="breadcrumb margin_top20"><li>商品</li><li>商品分类</li><li className="active">高手</li></ol>
              <SearchList loadData={this.loadData}/>
              <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={this.state.sort} onSort={this.handleSort} />

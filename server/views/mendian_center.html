@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>门店列表 -- 统一备份平台</title>
+    <title>门店列表</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/button.css">
@@ -279,7 +279,7 @@
        render() {
          console.log("a");
          return (
-           <div className="wrapRight col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+           <div className="wrapRight wrapRight_form col-sm-12 col-md-12" id="wrapRight">
             <div>
              <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={       this.state.sort} onSort={this.handleSort} />
              <Tab setPage={this.setPage} allNum={this.state.allNum} everyNum={this.state.everyNum} thisPage={this.state.thisPage} />
