@@ -1232,9 +1232,20 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/return_list_data',
 			handler: function(request, reply){
+				// var params = request.payload.params;
+				// if (!params) {
+				// 	return reply({"success":false,"message":"params wrong","service_info":service_info});
+				// }
 				search_return_list(function(err,rows){
 					if (!err) {
-						return reply({"success":true,"rows":rows.rows,"products":rows.products});
+						var orders = rows.rows;
+						var products = rows.products;
+						for (var i = 0; i < orders.length; i++) {
+							orders[i].product_name = products[orders[i].product_id].product_name;
+							orders[i].product_sale_price = products[orders[i].product_id].product_sale_price;
+							orders[i].img = products[orders[i].product_id].img.location;
+						}
+						return reply({"success":true,"rows":orders,"products":products});
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":rows.service_info});
 					}
