@@ -16,7 +16,8 @@
 module.exports = {
     entry: {
         index: './app/app.jsx',
-        products_sorts: './app/products_sorts.jsx'
+        products_sorts: './app/products_sorts.jsx',
+        products_center: './app/products_center.jsx'
     },
     output: {
         path: __dirname,

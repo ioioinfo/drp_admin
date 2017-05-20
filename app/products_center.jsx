@@ -16,14 +16,14 @@ class Wrap extends React.Component {
             <div className="wrap">
             <nav className="navbar navbar-inverse navbar-fixed-top">
             <div className="container-fluid">
-            <Logo />
-            <WrapRightHead />
+            <Logo/>
+            <WrapRightHead/>
             </div>
             </nav>
             <div className="container-fluid">
             <div className="row">
-            <Left />
-            <Right />
+            <Left/>
+            <Right/>
             </div>
             </div>
             <ChangePassword/>
@@ -39,6 +39,7 @@ class Right extends React.Component {
         this.setPage=this.setPage.bind(this);
         this.handleSort=this.handleSort.bind(this);
         this.loadData=this.loadData.bind(this);
+        this.refresh=this.refresh.bind(this);
         // 初始化一个空对象
         this.state = {tabthitems:[],tabtritems:[],allNum:0,everyNum:20,thisPage:1,sort:{name:"",dir:""}};
     }
@@ -60,12 +61,27 @@ class Right extends React.Component {
     handleSort(sort){
         this.loadData({sort:sort});
     }
+    refresh(id,status_name){
+        var tritems = this.state.tabtritems;
+        var st = "上架";
+        if (status_name == "上架") {
+            st = "下架";
+        }else if (status_name == "下架") {
+            st = "上架";
+        }
+        for(var i=0;i<tritems.length;i++){
+            if(id==tritems[i].id){
+                tritems[i].status_name=st;
+            }
+        }
+        this.setState({tabtritems:tritems});
+    }
     render() {
         return (
             <div className="wrapRight wrapRight_form col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-            <ol className="breadcrumb margin_top20"><li>商品</li><li className="active">商品分类</li></ol>
+            <ol className="breadcrumb margin_top20"><li>商品</li><li className="active">商品列表</li></ol>
             <SearchList loadData={this.loadData}/>
-            <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={this.state.sort} onSort={this.handleSort} checkTd={checkTd} />
+            <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={this.state.sort} onSort={this.handleSort} refresh={this.refresh} checkTd={checkTd} />
             <PageTab setPage={this.setPage} allNum={this.state.allNum} everyNum={this.state.everyNum} thisPage={this.state.thisPage} />
             </div>
         );
@@ -80,12 +96,13 @@ class SearchList extends React.Component {
     handleClick(e){
         var product_name = $(".product_name").val();
         var product_id = $(".product_id").val();
-
-        var params1 = {"product_name":product_name,"product_id":product_id};
+        var is_down = 0 ;
+        var params1 = {"product_name":product_name,"product_id":product_id,"is_down":is_down};
 
         this.props.loadData(params1);
 
     };
+
     render() {
         return (
             <div className="row search_margin_botton">
@@ -130,14 +147,71 @@ class SearchList extends React.Component {
 //判断特殊列
 var checkTd = function(defaultTd) {
     var id = this.props.item.id;
-    var href = "noob_sort?product_id="+id;
-    var href1 = "master?product_id="+id;
+    var href = "product_edit?product_id="+id;
+    var href1 = "product_view?product_id="+id;
     
+    //  点击下架
+    var product_down_click = function(e){
+        var  product_id = this.props.item.id;
+        $.ajax({
+            url: "/product_down",
+            dataType: 'json',
+            type: 'POST',
+            data: {"product_id":product_id},
+            success: function(data) {
+                if (data.success) {
+                    this.props.refresh(product_id,this.props.item.status_name);
+                    alert("保存成功！");
+                }else {
+                    alert("保存失败！");
+                }
+    
+            }.bind(this),
+            error: function(xhr, status, err) {
+            }.bind(this)
+        });
+    }.bind(this);
+    
+    // 点击上架
+    var product_up_click = function(e){
+        var  product_id = this.props.item.id;
+        $.ajax({
+            url: "/product_up",
+            dataType: 'json',
+            type: 'POST',
+            data: {"product_id":product_id},
+            success: function(data) {
+                if (data.success) {
+                    this.props.refresh(product_id,this.props.item.status_name);
+                    alert("保存成功！");
+                }else {
+                    alert("保存失败！");
+                }
+    
+            }.bind(this),
+            error: function(xhr, status, err) {
+            }.bind(this)
+        });
+    }.bind(this);
+   
     if(this.props.thitem.type=="operation"){
-        return (
-            <td><span className="btn btn-primary btn-xs operate_announce"><a href={href}>菜鸟</a></span>
-            <span className="btn btn-info btn-xs operate_announce"><a href={href1}>高手</a></span></td>
-        );
+        if(this.props.item.status_name=="上架"){
+            return (
+                <td>
+                <span className="btn btn-primary btn-xs operate_announce"><a href={href}>编辑</a></span>
+                <span className="btn btn-info btn-xs operate_announce"><a href={href1}>查看</a></span>
+                <span className="btn btn-info btn-xs operate_announce" onClick={product_down_click}><a>下架</a></span>
+                </td>
+            );
+        }else {
+            return (
+                <td>
+                <span className="btn btn-primary btn-xs operate_announce"><a href={href}>编辑</a></span>
+                <span className="btn btn-info btn-xs operate_announce"><a href={href1}>查看</a></span>
+                <span className="btn btn-info btn-xs operate_announce" onClick={product_up_click}><a>上架</a></span>
+                </td>
+            );
+        }
     }else {
         return defaultTd;
     }
