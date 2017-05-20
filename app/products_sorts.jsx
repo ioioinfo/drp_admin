@@ -61,9 +61,20 @@ class Right extends React.Component {
         this.loadData({sort:sort});
     }
     render() {
+        var breadcrumb = [];
+        breadcrumbs.map(function(item,idx) {
+            if (idx==breadcrumbs.length-1) {
+                breadcrumb.push(<li key={item} className="active">{item}</li>);
+            } else {
+                breadcrumb.push(<li key={item}>{item}</li>);
+            }
+        });
+        
         return (
             <div className="wrapRight wrapRight_form col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-            <ol className="breadcrumb margin_top20"><li>商品</li><li className="active">商品分类</li></ol>
+            <ol className="breadcrumb margin_top20">
+                {breadcrumb}
+            </ol>
             <SearchList loadData={this.loadData}/>
             <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={this.state.sort} onSort={this.handleSort} checkTd={checkTd} />
             <PageTab setPage={this.setPage} allNum={this.state.allNum} everyNum={this.state.everyNum} thisPage={this.state.thisPage} />
@@ -71,6 +82,7 @@ class Right extends React.Component {
         );
     }
 };
+
 //  搜索框
 class SearchList extends React.Component {
     constructor(props) {

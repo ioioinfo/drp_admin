@@ -23082,22 +23082,30 @@ var Right = function (_React$Component2) {
     }, {
         key: 'render',
         value: function render() {
+            var breadcrumb = [];
+            breadcrumbs.map(function (item, idx) {
+                if (idx == breadcrumbs.length - 1) {
+                    breadcrumb.push(React.createElement(
+                        'li',
+                        { key: item, className: 'active' },
+                        item
+                    ));
+                } else {
+                    breadcrumb.push(React.createElement(
+                        'li',
+                        { key: item },
+                        item
+                    ));
+                }
+            });
+
             return React.createElement(
                 'div',
                 { className: 'wrapRight wrapRight_form col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2' },
                 React.createElement(
                     'ol',
                     { className: 'breadcrumb margin_top20' },
-                    React.createElement(
-                        'li',
-                        null,
-                        '\u5546\u54C1'
-                    ),
-                    React.createElement(
-                        'li',
-                        { className: 'active' },
-                        '\u5546\u54C1\u5217\u8868'
-                    )
+                    breadcrumb
                 ),
                 React.createElement(SearchList, { loadData: this.loadData }),
                 React.createElement(Table, { tabthitems: this.state.tabthitems, tabtritems: this.state.tabtritems, sort: this.state.sort, onSort: this.handleSort, refresh: this.refresh, checkTd: checkTd }),
