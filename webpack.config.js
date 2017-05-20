@@ -14,10 +14,13 @@
 */
 
 module.exports = {
-    entry: './app/app.jsx',
+    entry: {
+        index: './app/app.jsx',
+        products_sorts: './app/products_sorts.jsx'
+    },
     output: {
         path: __dirname,
-        filename: './public/js/app/bundle.js'
+        filename: './public/js/app/[name].js'
     },
     resolve: {
         modules: [__dirname, '../node_modules','components'],
