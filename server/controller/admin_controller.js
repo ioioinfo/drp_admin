@@ -673,7 +673,162 @@ exports.register = function(server, options, next){
 		console.log("url:"+url);
 		do_get_method(url,cb);
 	};
+	//查询事件是否处理
+	var search_deal_event = function(data,cb){
+		var url = "http://211.149.248.241:18010/search_deal_event";
+		do_post_method(url,data,cb);
+	}
+	//保存事件
+	var save_event = function(data,cb){
+		var url = "http://211.149.248.241:18010/save_event";
+		do_post_method(url,data,cb);
+	}
+	//更新订单状态
+	var update_recharge_status = function(data,cb){
+		var url = "http://211.149.248.241:18010/update_recharge_status";
+		do_post_method(url,data,cb);
+	}
+	//查询充值订单
+	var get_recharge_order = function(order_id,cb){
+		var url = "http://127.0.0.1:18010/get_recharge_order?order_id="+order_id;
+		do_get_method(url,cb);
+	}
+	//发现vip
+	var get_person_vip = function(person_id,cb){
+		var url = "http://139.196.148.40:18666/vip/get_by_person_id?person_id=" + person_id + "&org_code=" + org_code;
+		do_get_method(url,cb);
+	};
+	//充值积分
+	var vip_add_amount_begin = function(data,cb){
+		var url = "http://139.196.148.40:18008/vip_add_amount_begin";
+		do_post_method(url,data,cb);
+	}
 	server.route([
+		//支付宝回调
+		{
+			method: 'POST',
+			path: '/receive_pay_notify',
+			handler: function(request, reply){
+				var success = request.payload.success;
+				var order_id = request.payload.order_id;
+				//实际保存
+				var info = {"id":order_id};
+				search_deal_event(info,function(err,rows){
+					if (!err) {
+						if (rows.row.length>0) {
+							//有处理的，保存当前事件
+							info.is_deal = 0;
+							save_event(info,function(err,content){
+								if (!err) {
+									return reply({"success":true,"message":"已经处理事件了"});
+								}else {
+									return reply({"success":false,"message":content.message,"service_info":service_info});
+								}
+							});
+						}else {
+							//没处理的更新订单状态，保存事件，传阿里云进去
+							var data = {"order_id":order_id,"order_status":1};
+							var boolean = order_id.indexOf("RC");
+							if (boolean==-1) {
+								//修改订单状态
+								update_order_status(data,function(err,content){
+									if (!err) {
+										//回调函数到支付宝接口
+										info.is_deal = 1;
+										save_event(info,function(err,content){
+											if (!err) {
+												get_order(order_id,function(err,row){
+													if (!err) {
+														var order = row.rows[0];
+														var info = {
+															"order_id" :order_id,
+															"logi_code" : order.type,
+															"org_code" : "ioio",
+															"to_province" : order.province,
+															"to_city" : order.city,
+															"to_district" : order.district,
+															"to_detail_address" : order.detail_address,
+															"linkname" : order.linkname,
+															"mobile" : order.mobile
+														};
+														logistics_order(info,function(err,content){
+															if (!err) {
+																return reply({"success":true,"message":"订单事件处理完,并生成运单"});
+															}else {
+																return reply({"success":false,"message":content.message,"service_info":service_info});
+															}
+														});
+													}else {
+														return reply({"success":false,"message":row.message,"service_info":service_info});
+													}
+												});
+											}else {
+												return reply({"success":false,"message":content.message,"service_info":service_info});
+											}
+										});
+									}else {
+										return reply({"success":false,"message":content.message,"service_info":service_info});
+									}
+								});
+							}else {
+								//修改订单状态
+								update_recharge_status(data,function(err,content){
+									if (!err) {
+										//回调函数到支付宝接口
+										info.is_deal = 1;
+										save_event(info,function(err,content){
+											if (!err) {
+												get_recharge_order(order_id,function(err,rows){
+													if (!err) {
+														var order = rows.rows[0];
+														get_person_vip(person_id,function(err,content){
+															if (!err) {
+																var vip = content.row;
+																var payment ={
+																	"sob_id":"ioio",
+																	"address":"上海宝山",
+																	"pay_amount":order.actual_price,
+																	"effect_amount":order.marketing_price,
+																	"operator":1,
+																	"main_role_name":vip.vip_name,
+																	"main_role_id":vip.vip_id,
+																	"pay_type":order.pay_way
+																};
+																vip_add_amount_begin(payment,function(err,content){
+																	if (!err) {
+																		//回调阿里接口
+																		return reply({"success":true,"message":"订单事件处理完"});
+																	}else {
+																		return reply({"success":false,"messsage":content.messsage});
+																	}
+																});
+															}else {
+																return reply({"success":false,"messsage":content.messsage});
+															}
+														});
+
+													}else {
+														return reply({"success":false,"message":rows.message,"service_info":service_info});
+													}
+												});
+
+											}else {
+												return reply({"success":false,"message":content.message,"service_info":service_info});
+											}
+										});
+									}else {
+										return reply({"success":false,"message":content.message,"service_info":service_info});
+									}
+								});
+							}
+						}
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+
+			}
+		},
 		//高手
 		{
 			method: 'GET',
