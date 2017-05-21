@@ -243,8 +243,8 @@ exports.register = function(server, options, next){
 		do_get_method(url,cb);
 	};
 	//退货列表
-	var search_return_list = function(cb){
-		var url = "http://211.149.248.241:18010/search_return_list";
+	var return_list = function(params,cb){
+		var url = "http://211.149.248.241:18010/return_list?params="+params;
 		do_get_method(url,cb);
 	};
 	// 商品信息
@@ -1232,9 +1232,20 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/return_list_data',
 			handler: function(request, reply){
-				search_return_list(function(err,rows){
+				var params = request.query.params;
+				if (!params) {
+					return reply({"success":false,"message":"params wrong","service_info":service_info});
+				}
+				return_list(params,function(err,rows){
 					if (!err) {
-						return reply({"success":true,"rows":rows.rows,"products":rows.products});
+						var orders = rows.rows;
+						var products = rows.products;
+						for (var i = 0; i < orders.length; i++) {
+							orders[i].product_name = products[orders[i].product_id].product_name;
+							orders[i].product_sale_price = products[orders[i].product_id].product_sale_price;
+							orders[i].img = products[orders[i].product_id].img.location;
+						}
+						return reply({"success":true,"rows":orders,"products":products,"num":rows.num});
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":rows.service_info});
 					}
