@@ -460,6 +460,28 @@
        }
      };
      class Td extends React.Component {
+         constructor(props) {
+             super(props);
+             this.handleClick=this.handleClick.bind(this);
+         }
+         handleClick(e){
+             $.ajax({
+                    url: "/commit_order",
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {"logistics_id":logistics_id},
+                    success: function(data) {
+                        if (data.success) {
+                            alert("提交成功！");
+                        }else {
+                            alert("提交失败！");
+                        }
+                    }.bind(this),
+                    error: function(xhr, status, err) {
+                    }.bind(this)
+                });
+
+         }
        render() {
            var order_id = this.props.item.order_id;
            var href = "mp_orderDetail_view?order_id="+order_id;
@@ -468,6 +490,7 @@
 
                <td>
                <span className="btn btn-primary btn-xs operate_announce"><a href={href}>查看</a></span>
+               <span className="btn btn-info btn-xs operate_announce" onClick={this.handleClick}>提交</span>
                </td>
                );
            }else {
