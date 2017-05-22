@@ -703,6 +703,11 @@ exports.register = function(server, options, next){
 		var url = "http://139.196.148.40:18008/vip_add_amount_begin";
 		do_post_method(url,data,cb);
 	}
+	//退单完成
+	var add_jifen = function(data,cb){
+		var url = "http://139.196.148.40:18003/vip/order_finish";
+		do_post_method(url,data,cb);
+	}
 	server.route([
 		//支付宝回调
 		{
@@ -740,6 +745,8 @@ exports.register = function(server, options, next){
 												get_order(order_id,function(err,row){
 													if (!err) {
 														var order = row.rows[0];
+														var person_id = order.person_id;
+														var amount = order.actual_price;
 														var info = {
 															"order_id" :order_id,
 															"logi_code" : order.type,
@@ -753,7 +760,30 @@ exports.register = function(server, options, next){
 														};
 														logistics_order(info,function(err,content){
 															if (!err) {
-																return reply({"success":true,"message":"订单事件处理完,并生成运单"});
+																get_person_vip(person_id,function(err,content){
+																	if (!err) {
+																		if (!content.row) {
+																			return reply({"success":true,"message":"订单事件处理完,并生成运单,但是没有vip_id"});
+																		}
+																		var vip = content.row;
+																		var infos = {
+																			"order_id":order_id,
+																			"vip_id":vip.vip_id,
+																			"order_desc":"001购物",
+																			"amount":amount,
+																			"platform_code":"ioio"
+																		};
+																		add_jifen(infos,function(err,content){
+																			if (!err) {
+																				return reply({"success":true,"message":"订单事件处理完,并生成运单"});
+																			}else {
+																				reply({"success":false,"message":content.message,"service_info":content.service_info});
+																			}
+																		});
+																	}else {
+																		reply({"success":false,"message":content.message,"service_info":content.service_info});
+																	}
+																});
 															}else {
 																return reply({"success":false,"message":content.message,"service_info":service_info});
 															}
@@ -781,6 +811,7 @@ exports.register = function(server, options, next){
 												get_recharge_order(order_id,function(err,rows){
 													if (!err) {
 														var order = rows.rows[0];
+														var person_id = order.person_id;
 														get_person_vip(person_id,function(err,content){
 															if (!err) {
 																var vip = content.row;
