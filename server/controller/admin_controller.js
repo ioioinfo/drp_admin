@@ -294,7 +294,7 @@ exports.register = function(server, options, next){
 	}
 	//保存库存接口
 	var save_product_inventory = function(data,cb){
-		var url = "http://211.149.248.241:18002/save_product_inventory";
+		var url = "http://127.0.0.1:18002/save_product_inventory";
 		do_post_method(url,data,cb);
 	}
 	//读取，保存库存
