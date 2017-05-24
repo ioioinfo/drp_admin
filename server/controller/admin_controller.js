@@ -40,7 +40,6 @@ var do_get_method = function(url,cb){
 //所有post调用接口方法
 var do_post_method = function(url,data,cb){
 	uu_request.request(url, data, function(err, response, body) {
-		console.log(body);
 		if (!err && response.statusCode === 200) {
 			do_result(false, body, cb);
 		} else {
@@ -101,7 +100,6 @@ exports.register = function(server, options, next){
 					}
 					row[c] = worksheet[z].v;
 				}
-				console.log(rows);
 
 				var remark = rows[0]["1"];
 				var purchased_person =  rows[1]["1"];
@@ -171,7 +169,6 @@ exports.register = function(server, options, next){
 	};
 	//获取所有订单数量
 	var get_all_num = function(params,cb){
-		console.log("order_id:"+params.order_id);
 		var url = "http://211.149.248.241:18010/get_all_num?params="+encodeURI(params);
 		do_get_method(url,cb);
 	};
@@ -287,7 +284,7 @@ exports.register = function(server, options, next){
 	};
 	//复杂的产品保存
 	var save_product_complex = function(data,cb){
-		var url = "http://127.0.0.1:18002/save_product_complex";
+		var url = "http://211.149.248.241:18002/save_product_complex";
 		do_post_method(url,data,cb);
 	}
 	//新增产品
@@ -322,7 +319,6 @@ exports.register = function(server, options, next){
 			}
 			row[c] = worksheet[z].v;
 		}
-		console.log("rows:"+rows);
 		var inventory = [];
 		for (var i = 0; i < rows.length; i++) {
 			var leng = rows.length;
@@ -335,18 +331,24 @@ exports.register = function(server, options, next){
 				}else if (rows[i]["0"] != "货号") {
 					return reply({"success":false,"message":rows[i]["0"]+": form wrong"});
 				}else if (rows[i]["15"] != "尺寸/尺码") {
-					return reply({"success":false,"message":rows[i]["0"]+": form wrong"});
+					return reply({"success":false,"message":rows[i]["15"]+": form wrong"});
+				}else if (rows[i]["17"] != "地址") {
+					return reply({"success":false,"message":rows[i]["17"]+": form wrong"});
+				}else if (rows[i]["18"] != "库位") {
+					return reply({"success":false,"message":rows[i]["18"]+": form wrong"});
 				}
 			}
 			if (i>0) {
 				var quantity = rows[i]["16"];
 				var product_id = rows[i]["0"];
 				var size_name = rows[i]["15"];
-				var data = {"quantity":quantity,"product_id":product_id,"size_name":size_name};
+				var address = rows[i]["17"];
+				var stock_location = rows[i]["18"];
+				var data = {"quantity":quantity,"product_id":product_id,"size_name":size_name,"address":address,"stock_location":stock_location};
 				inventory.push(data);
 			}
 			for (var i = 0; i < inventory.length; i++) {
-				if (!inventory[i].product_id || !inventory[i].quantity) {
+				if (!inventory[i].product_id || !inventory[i].quantity || !inventory[i].address || !inventory[i].stock_location) {
 					return reply({"success":false,"message":"第"+(i+2)+"行"+" params null!!"});
 				}
 				var re = /^[0-9]*$/;
@@ -386,7 +388,6 @@ exports.register = function(server, options, next){
 			}
 			row[c] = worksheet[z].v;
 		}
-		console.log(rows);
 		var products = [];
 		for (var i = 0; i < rows.length; i++) {
 			//长度
@@ -404,7 +405,7 @@ exports.register = function(server, options, next){
 				}else if (rows[i]["3"] != "原价") {
 					return reply({"success":false,"message":rows[i]["3"]+": form wrong"});
 				}else if (rows[i]["4"] != "分类编号") {
-					return reply({"success":false,"message":rows[i]["4"]+": form wrong"});
+					// return reply({"success":false,"message":rows[i]["4"]+": form wrong"});
 				}else if (rows[i]["5"] != "品牌") {
 					return reply({"success":false,"message":rows[i]["5"]+": form wrong"});
 				}else if (rows[i]["6"] != "描述") {
@@ -474,7 +475,7 @@ exports.register = function(server, options, next){
 		}
 		for (var i = 0; i < products.length; i++) {
 			var product = products[i];
-			if (!product.product_id || !product.product_name || !product.product_sale_price || !product.sort_id || !product.barcode || !product.product_marketing_price) {
+			if (!product.product_id || !product.product_name || !product.product_sale_price || !product.barcode || !product.product_marketing_price) {
 				return reply({"success":false,"message":"第"+(i+2)+"行"+" params null!!"});
 			}
 			var re = /^[0-9]+(.[0-9]{0,2})?$/;
@@ -487,8 +488,6 @@ exports.register = function(server, options, next){
 			// }
 		}
 		var data = {"products":JSON.stringify(products)};
-		console.log("products:"+JSON.stringify(products));
-		// return reply({"success":true,"msc":JSON.stringify(products)});
 		save_product_complex(data,function(err,result){
 			if (!err) {
 				return reply({"success":true,"message":"ok","success_num":result.success_num,"repeat_num":result.repeat_num,"fail_num":result.fail_num,"repeat_products":result.repeat_products,"save_fail":result.save_fail});
@@ -555,7 +554,7 @@ exports.register = function(server, options, next){
 	};
 	//开票信息
 	var get_invoice_info = function(person_id,order_ids,cb){
-		var url = "http://127.0.0.1:18010/search_ec_invoices?order_id=";
+		var url = "http://211.149.248.241:18010/search_ec_invoices?order_id=";
 		url = url + order_ids + "&person_id=" + person_id;
 		do_get_method(url,cb);
 	};
@@ -658,19 +657,16 @@ exports.register = function(server, options, next){
 	//商品名称模糊查询
 	var search_pos_product = function(product_name,cb){
 		var url = "http://211.149.248.241:18002/search_pos_product?product_name="+product_name;
-		console.log("url:"+url);
 		do_get_method(url,cb);
 	};
 	//商品名称模糊查询
 	var search_sort = function(id,cb){
 		var url = "http://211.149.248.241:18002/search_sort?id="+id;
-		console.log("url:"+url);
 		do_get_method(url,cb);
 	};
 	//商品名称模糊查询
 	var search_sorts = function(ids,cb){
 		var url = "http://211.149.248.241:18002/search_sorts?sort_ids="+ids;
-		console.log("url:"+url);
 		do_get_method(url,cb);
 	};
 	//查询事件是否处理
@@ -690,7 +686,7 @@ exports.register = function(server, options, next){
 	}
 	//查询充值订单
 	var get_recharge_order = function(order_id,cb){
-		var url = "http://127.0.0.1:18010/get_recharge_order?order_id="+order_id;
+		var url = "http://211.149.248.241:18010/get_recharge_order?order_id="+order_id;
 		do_get_method(url,cb);
 	}
 	//发现vip
@@ -925,7 +921,6 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/get_level_one',
 			handler: function(request, reply){
-				console.log("id:"+request.query.id);
 				var parent = 0;
                 if (request.query.id) {
                     parent = request.query.id;
@@ -1719,7 +1714,6 @@ exports.register = function(server, options, next){
 				},
 				handler:function (request, reply) {
 					var path = request.payload.file.path;
-					console.log('fileUpload path : ' + path);
 
 					read_inventory_excel(path, reply);
 				}
@@ -2043,7 +2037,6 @@ exports.register = function(server, options, next){
 				},
 				handler:function (request, reply) {
 					var path = request.payload.file.path;
-					console.log('fileUpload path : ' + path);
 					read_product_excel(path, reply);
 				}
 			},
@@ -2093,7 +2086,6 @@ exports.register = function(server, options, next){
 					if (!err) {
 						ep.emit("pictures", rows.rows);
 					}else {
-						console.log(rows.message);
 						ep.emit("pictures", []);
 					}
 				});
@@ -2102,7 +2094,6 @@ exports.register = function(server, options, next){
 					if (!err) {
 						ep.emit("properties", row.properties);
 					}else {
-						console.log(rows.message);
 						ep.emit("properties", []);
 					}
 				});
@@ -2382,7 +2373,6 @@ exports.register = function(server, options, next){
 				search_order_info(order_id,function(err,row){
 					if (!err) {
 						if (row.success) {
-							console.log("row:"+JSON.stringify(row));
 							var orders = [];
 							orders.push(row.order);
 							return reply({"success":true,"row":orders,"service_info":service_info});
@@ -2449,7 +2439,6 @@ exports.register = function(server, options, next){
 	            },
 	            handler:function (request, reply) {
 					var path = request.payload.file.path;
-					console.log('fileUpload path : ' + path);
 					read_purchase_excel(path, reply);
 	            }
 			},
@@ -2468,7 +2457,6 @@ exports.register = function(server, options, next){
 						return reply({"success":true,"order":order,"order_details":order_details,"pay_infos":pay_infos,"service_info":service_info});
 				});
 				search_order_products(order_id, function(err,row){
-					console.log("row:"+JSON.stringify(row));
 					if (!err) {
 						if (row.success) {
 							var order_details = row.order_details;
@@ -2497,7 +2485,6 @@ exports.register = function(server, options, next){
 					if (!err) {
 						if (row.success) {
 							var pay_infos = row.rows;
-							console.log("pay_infos"+pay_infos);
 							ep.emit("pay_infos", pay_infos);
 						}else {
 							ep.emit("pay_infos", null);
@@ -2610,7 +2597,6 @@ exports.register = function(server, options, next){
 				get_orders_byDate(date1,date2,function(err,rows){
 					if (!err) {
 						if (rows.success) {
-							console.log("rows:"+JSON.stringify(rows));
 							return reply({"success":true,"rows":rows.rows,"service_info":service_info});
 						}else {
 						}
