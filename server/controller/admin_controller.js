@@ -694,6 +694,11 @@ exports.register = function(server, options, next){
 		var url = "http://139.196.148.40:18666/vip/get_by_person_id?person_id=" + person_id + "&org_code=" + org_code;
 		do_get_method(url,cb);
 	};
+	//变异订单
+	var get_poor_orders = function(cb){
+		var url = "http://211.149.248.241:18010/get_poor_orders";
+		do_get_method(url,cb);
+	};
 	//充值积分
 	var vip_add_amount_begin = function(data,cb){
 		var url = "http://139.196.148.40:18008/vip_add_amount_begin";
@@ -705,6 +710,28 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	}
 	server.route([
+		//变异订单
+		{
+			method: 'GET',
+			path: '/poor_orders',
+			handler: function(request, reply){
+				return reply.view("poor_orders");
+			}
+		},
+		//变异订单数据
+		{
+			method: 'GET',
+			path: '/get_poor_orders',
+			handler: function(request, reply){
+				get_poor_orders(function(err,rows){
+					if (!err) {
+						return reply({"success":true,"rows":rows.rows});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
 		//支付宝回调
 		{
 			method: 'POST',
