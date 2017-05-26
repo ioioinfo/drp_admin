@@ -322,9 +322,9 @@ exports.register = function(server, options, next){
 		var inventory = [];
 		for (var i = 0; i < rows.length; i++) {
 			var leng = rows.length;
-			if(leng >101){
-				return reply({"success":false,"message":"over 100"});
-			};
+			// if(leng >101){
+			// 	return reply({"success":false,"message":"over 100"});
+			// };
 			if (i == 0) {
 				if (rows[i]["16"] != "数量（实际）") {
 					return reply({"success":false,"message":rows[i]["16"]+": form wrong"});
