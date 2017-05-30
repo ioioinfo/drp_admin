@@ -294,7 +294,7 @@ exports.register = function(server, options, next){
 	}
 	//保存库存接口
 	var save_product_inventory = function(data,cb){
-		var url = "http://127.0.0.1:18002/save_product_inventory";
+		var url = "http://211.149.248.241:18002/save_product_inventory";
 		do_post_method(url,data,cb);
 	}
 	//读取，保存库存
@@ -392,9 +392,9 @@ exports.register = function(server, options, next){
 		for (var i = 0; i < rows.length; i++) {
 			//长度
 			var leng = rows.length;
-			if(leng >101){
-				return reply({"success":false,"message":"over 100"});
-			};
+			// if(leng >101){
+			// 	return reply({"success":false,"message":"over 100"});
+			// };
 			if (i==0) {
 				if (rows[i]["0"] != "货号") {
 					return reply({"success":false,"message":rows[i]["0"]+": form wrong"});
