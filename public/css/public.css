@@ -215,7 +215,11 @@ tr td:last-child{
 .font_size12{
     font-size: 12px;
 }
-..overflow-x{
+.font_size12 .line-height{
+    height: 35px;
+    line-height: 35px;
+}
+.overflow-x{
     overflow-x: auto;
 }
 

@@ -314,10 +314,13 @@
                                     <div className="col-sm-12">商品ID : {item.product_id}</div>
                                 </div>
                                 <div className="margin_bottom overflow font_size12">
-                                    <div className="col-sm-3">数量 : {item.number}</div>
-                                    <div className="col-sm-3">市场价 : {item.marketing_price}</div>
-                                    <div className="col-sm-3">销售价 : {item.price}</div>
-                                    <div className="col-sm-3">总价 : {item.total_price}</div>
+                                    <div className="col-sm-3 line-height">数量 : {item.number}</div>
+                                    <div className="col-sm-3 line-height">重量 : {this.state.product[item.product_id].weight}kg</div>
+                                    <div className="col-sm-3 line-height">市场价 : {item.marketing_price}</div>
+                                    <div className="col-sm-3 line-height">销售价 : {item.price}</div>
+                                    <div className="col-sm-3 line-height">总价 : {item.total_price}</div>
+                                    <div className="col-sm-3 line-height">快递公司 : {this.state.order.type}</div>
+                                    <div className="col-sm-3 line-height">快递费 : {this.state.order.logistics_price}</div>
                                 </div>
                             </div>
                         </div>
@@ -335,6 +338,10 @@
                         <div className="margin_bottom overflow">
                             <div className="col-sm-3">地址</div>
                             <div className="col-sm-9 border_style">{this.state.order.province}{this.state.order.city}{this.state.order.detail_address}</div>
+                        </div>
+                        <div className="margin_bottom overflow">
+                            <div className="col-sm-3">下单时间</div>
+                            <div className="col-sm-9 border_style">{this.state.order.created_at}</div>
                         </div>
                  </div>
                 </div>
