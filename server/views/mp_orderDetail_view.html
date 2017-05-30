@@ -318,9 +318,9 @@
                                     <div className="col-sm-3 line-height">重量 : {this.state.product[item.product_id].weight}kg</div>
                                     <div className="col-sm-3 line-height">市场价 : {item.marketing_price}</div>
                                     <div className="col-sm-3 line-height">销售价 : {item.price}</div>
-                                    <div className="col-sm-3 line-height">总价 : {item.total_price}</div>
-                                    <div className="col-sm-3 line-height">快递公司 : {this.state.order.type}</div>
-                                    <div className="col-sm-3 line-height">快递费 : {this.state.order.logistics_price}</div>
+
+
+
                                 </div>
                             </div>
                         </div>
@@ -328,22 +328,35 @@
                     </div>
                  <div className="col-sm-4">
                         <div className="margin_bottom overflow">
-                            <div className="col-sm-3">姓名</div>
-                            <div className="col-sm-9 border_style">{this.state.order.linkname}</div>
+                            <div className="col-sm-4">姓名</div>
+                            <div className="col-sm-8 border_style">{this.state.order.linkname}</div>
                         </div>
                         <div className="margin_bottom overflow">
-                            <div className="col-sm-3">手机</div>
-                            <div className="col-sm-9 border_style">{this.state.order.mobile}</div>
+                            <div className="col-sm-4">手机</div>
+                            <div className="col-sm-8 border_style">{this.state.order.mobile}</div>
                         </div>
                         <div className="margin_bottom overflow">
-                            <div className="col-sm-3">地址</div>
-                            <div className="col-sm-9 border_style">{this.state.order.province}{this.state.order.city}{this.state.order.detail_address}</div>
+                            <div className="col-sm-4">地址</div>
+                            <div className="col-sm-8 border_style">{this.state.order.province}{this.state.order.city}{this.state.order.detail_address}</div>
                         </div>
                         <div className="margin_bottom overflow">
-                            <div className="col-sm-3">下单时间</div>
-                            <div className="col-sm-9 border_style">{this.state.order.created_at}</div>
+                            <div className="col-sm-4">下单时间</div>
+                            <div className="col-sm-8 border_style">{this.state.order.created_at}</div>
+                        </div>
+                        <div className="margin_bottom overflow">
+                            <div className="col-sm-4">总价</div>
+                            <div className="col-sm-8 border_style">{this.state.order.gain_point}</div>
+                        </div>
+                        <div className="margin_bottom overflow">
+                            <div className="col-sm-4">快递公司</div>
+                            <div className="col-sm-8 border_style">{this.state.order.type}</div>
+                        </div>
+                        <div className="margin_bottom overflow">
+                            <div className="col-sm-4">快递费</div>
+                            <div className="col-sm-8 border_style">{this.state.order.logistics_price}</div>
                         </div>
                  </div>
+
                 </div>
             </div>
          );
