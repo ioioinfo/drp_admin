@@ -720,6 +720,14 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	};
 	server.route([
+		//登入页面
+		{
+			method: 'GET',
+			path: '/login_page',
+			handler: function(request, reply){
+				return reply.view("login_page");
+			}
+		},
 		//查询描述
 		{
 			method: 'GET',
