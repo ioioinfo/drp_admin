@@ -709,7 +709,63 @@ exports.register = function(server, options, next){
 		var url = "http://139.196.148.40:18003/vip/order_finish";
 		do_post_method(url,data,cb);
 	}
+	//查询描述
+	var search_descriptions = function(product_id,cb){
+		var url = "http://211.149.248.241:18002/search_descriptions?product_id="+product_id;
+		do_get_method(url,cb);
+	};
+	//查询更新
+	var update_product_description = function(data,cb){
+		var url = "http://211.149.248.241:18002/update_product_description";
+		do_post_method(url,data,cb);
+	};
 	server.route([
+		//查询描述
+		{
+			method: 'GET',
+			path: '/search_descriptions',
+			handler: function(request, reply){
+				var product_id = request.query.product_id;
+				if (!product_id) {
+					return reply({"success":false,"message":"param null"});
+				}
+				search_descriptions(product_id,function(err,row){
+					if (!err) {
+						return reply({"success":true,"row":row.row,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//更新描述
+		{
+			method: 'POST',
+			path: '/update_product_description',
+			handler: function(request, reply){
+				var product_id = request.payload.product_id;
+				var description = request.payload.description;
+				if (!product_id || !description) {
+					return reply({"success":false,"message":"param null"});
+				}
+				var data = {"product_id":product_id,"description":description};
+				update_product_description(data,function(err,row){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//变异订单
+		{
+			method: 'GET',
+			path: '/inventory_search',
+			handler: function(request, reply){
+				return reply.view("inventory_search");
+			}
+		},
 		//变异订单
 		{
 			method: 'GET',
