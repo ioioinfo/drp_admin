@@ -585,7 +585,7 @@
                    imgs.push("images/"+images[i]);
                }
                return (<td>{imgs.map(img => (
-                   <a href={img} target="_blank"><img className="loading" src="images/load.png" data-src={img} alt="" /></a>))
+                   <a href={img} target="_blank"><img className="loading" src="images/load.gif" data-src={img} alt="" /></a>))
                }</td>);
            }else if (this.props.thitem.type=="operate") {
                if(this.props.item.state_text=="已发布"){
