@@ -22653,7 +22653,7 @@ var Table = function (_React$Component) {
                             "tbody",
                             null,
                             this.props.tabtritems.map(function (item) {
-                                return React.createElement(Tr, { key: item.id, item: item, tabthitems: _this2.props.tabthitems, checkTd: _this2.props.checkTd });
+                                return React.createElement(Tr, { key: item.id, item: item, tabthitems: _this2.props.tabthitems, refresh: _this2.props.refresh, checkTd: _this2.props.checkTd });
                             })
                         )
                     )
@@ -22689,7 +22689,7 @@ var Tr = function (_React$Component2) {
                 "tr",
                 null,
                 this.props.tabthitems.map(function (item) {
-                    return React.createElement(Td, { key: item.name, item: _this4.props.item, thitem: item, checkTd: _this4.props.checkTd });
+                    return React.createElement(Td, { key: item.name, item: _this4.props.item, thitem: item, refresh: _this4.props.refresh, checkTd: _this4.props.checkTd });
                 })
             );
         }

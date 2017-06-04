@@ -85,7 +85,7 @@ class Right extends React.Component {
                 breadcrumb.push(<li key={item}>{item}</li>);
             }
         });
-        
+
         return (
             <div className="wrapRight wrapRight_form col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
             <ol className="breadcrumb margin_top20">
@@ -160,7 +160,7 @@ var checkTd = function(defaultTd) {
     var id = this.props.item.id;
     var href = "product_edit?product_id="+id;
     var href1 = "product_view?product_id="+id;
-    
+
     //  点击下架
     var product_down_click = function(e){
         var  product_id = this.props.item.id;
@@ -172,17 +172,15 @@ var checkTd = function(defaultTd) {
             success: function(data) {
                 if (data.success) {
                     this.props.refresh(product_id,this.props.item.status_name);
-                    alert("保存成功！");
                 }else {
-                    alert("保存失败！");
                 }
-    
+
             }.bind(this),
             error: function(xhr, status, err) {
             }.bind(this)
         });
     }.bind(this);
-    
+
     // 点击上架
     var product_up_click = function(e){
         var  product_id = this.props.item.id;
@@ -194,17 +192,15 @@ var checkTd = function(defaultTd) {
             success: function(data) {
                 if (data.success) {
                     this.props.refresh(product_id,this.props.item.status_name);
-                    alert("保存成功！");
                 }else {
-                    alert("保存失败！");
                 }
-    
+
             }.bind(this),
             error: function(xhr, status, err) {
             }.bind(this)
         });
     }.bind(this);
-   
+
     if(this.props.thitem.type=="operation"){
         if(this.props.item.status_name=="上架"){
             return (

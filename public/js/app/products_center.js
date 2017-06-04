@@ -22653,7 +22653,7 @@ var Table = function (_React$Component) {
                             "tbody",
                             null,
                             this.props.tabtritems.map(function (item) {
-                                return React.createElement(Tr, { key: item.id, item: item, tabthitems: _this2.props.tabthitems, checkTd: _this2.props.checkTd });
+                                return React.createElement(Tr, { key: item.id, item: item, tabthitems: _this2.props.tabthitems, refresh: _this2.props.refresh, checkTd: _this2.props.checkTd });
                             })
                         )
                     )
@@ -22689,7 +22689,7 @@ var Tr = function (_React$Component2) {
                 "tr",
                 null,
                 this.props.tabthitems.map(function (item) {
-                    return React.createElement(Td, { key: item.name, item: _this4.props.item, thitem: item, checkTd: _this4.props.checkTd });
+                    return React.createElement(Td, { key: item.name, item: _this4.props.item, thitem: item, refresh: _this4.props.refresh, checkTd: _this4.props.checkTd });
                 })
             );
         }
@@ -23230,10 +23230,7 @@ var checkTd = function checkTd(defaultTd) {
             success: function (data) {
                 if (data.success) {
                     this.props.refresh(product_id, this.props.item.status_name);
-                    alert("保存成功！");
-                } else {
-                    alert("保存失败！");
-                }
+                } else {}
             }.bind(this),
             error: function (xhr, status, err) {}.bind(this)
         });
@@ -23250,10 +23247,7 @@ var checkTd = function checkTd(defaultTd) {
             success: function (data) {
                 if (data.success) {
                     this.props.refresh(product_id, this.props.item.status_name);
-                    alert("保存成功！");
-                } else {
-                    alert("保存失败！");
-                }
+                } else {}
             }.bind(this),
             error: function (xhr, status, err) {}.bind(this)
         });

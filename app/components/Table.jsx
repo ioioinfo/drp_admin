@@ -16,7 +16,7 @@ class Table extends React.Component {
             </thead>
             <tbody>
             {this.props.tabtritems.map(item => (
-                <Tr key={item.id} item={item} tabthitems={this.props.tabthitems} checkTd={this.props.checkTd} />))
+                <Tr key={item.id} item={item} tabthitems={this.props.tabthitems} refresh={this.props.refresh} checkTd={this.props.checkTd} />))
             }
             </tbody>
             </table>
@@ -37,7 +37,7 @@ class Tr extends React.Component {
         return (
             <tr>
             {this.props.tabthitems.map(item => (
-                <Td key={item.name} item={this.props.item} thitem={item} checkTd={this.props.checkTd} />))
+                <Td key={item.name} item={this.props.item} thitem={item} refresh={this.props.refresh} checkTd={this.props.checkTd} />))
             }
             </tr>
         );
@@ -94,7 +94,7 @@ class Td extends React.Component {
     render() {
         var defaultTd = (<td>{this.props.item[this.props.thitem.name]}</td>);
         var checkTd = this.props.checkTd;
-        
+
         if (checkTd) {
             checkTd = checkTd.bind(this);
             return checkTd(defaultTd);
