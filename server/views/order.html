@@ -315,14 +315,13 @@
            super(props);
            this.handleClick = this.handleClick.bind(this);
        }
-       handleClick(e){
-           var order_id = $(".order_id").val();
-           var status_name = $(".status_name").val();
-           var params1 = {"order_id":order_id,"status_name":status_name};
+        handleClick(e){
+            var order_id = $(".order_id").val();
+            var status_name = $(".status_name").val();
+            var params1 = {"thisPage":1,"order_id":order_id,"status_name":status_name};
 
-             this.props.loadData(params1);
-
-       };
+            this.props.loadData(params1);
+        };
       render() {
           return (
               <div className="row search_margin_botton">
