@@ -728,6 +728,14 @@ exports.register = function(server, options, next){
 				return reply.view("login_page");
 			}
 		},
+		//产品描述
+		{
+			method: 'GET',
+			path: '/product_description',
+			handler: function(request, reply){
+				return reply.view("product_description");
+			}
+		},
 		//查询描述
 		{
 			method: 'GET',
