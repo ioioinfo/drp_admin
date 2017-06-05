@@ -301,9 +301,7 @@
                   <li className="active">编辑</li>
                 </ol>
                 <WrapRight/>
-        		<div className="span12 text_align_right">
-                  <button className="btn button_background2 button_white" type="button">保 存</button>
-        		</div>
+
             </div>
          );
       }
@@ -358,7 +356,7 @@
             		</div>
             	</div>
                 <hr/>
-                <div className="row-fluid">
+                <div className="row-fluid overflow">
                     <h5 className="font_color_h5">商品属性</h5>
                     <div className="col-sm-6 margin_bottom">
                         <div className="col-sm-3">编号</div>
@@ -395,6 +393,9 @@
                         <input type={this.state.product.time_to_market} className="col-sm-9 border_style" />
                     </div>
                 </div>
+                <div className="span12 text_align_right">
+                  <button className="btn button_background2 button_white" type="button">保 存</button>
+        		</div>
             </div>
          );
        }
