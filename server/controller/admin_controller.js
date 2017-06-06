@@ -2699,16 +2699,20 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/get_orders_byDate',
 			handler: function(request, reply){
-				var date1 = request.query.date1;
-				var date2 = request.query.date2;
+				var date = new Date();
+				var date1 = date.toLocaleDateString();
+				var date2 = date1 +" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
 				get_orders_byDate(date1,date2,function(err,rows){
 					if (!err) {
-						if (rows.success) {
-							return reply({"success":true,"rows":rows.rows,"service_info":service_info});
-						}else {
+						var order_num = rows.rows.length;
+						var total_products =  rows.prducts_num;
+						var total_sales = 0;
+						for (var i = 0; i < rows.rows.length; i++) {
+							total_sales = total_sales + rows.rows[i].actual_price;
 						}
+						return reply({"success":true,"time":date2,"order_num":order_num,"total_sales":total_sales,"total_products":total_products,"service_info":service_info});
 					}else {
-
+						return reply({"success":true,"rows":rows.message,"service_info":service_info});
 					}
 				});
 			}
