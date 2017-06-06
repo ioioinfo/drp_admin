@@ -720,6 +720,14 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	};
 	server.route([
+		//统计页面
+		{
+			method: 'GET',
+			path: '/statistics',
+			handler: function(request, reply){
+				return reply.view("statistics");
+			}
+		},
 		//登入页面
 		{
 			method: 'GET',
