@@ -23,7 +23,8 @@ var pos_order_status = {
 	"1":"未付款",
 	"2":"付款确认中",
 	"3":"付款完成",
-	"4":"交易完成"
+	"4":"交易完成",
+	"5":"交易作废"
 };
 
 var do_get_method = function(url,cb){
