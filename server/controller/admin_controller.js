@@ -748,6 +748,11 @@ exports.register = function(server, options, next){
 		data.platform_code = "drp_admin";
 		do_post_method(url,data,cb);
 	};
+	//更新商品信息
+	var update_product_info = function(data, cb){
+		var url = "http://211.149.248.241:18002/update_product_info";
+		do_post_method(url,data,cb);
+	};
 	server.route([
 		//产品编辑
 		{
