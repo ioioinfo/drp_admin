@@ -2705,6 +2705,9 @@ exports.register = function(server, options, next){
 				var date2 = date1 +" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
 				get_orders_byDate(date1,date2,function(err,rows){
 					if (!err) {
+						if (rows.rows.length == 0) {
+							return reply({"success":true,"time":date2,"order_num":0,"total_sales":0,"total_products":0,"service_info":service_info});
+						}
 						var order_num = rows.rows.length;
 						var total_products =  rows.prducts_num;
 						var total_sales = 0;
