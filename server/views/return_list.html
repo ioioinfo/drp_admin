@@ -183,7 +183,7 @@
 		 var allNum = 0;
 		 $.get("/return_list_data",{params:JSON.stringify(params)},function(data){
 			 if (data.success) {
-                 
+
 				 allNum = data.num;
 				 cb({tabthitems:tt,tabtritems:data.rows,tabtritems1:data.products,allNum:allNum,everyNum:params.everyNum});
 			 }else {
@@ -534,6 +534,8 @@
      };
      class Td extends React.Component {
        render() {
+           var id = this.props.item.id;
+           var href = "return_view?id="+id;
            if(this.props.thitem.type=="image"){
                var images = this.props.item[this.props.thitem.name];
                return (
@@ -541,7 +543,7 @@
                );
            }else if (this.props.thitem.type=="operate") {
                    return (
-                   <td><a href="edit_announce" className="btn btn-primary btn-xs operate_announce">同 意</a><span className="btn btn-info btn-xs operate_announce">查 看</span></td>
+                   <td><a href="edit_announce" className="btn btn-primary btn-xs operate_announce">同 意</a><span className="btn btn-info btn-xs operate_announce"><a href={href}>查 看</a></span></td>
                )
            }
            else {

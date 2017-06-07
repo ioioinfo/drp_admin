@@ -305,12 +305,24 @@
                error: function(xhr, status, err) {
                }.bind(this)
            });
+        //    订单描述查询
+           $.ajax({
+             url: "/search_descriptions",
+             dataType: 'json',
+             type: 'GET',
+             data:{"product_id":"{{product_id}}"},
+             success: function(data) {
+                 this.setState({desitem:data});
+             }.bind(this),
+             error: function(xhr, status, err) {
+             }.bind(this)
+         });
          }
 
        render() {
          return (
              <div className="container-fluid ">
-             <h5 className="font_color_h5">商品图片</h5>
+                <h5 className="font_color_h5">商品图片</h5>
             	<div className="row-fluid overflow-x">
 
             		<div className="span12">
@@ -358,6 +370,10 @@
                         <div className="col-sm-9 border_style">{this.state.product.update_at_text}</div>
                     </div>
                     </div>
+                </div>
+
+                <div className="row">
+                    <div className="description"></div>
                 </div>
             </div>
          );
