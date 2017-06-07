@@ -235,3 +235,58 @@ tr td:last-child{
 .red_color{
     color: red;
 }
+
+
+/*搜索框样式*/
+.search{
+    width: 100%;
+    display: flex;
+    margin: 20px auto;
+    border-radius: 4px;
+    border-radius: 4px;
+}
+.search .searchSubmit{
+    position: relative;
+}
+.search .searchSubmit input::-webkit-input-placeholder {
+    font-size: 12px;
+    text-indent: 5px;
+}
+.search .searchSubmit input:-moz-placeholder {
+    font-size: 12px;
+    text-indent: 5px;
+}
+
+.search .searchImg{
+    position: absolute;
+    top: 6px;
+    right: 15px;
+    width: 20px;
+    height: 20px;
+}
+.search .searchImg img{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.search input{
+    width: 100%;
+    justify-content:space-between;
+    height: 32px;
+    font-size: 14px;
+    color: #000;
+    margin-right: 10px;
+    border: none;
+}
+.wrapTop{
+    z-index: 9999;
+}
+
+.return_view_style{
+    border: 1px solid #eee;
+    padding: 7px;
+}
+
+.statistics_middle{
+    padding-top: 35px;
+}

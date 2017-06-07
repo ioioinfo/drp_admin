@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 188);
+/******/ 	return __webpack_require__(__webpack_require__.s = 192);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -9524,11 +9524,479 @@ module.exports = __webpack_require__(116);
 
 
 /***/ }),
-/* 82 */,
-/* 83 */,
-/* 84 */,
-/* 85 */,
-/* 86 */,
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = __webpack_require__(17);
+
+// 修改密码弹出层
+
+var ChangePassword = function (_React$Component) {
+    _inherits(ChangePassword, _React$Component);
+
+    function ChangePassword() {
+        _classCallCheck(this, ChangePassword);
+
+        return _possibleConstructorReturn(this, (ChangePassword.__proto__ || Object.getPrototypeOf(ChangePassword)).apply(this, arguments));
+    }
+
+    _createClass(ChangePassword, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "modal fade bs-example-modal-sm", tabIndex: "-1", role: "dialog", "aria-labelledby": "mySmallModalLabel" },
+                React.createElement(
+                    "div",
+                    { className: "modal-dialog modal-sm", role: "document" },
+                    React.createElement(
+                        "div",
+                        { className: "modal-content modal_content_padding" },
+                        React.createElement(
+                            "a",
+                            { href: "/logout", className: "btn btn-primary btn-sm active", role: "button" },
+                            "\u9000\u51FA\u767B\u5F55"
+                        ),
+                        React.createElement(
+                            "a",
+                            { href: "/change_password", className: "btn btn-default btn-sm active", role: "button" },
+                            "\u4FEE\u6539\u5BC6\u7801"
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return ChangePassword;
+}(React.Component);
+
+;
+
+module.exports = ChangePassword;
+
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = __webpack_require__(17);
+
+// 左边导航
+
+var Left = function (_React$Component) {
+    _inherits(Left, _React$Component);
+
+    function Left() {
+        _classCallCheck(this, Left);
+
+        return _possibleConstructorReturn(this, (Left.__proto__ || Object.getPrototypeOf(Left)).apply(this, arguments));
+    }
+
+    _createClass(Left, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "wrapLeftWarp col-sm-3 col-md-2 sidebar" },
+                React.createElement(
+                    "div",
+                    { className: "wrapLeft" },
+                    React.createElement(Nav, null)
+                )
+            );
+        }
+    }]);
+
+    return Left;
+}(React.Component);
+
+;
+
+// 左侧导航具体导航
+
+var Nav = function (_React$Component2) {
+    _inherits(Nav, _React$Component2);
+
+    // 2
+    function Nav(props) {
+        _classCallCheck(this, Nav);
+
+        // 初始化一个空对象
+        var _this2 = _possibleConstructorReturn(this, (Nav.__proto__ || Object.getPrototypeOf(Nav)).call(this, props));
+
+        _this2.setSelected = _this2.setSelected.bind(_this2);
+        _this2.state = { items: [], selected: default_selected };
+        return _this2;
+    }
+
+    _createClass(Nav, [{
+        key: "setSelected",
+        value: function setSelected(id) {
+            this.setState({ selected: id });
+        }
+        // 3
+
+    }, {
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            $.ajax({
+                url: "/menu_list",
+                dataType: 'json',
+                type: 'GET',
+                success: function (data) {
+                    this.setState({ items: data.rows });
+                }.bind(this),
+                error: function (xhr, status, err) {}.bind(this)
+            });
+        }
+
+        // 1
+
+    }, {
+        key: "render",
+        value: function render() {
+            var _this3 = this;
+
+            return React.createElement(
+                "div",
+                { className: "wrapLeftNav" },
+                React.createElement(
+                    "ul",
+                    { className: "wrapLeftNav_ul" },
+                    this.state.items.map(function (item) {
+                        return React.createElement(Li, { key: item.id, item: item, setSelected: _this3.setSelected, selected: _this3.state.selected });
+                    })
+                )
+            );
+        }
+    }]);
+
+    return Nav;
+}(React.Component);
+
+;
+
+//一级导航
+
+var Li = function (_React$Component3) {
+    _inherits(Li, _React$Component3);
+
+    function Li(props) {
+        _classCallCheck(this, Li);
+
+        var _this4 = _possibleConstructorReturn(this, (Li.__proto__ || Object.getPrototypeOf(Li)).call(this, props));
+
+        _this4.handleClick = _this4.handleClick.bind(_this4);
+        return _this4;
+    }
+
+    _createClass(Li, [{
+        key: "handleClick",
+        value: function handleClick(e) {
+            this.props.setSelected(this.props.item.code);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var c = "";
+            var d = React.createElement("div", null);
+            var img = this.props.item.img;
+
+            if (this.props.selected == this.props.item.code) {
+                c = "on";
+                img = this.props.item.img2;
+                d = React.createElement(
+                    "div",
+                    null,
+                    this.props.item.child.map(function (item) {
+                        return React.createElement(Secondnav, { key: item.id, item: item });
+                    })
+                );
+            }
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "li",
+                    { className: c, onClick: this.handleClick },
+                    React.createElement(
+                        "span",
+                        null,
+                        React.createElement("img", { src: img, alt: "" })
+                    ),
+                    React.createElement(
+                        "span",
+                        { className: "wrapLeftNav_word" },
+                        this.props.item.name
+                    )
+                ),
+                d
+            );
+        }
+    }]);
+
+    return Li;
+}(React.Component);
+
+;
+
+// 二级导航
+
+var Secondnav = function (_React$Component4) {
+    _inherits(Secondnav, _React$Component4);
+
+    function Secondnav() {
+        _classCallCheck(this, Secondnav);
+
+        return _possibleConstructorReturn(this, (Secondnav.__proto__ || Object.getPrototypeOf(Secondnav)).apply(this, arguments));
+    }
+
+    _createClass(Secondnav, [{
+        key: "render",
+        value: function render() {
+            var img = this.props.item.img;
+            return React.createElement(
+                "div",
+                { className: "second_nav" },
+                React.createElement(
+                    "a",
+                    { href: this.props.item.href },
+                    React.createElement(
+                        "div",
+                        { className: "second_navInfor" },
+                        React.createElement("img", { src: img }),
+                        React.createElement(
+                            "p",
+                            null,
+                            this.props.item.name
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return Secondnav;
+}(React.Component);
+
+;
+
+module.exports = Left;
+
+/***/ }),
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = __webpack_require__(17);
+
+// 左边导航头部
+
+var Logo = function (_React$Component) {
+    _inherits(Logo, _React$Component);
+
+    function Logo() {
+        _classCallCheck(this, Logo);
+
+        return _possibleConstructorReturn(this, (Logo.__proto__ || Object.getPrototypeOf(Logo)).apply(this, arguments));
+    }
+
+    _createClass(Logo, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "navbar-header" },
+                React.createElement(
+                    "button",
+                    { type: "button", className: "navbar-toggle collapsed", "data-toggle": "collapse", "data-target": "#navbar", "aria-expanded": "false", "aria-controls": "navbar" },
+                    React.createElement(
+                        "span",
+                        { className: "sr-only" },
+                        "Toggle navigation"
+                    ),
+                    React.createElement("span", { className: "icon-bar" }),
+                    React.createElement("span", { className: "icon-bar" }),
+                    React.createElement("span", { className: "icon-bar" })
+                ),
+                React.createElement(
+                    "a",
+                    { className: "navbar-brand", href: "/" },
+                    "\u7535\u5546\u540E\u53F0"
+                )
+            );
+        }
+    }]);
+
+    return Logo;
+}(React.Component);
+
+;
+
+module.exports = Logo;
+
+/***/ }),
+/* 85 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = __webpack_require__(17);
+
+var WrapBottom = function (_React$Component) {
+    _inherits(WrapBottom, _React$Component);
+
+    function WrapBottom() {
+        _classCallCheck(this, WrapBottom);
+
+        return _possibleConstructorReturn(this, (WrapBottom.__proto__ || Object.getPrototypeOf(WrapBottom)).apply(this, arguments));
+    }
+
+    _createClass(WrapBottom, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "wrapBottom container" },
+                "@\u4E0A\u6D77\u4F51\u4F51\u4FE1\u606F\u79D1\u6280\u6709\u9650\u516C\u53F8"
+            );
+        }
+    }]);
+
+    return WrapBottom;
+}(React.Component);
+
+;
+
+module.exports = WrapBottom;
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = __webpack_require__(17);
+
+// 右侧头部
+
+var WrapRightHead = function (_React$Component) {
+    _inherits(WrapRightHead, _React$Component);
+
+    function WrapRightHead() {
+        _classCallCheck(this, WrapRightHead);
+
+        return _possibleConstructorReturn(this, (WrapRightHead.__proto__ || Object.getPrototypeOf(WrapRightHead)).apply(this, arguments));
+    }
+
+    _createClass(WrapRightHead, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            $.ajax({
+                url: "/user/login_info",
+                dataType: 'json',
+                type: 'GET',
+                success: function (data) {
+                    $(".head_user_name li:nth-child(2) a").html(data.row.name);
+                }.bind(this),
+                error: function (xhr, status, err) {}.bind(this)
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return React.createElement(
+                'div',
+                { id: 'navbar', className: 'navbar-collapse collapse' },
+                React.createElement(
+                    'ul',
+                    { className: 'nav navbar-nav navbar-right head_user_name' },
+                    React.createElement(
+                        'li',
+                        null,
+                        React.createElement(
+                            'a',
+                            null,
+                            React.createElement('img', { src: 'images/houtai_touxiang1.png', alt: '' })
+                        )
+                    ),
+                    React.createElement(
+                        'li',
+                        null,
+                        React.createElement(
+                            'a',
+                            { 'data-toggle': 'modal', 'data-target': '.bs-example-modal-sm' },
+                            '\u7BA1\u7406\u54581'
+                        )
+                    )
+                ),
+                React.createElement(
+                    'form',
+                    { className: 'navbar-form navbar-right' },
+                    React.createElement('input', { type: 'text', className: 'form-control', placeholder: '\u641C\u7D22...' })
+                )
+            );
+        }
+    }]);
+
+    return WrapRightHead;
+}(React.Component);
+
+;
+
+module.exports = WrapRightHead;
+
+/***/ }),
 /* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -22018,20 +22486,210 @@ module.exports = traverseAllChildren;
 /***/ }),
 /* 186 */,
 /* 187 */,
-/* 188 */
+/* 188 */,
+/* 189 */,
+/* 190 */,
+/* 191 */,
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var React = __webpack_require__(17);
 var ReactDOM = __webpack_require__(81);
 
-ReactDOM.render(React.createElement(
-    'h1',
-    null,
-    'Ioio info app!'
-), document.getElementById('app'));
+var Logo = __webpack_require__(84);
+var WrapRightHead = __webpack_require__(86);
+var Left = __webpack_require__(83);
+var WrapBottom = __webpack_require__(85);
+var ChangePassword = __webpack_require__(82);
+
+// 框架
+
+var Wrap = function (_React$Component) {
+    _inherits(Wrap, _React$Component);
+
+    function Wrap() {
+        _classCallCheck(this, Wrap);
+
+        return _possibleConstructorReturn(this, (Wrap.__proto__ || Object.getPrototypeOf(Wrap)).apply(this, arguments));
+    }
+
+    _createClass(Wrap, [{
+        key: 'render',
+        value: function render() {
+            return React.createElement(
+                'div',
+                { className: 'wrap' },
+                React.createElement(
+                    'nav',
+                    { className: 'navbar navbar-inverse navbar-fixed-top' },
+                    React.createElement(
+                        'div',
+                        { className: 'container-fluid' },
+                        React.createElement(Logo, null),
+                        React.createElement(WrapRightHead, null)
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'container-fluid' },
+                    React.createElement(
+                        'div',
+                        { className: 'row' },
+                        React.createElement(Left, null),
+                        React.createElement(Right, null)
+                    )
+                ),
+                React.createElement(ChangePassword, null)
+            );
+        }
+    }]);
+
+    return Wrap;
+}(React.Component);
+
+;
+// 统计
+
+var Right = function (_React$Component2) {
+    _inherits(Right, _React$Component2);
+
+    function Right() {
+        _classCallCheck(this, Right);
+
+        return _possibleConstructorReturn(this, (Right.__proto__ || Object.getPrototypeOf(Right)).apply(this, arguments));
+    }
+
+    _createClass(Right, [{
+        key: 'render',
+        value: function render() {
+            return React.createElement(
+                'div',
+                { className: 'wrapRight wrapRight_form col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2' },
+                React.createElement(Middle, null)
+            );
+        }
+    }]);
+
+    return Right;
+}(React.Component);
+
+;
+
+var Middle = function (_React$Component3) {
+    _inherits(Middle, _React$Component3);
+
+    function Middle(props) {
+        _classCallCheck(this, Middle);
+
+        // 初始化一个空对象
+        var _this3 = _possibleConstructorReturn(this, (Middle.__proto__ || Object.getPrototypeOf(Middle)).call(this, props));
+
+        _this3.state = { items: {} };
+        return _this3;
+    }
+
+    _createClass(Middle, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            $.ajax({
+                url: "/get_orders_byDate",
+                dataType: 'json',
+                type: 'GET',
+                success: function (data) {
+                    this.setState({ items: data });
+                }.bind(this),
+                error: function (xhr, status, err) {}.bind(this)
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var time = this.state.items.time;
+            var total_sales = this.state.items.total_sales;
+            var order_num = this.state.items.order_num;
+            var total_products = this.state.items.total_products;
+            return React.createElement(
+                'div',
+                { className: 'statistics_middle' },
+                React.createElement(
+                    'p',
+                    { className: 'back' },
+                    '\u7EDF\u8BA1\u65F6\u95F4:',
+                    time
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'col-xs-6 col-sm-6 number number1' },
+                    React.createElement(
+                        'p',
+                        null,
+                        '\uFFE5',
+                        total_sales
+                    ),
+                    React.createElement(
+                        'p',
+                        null,
+                        '\u8425\u4E1A\u989D'
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'col-xs-6 col-sm-6 number number2' },
+                    React.createElement(
+                        'p',
+                        null,
+                        order_num
+                    ),
+                    React.createElement(
+                        'p',
+                        null,
+                        '\u8BA2\u5355\u6570'
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'col-xs-6 col-sm-6 number number3' },
+                    React.createElement(
+                        'p',
+                        null,
+                        total_products
+                    ),
+                    React.createElement(
+                        'p',
+                        null,
+                        '\u4EF6\u6570'
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'col-xs-6 col-sm-6 number number4' },
+                    React.createElement(
+                        'p',
+                        null,
+                        '\u6682\u65E0'
+                    )
+                )
+            );
+        }
+    }]);
+
+    return Middle;
+}(React.Component);
+
+;
+// 返回到页面
+ReactDOM.render(React.createElement(Wrap, null), document.getElementById("content"));
 
 /***/ })
 /******/ ]);

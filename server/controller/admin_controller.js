@@ -23,7 +23,8 @@ var pos_order_status = {
 	"1":"未付款",
 	"2":"付款确认中",
 	"3":"付款完成",
-	"4":"交易完成"
+	"4":"交易完成",
+	"5":"交易作废"
 };
 
 var do_get_method = function(url,cb){
@@ -61,6 +62,18 @@ var do_result = function(err,result,cb){
 };
 
 exports.register = function(server, options, next){
+	var i18n = server.plugins.i18n;
+	//获取当前cookie cookie_id
+	var get_cookie_id = function(request){
+		var cookie_id;
+		if (request.state && request.state.cookie) {
+			var cookie = request.state.cookie;
+			if (cookie.cookie_id) {
+				cookie_id = cookie.cookie_id;
+			}
+		}
+		return cookie_id;
+	};
 	//临时订单号
 	var get_temp_order_no = function(cb){
 		var url = "http://211.149.248.241:18011/get_temp_order_no?org_code=ioio&order_type=purchase_inbound"
@@ -719,13 +732,138 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18002/update_product_description";
 		do_post_method(url,data,cb);
 	};
+	//获取验证图片
+	var get_captcha = function(cookie_id,cb){
+		var url = "http://139.196.148.40:11111/api/captcha.png?cookie_id="+cookie_id;
+		do_get_method(url,cb);
+	};
+	//验证码验证
+	var check_captcha = function(vertify,cookie_id,cb){
+		var url = "http://139.196.148.40:11111/api/verify?cookie_id=" +cookie_id + "&text=" + vertify;
+		do_get_method(url,cb);
+	};
+	//登入账号验证
+	var do_login = function(data, cb){
+		var url = "http://139.196.148.40:18666/user/login_check";
+		data.platform_code = "drp_admin";
+		do_post_method(url,data,cb);
+	};
 	server.route([
+		//产品编辑
+		{
+			method: 'POST',
+			path: '/edit_product',
+			handler: function(request, reply){
+				var old_id = request.payload.old_id;
+				var id = request.payload.id;
+				var product_name = request.payload.product_name;
+				var weight = request.payload.weight;
+				var product_sale_price = request.payload.product_sale_price;
+				var product_marketing_price = request.payload.product_marketing_price;
+				var origin = request.payload.origin;
+				if (!id || !product_name || !weight || !product_sale_price || !product_marketing_price || !origin || !old_id) {
+					return reply({"success":false,"message":"params wrong"});
+				}
+				var data = {
+					"old_id":old_id,
+					"id": id,
+					"product_name":product_name,
+					"weight":weight,
+					"product_sale_price":product_sale_price,
+					"product_marketing_price":product_marketing_price,
+					"origin":origin
+				}
+				update_product_info(data,function(err,content){
+					if (!err) {
+						return reply({"success":true});
+					}else {
+						return reply({"success":false,"message":content.message});
+					}
+				});
+
+			}
+		},
+		//统计页面
+		{
+			method: 'GET',
+			path: '/statistics',
+			handler: function(request, reply){
+				return reply.view("statistics");
+			}
+		},
+		//登入验证
+		{
+			method: 'POST',
+			path: '/do_login',
+			handler: function(request, reply){
+				var data = {};
+				data.username = request.payload.username;
+				data.password = request.payload.password;
+				var vertify = request.payload.vertify;
+				data.org_code = "ioio";
+
+				var cookie_id = get_cookie_id(request);
+				if (!cookie_id) {
+					return reply({"success":false});
+				}
+				check_captcha(vertify,cookie_id,function(err, content){
+					if (!err) {
+						if (content.success) {
+							do_login(data, function(err,content){
+								if (!err) {
+									var login_id = content.row.login_id;
+									var cookie = request.state.cookie;
+									if (!cookie) {
+										cookie = {};
+									}
+									cookie.login_id = login_id;
+									return reply({"success":true,"service_info":service_info}).state('cookie', cookie, {ttl:10*365*24*60*60*1000});
+								} else {
+									return reply({"success":false,"message":i18n._n(content.message)});
+								}
+							});
+						}else {
+							return reply({"success":false,"message":i18n._n("vertify wrong")});
+						}
+					}else {
+						return reply({"success":false,"message":i18n._n("vertify wrong")});
+					}
+				});
+			}
+		},
 		//登入页面
 		{
 			method: 'GET',
 			path: '/login_page',
 			handler: function(request, reply){
-				return reply.view("login_page");
+				var cookie_id = get_cookie_id(request);
+				if (!cookie_id) {
+					cookie_id = uuidV1();
+				}
+				var cookie = request.state.cookie;
+				if (!cookie) {
+					cookie = {};
+				}
+				cookie.cookie_id = cookie_id;
+				return reply.view("login_page").state('cookie', cookie, {ttl:10*365*24*60*60*1000});
+			}
+		},
+		//验证码获取
+		{
+			method: 'GET',
+			path: '/captcha',
+			handler: function(request, reply){
+				var cookie_id = get_cookie_id(request);
+				if (!cookie_id) {
+					return reply({"success":false});
+				}
+				get_captcha(cookie_id,function(err, content){
+					if (!err) {
+						return reply({"success":true,"image":content.image,"service_info":service_info});
+					}else {
+
+					}
+				});
 			}
 		},
 		//产品描述
@@ -1538,7 +1676,8 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/return_view',
 			handler: function(request, reply){
-				return reply.view("return_view");
+				var id = request.query.id;
+				return reply.view("return_view",{"id":id});
 			}
 		},
 		//退货列表明细数据
@@ -2691,16 +2830,23 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/get_orders_byDate',
 			handler: function(request, reply){
-				var date1 = request.query.date1;
-				var date2 = request.query.date2;
+				var date = new Date();
+				var date1 = date.toLocaleDateString();
+				var date2 = date1 +" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
 				get_orders_byDate(date1,date2,function(err,rows){
 					if (!err) {
-						if (rows.success) {
-							return reply({"success":true,"rows":rows.rows,"service_info":service_info});
-						}else {
+						if (rows.rows.length == 0) {
+							return reply({"success":true,"time":date2,"order_num":0,"total_sales":0,"total_products":0,"service_info":service_info});
 						}
+						var order_num = rows.rows.length;
+						var total_products =  rows.prducts_num;
+						var total_sales = 0;
+						for (var i = 0; i < rows.rows.length; i++) {
+							total_sales = total_sales + rows.rows[i].actual_price;
+						}
+						return reply({"success":true,"time":date2,"order_num":order_num,"total_sales":total_sales,"total_products":total_products,"service_info":service_info});
 					}else {
-
+						return reply({"success":true,"rows":rows.message,"service_info":service_info});
 					}
 				});
 			}

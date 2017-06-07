@@ -345,7 +345,7 @@
        render() {
          return (
              <div className="container-fluid ">
-            	<div className="row-fluid ">
+            	<div className="row-fluid overflow">
                     <h5 className="font_color_h5">商品图片</h5>
             		<div className="span12">
                     {this.state.pictures.map((item,index) => (
@@ -368,12 +368,6 @@
                         <input type="text" value={this.state.product.product_name} className="col-sm-9 border_style" />
 
                     </div>
-                    {this.state.items.map(item => (
-                        <div className="col-sm-6 margin_bottom">
-                            <div className="col-sm-3">{item.name}</div>
-                            <input type="text" className="col-sm-9 border_style" />
-                        </div>))
-                    }
                     <div className="col-sm-6 margin_bottom">
                         <div className="col-sm-3">重量</div>
                         <input type="text" value={this.state.product.weight} className="col-sm-9 border_style" />
@@ -389,8 +383,8 @@
                         <input type="text" value={this.state.product.product_marketing_price} className="col-sm-9 border_style" />
                     </div>
                     <div className="col-sm-6 margin_bottom">
-                        <div className="col-sm-3">上市时间</div>
-                        <input type={this.state.product.time_to_market} className="col-sm-9 border_style" />
+                        <div className="col-sm-3">门店</div>
+                        <input type="text" className="col-sm-9 border_style" value={this.state.product.origin}/>
                     </div>
                 </div>
                 <div className="span12 text_align_right">
