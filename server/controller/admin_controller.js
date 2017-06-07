@@ -748,7 +748,46 @@ exports.register = function(server, options, next){
 		data.platform_code = "drp_admin";
 		do_post_method(url,data,cb);
 	};
+	//更新商品信息
+	var update_product_info = function(data, cb){
+		var url = "http://211.149.248.241:18002/update_product_info";
+		do_post_method(url,data,cb);
+	};
 	server.route([
+		//产品编辑
+		{
+			method: 'POST',
+			path: '/edit_product',
+			handler: function(request, reply){
+				var old_id = request.payload.old_id;
+				var id = request.payload.id;
+				var product_name = request.payload.product_name;
+				var weight = request.payload.weight;
+				var product_sale_price = request.payload.product_sale_price;
+				var product_marketing_price = request.payload.product_marketing_price;
+				var origin = request.payload.origin;
+				if (!id || !product_name || !weight || !product_sale_price || !product_marketing_price || !origin || !old_id) {
+					return reply({"success":false,"message":"params wrong"});
+				}
+				var data = {
+					"old_id":old_id,
+					"id": id,
+					"product_name":product_name,
+					"weight":weight,
+					"product_sale_price":product_sale_price,
+					"product_marketing_price":product_marketing_price,
+					"origin":origin
+				}
+				update_product_info(data,function(err,content){
+					if (!err) {
+						return reply({"success":true});
+					}else {
+						return reply({"success":false,"message":content.message});
+					}
+				});
+
+			}
+		},
 		//统计页面
 		{
 			method: 'GET',

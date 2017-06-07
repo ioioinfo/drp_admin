@@ -11,9 +11,9 @@
  │   committed to the intelligent transformation of the world   │
  │                                                              │
  └──────────────────────────────────────────────────────────────┘
- */
+*/
  
- var _ = require('lodash');
+var _ = require('lodash');
 var moment = require('moment');
 var eventproxy = require('eventproxy');
 const uu_request = require('../utils/uu_request');
