@@ -314,6 +314,7 @@
              // 初始化一个空对象
              this.handleClick = this.handleClick.bind(this);
               this.handleClick1 = this.handleClick1.bind(this);
+              this.handleClick2 = this.handleClick2.bind(this);
              this.state = {items:[],pictures:[],product:[]};
          }
         //  点击删除
@@ -327,6 +328,8 @@
              pictures.push({});
              this.setState({pictures:pictures});
          }
+
+
          // 3
          componentDidMount() {
              $.ajax({
@@ -335,11 +338,52 @@
                type: 'GET',
                data:{"product_id":"{{product_id}}"},
                success: function(data) {
+
                    this.setState({items: data.properties,pictures:data.pictures,product:data.product});
+                   var id=this.state.product.id;
+                   var weight=this.state.product.weight;
+                   var product_name=this.state.product.product_name;
+                   var product_sale_price=this.state.product.product_sale_price;
+                   var product_marketing_price=this.state.product.product_marketing_price;
+                   var origin=this.state.product.origin;
+                   $(".id").val(id);
+                   $(".weight").val(weight);
+                   $(".product_name").val(product_name);
+                   $(".product_sale_price").val(product_sale_price);
+                   $(".origin").val(origin);
+                   $(".product_marketing_price").val(product_marketing_price);
+
                }.bind(this),
                error: function(xhr, status, err) {
                }.bind(this)
            });
+         }
+
+         handleClick2(e){
+               var old_id = "{{product_id}}";
+               var id = $(".id").val();
+               var product_name = $(".product_name").val();
+               var weight = $(".weight").val();
+               var product_sale_price = $(".product_sale_price").val();
+               var product_marketing_price = $(".product_marketing_price").val();
+               var origin = $(".origin").val();
+             $.ajax({
+                    url: "/edit_product",
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {"old_id":old_id,"id":id,"product_name":product_name,"weight":weight,
+                            "product_sale_price":product_sale_price,"product_marketing_price":product_marketing_price,"origin":origin,},
+                    success: function(data) {
+                        if (data.success) {
+                            alert("保存成功！");
+                        }else {
+                            alert("保存失败！");
+                        }
+                    }.bind(this),
+                    error: function(xhr, status, err) {
+                    }.bind(this)
+                });
+
          }
 
        render() {
@@ -360,41 +404,35 @@
                     <h5 className="font_color_h5">商品属性</h5>
                     <div className="col-sm-6 margin_bottom">
                         <div className="col-sm-3">编号</div>
-                        <input type="text" value={this.state.product.id} className="col-sm-9 border_style" />
+                        <input type="text"  className="col-sm-9 border_style id" />
 
                     </div>
                     <div className="col-sm-6 margin_bottom">
                         <div className="col-sm-3">名称</div>
-                        <input type="text" value={this.state.product.product_name} className="col-sm-9 border_style" />
+                        <input type="text" className="col-sm-9 border_style product_name" />
 
                     </div>
-                    {this.state.items.map(item => (
-                        <div className="col-sm-6 margin_bottom">
-                            <div className="col-sm-3">{item.name}</div>
-                            <input type="text" className="col-sm-9 border_style" />
-                        </div>))
-                    }
                     <div className="col-sm-6 margin_bottom">
                         <div className="col-sm-3">重量</div>
-                        <input type="text" value={this.state.product.weight} className="col-sm-9 border_style" />
+                        <input type="text" className="col-sm-9 border_style weight" />
 
                     </div>
                     <div className="col-sm-6 margin_bottom">
                         <div className="col-sm-3">售价</div>
-                        <input type="text" value={this.state.product.product_sale_price} className="col-sm-9 border_style" />
+                        <input type="text"  className="col-sm-9 border_style product_sale_price" />
                     </div>
 
                     <div className="col-sm-6 margin_bottom">
                         <div className="col-sm-3">市场价</div>
-                        <input type="text" value={this.state.product.product_marketing_price} className="col-sm-9 border_style" />
+                        <input type="text"  className="col-sm-9 border_style product_marketing_price" />
                     </div>
                     <div className="col-sm-6 margin_bottom">
-                        <div className="col-sm-3">上市时间</div>
-                        <input type={this.state.product.time_to_market} className="col-sm-9 border_style" />
+                        <div className="col-sm-3">门店</div>
+                        <input type="text" className="col-sm-9 border_style origin" />
                     </div>
                 </div>
                 <div className="span12 text_align_right">
-                  <button className="btn button_background2 button_white" type="button">保 存</button>
+                  <button className="btn button_background2 button_white" type="button" onClick={this.handleClick2}>保 存</button>
         		</div>
             </div>
          );
