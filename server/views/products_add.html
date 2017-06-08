@@ -250,51 +250,103 @@
       };
       // 右侧下部表格
      class WrapRight extends React.Component {
+         constructor(props) {
+             super(props);
+             // 初始化一个空对象
+             this.handleClick = this.handleClick.bind(this);
+         }
+         handleClick(e){
+             var id = $("#product_id").val();
+             var weight = $("#weight").val();
+             var product_name = $("#product_name").val();
+             var product_sale_price = $("#product_sale_price").val();
+             var origin = $("#origin").val();
+             var product_marketing_price = $("#product_marketing_price").val();
+             var color = $("#color").val();
+             var sort_id = $("#sort_id").val();
+             var guarantee = $("#guarantee").val();
+             var product_brand = $("#product_brand").val();
+             var industry_id = "102";
+             var product = {
+                 "id":id,
+                 "product_name":product_name,
+                 "weight":weight,
+                 "product_sale_price":product_sale_price,
+                 "product_marketing_price":product_marketing_price,
+                 "origin":origin,
+                 "color":color,
+                 "sort_id":sort_id,
+                 "guarantee":guarantee,
+                 "product_brand":product_brand,
+                 "industry_id":industry_id
+                }
+           $.ajax({
+                  url: "/add_product",
+                  dataType: 'json',
+                  type: 'POST',
+                  data: {"product":product},
+                  success: function(data) {
+                      if (data.success) {
+                          alert("保存成功！");
+                      }else {
+                          alert("保存失败！");
+                      }
+                  }.bind(this),
+                  error: function(xhr, status, err) {
+                  }.bind(this)
+              });
+
+         }
        render() {
          return (
            <div>
                 <div className="row">
                     <div className="form-group col-md-3 col-md-offset-1">
-                        <label>ID</label>
-                        <input type="text" className="form-control" id="exampleInputName2" />
+                        <label>Product_id</label>
+                        <input type="text" className="form-control" id="exampleInputName2" id="product_id" />
                     </div>
                     <div className="form-group col-md-3 col-md-offset-1">
-                        <label>名称</label>
-                        <input type="text" className="form-control" id="exampleInputEmail2" />
+                        <label>产品名称</label>
+                        <input type="text" className="form-control" id="exampleInputEmail2" id="product_name" />
                     </div>
                     <div className="form-group col-md-3 col-md-offset-1">
                         <label>售价</label>
-                        <input type="text" className="form-control" id="exampleInputName2" />
+                        <input type="text" className="form-control" id="exampleInputName2" id="product_sale_price" />
                     </div>
                     <div className="form-group col-md-3 col-md-offset-1">
                         <label>市场价</label>
-                        <input type="text" className="form-control" id="exampleInputEmail2" />
+                        <input type="text" className="form-control" id="exampleInputEmail2" id="product_marketing_price" />
                     </div>
                     <div className="form-group col-md-3 col-md-offset-1">
-                        <label>重量</label>
-                        <input type="text" className="form-control" id="exampleInputName2" />
+                        <label>分类</label>
+                        <input type="text" className="form-control" id="exampleInputName2" id="sort_id" />
                     </div>
                     <div className="form-group col-md-3 col-md-offset-1">
-                        <label>编码</label>
-                        <input type="text" className="form-control" id="exampleInputEmail2" />
+                        <label>品牌</label>
+                        <input type="text" className="form-control" id="exampleInputEmail2" id="product_brand" />
                     </div>
                     <div className="form-group col-md-3 col-md-offset-1">
                         <label>成色</label>
-                        <input type="text" className="form-control" id="exampleInputName2" />
+                        <input type="text" className="form-control" id="exampleInputName2" id="color" />
                     </div>
                     <div className="form-group col-md-3 col-md-offset-1">
-                        <label>材质</label>
-                        <input type="text" className="form-control" id="exampleInputEmail2" />
+                        <label>重量</label>
+                        <input type="text" className="form-control" id="exampleInputEmail2" id="weight" />
                     </div>
                     <div className="form-group col-md-3 col-md-offset-1">
-                        <label>批次</label>
-                        <input type="text" className="form-control" id="exampleInputEmail2" />
+                        <label>保质期</label>
+                        <input type="text" className="form-control" id="exampleInputEmail2" id="guarantee" />
                     </div>
+                    <div className="form-group col-md-3 col-md-offset-1">
+                        <label>门店</label>
+                        <input type="text" className="form-control" id="exampleInputEmail2" id="origin" />
+                    </div>
+
                 </div>
                 <div className="row">
                     <input type="file" multiple className="col-md-offset-1" />
                 </div>
-                <div className="row add_margin_top"><p className="button button-glow button-rounded button-royal button-small pull-right ">添加商品</p></div>
+                <div className="row add_margin_top"><p className="button button-glow button-rounded button-royal button-small pull-right " onClick={this.handleClick}>添加商品</p></div>
            </div>
          );
        }
