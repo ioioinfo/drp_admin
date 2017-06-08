@@ -19,7 +19,8 @@ module.exports = {
         products_sorts: './app/products_sorts.jsx',
         products_center: './app/products_center.jsx',
         statistics: './app/statistics.jsx',
-        return_view: './app/return_view.jsx'
+        return_view: './app/return_view.jsx',
+        inventory_search: './app/inventory_search.jsx'
     },
     output: {
         path: __dirname,
