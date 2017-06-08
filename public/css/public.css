@@ -196,6 +196,12 @@ tr td:last-child{
 .button_background1{
     background: #337AB7;
 }
+.button_background2{
+    background: #008997;
+}
+.button_background2 a{
+    color: #fff;
+}
 .button_white{
     color: #fff;
 }
@@ -289,4 +295,19 @@ tr td:last-child{
 
 .statistics_middle{
     padding-top: 35px;
+}
+
+/*商品描述*/
+.descript{
+    padding-top: 35px;
+}
+.descript_infor{
+    width: 100%;
+    min-height: 185px;
+    border: 1px solid #eee;
+    padding: 2px;
+    font-size: 14px;
+}
+.margin_top_de{
+    margin-top: 15px;
 }

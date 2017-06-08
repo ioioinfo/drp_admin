@@ -285,7 +285,7 @@
          constructor(props) {
              super(props);
              // 初始化一个空对象
-             this.state = {items:[],pictures:[],product:{}};
+             this.state = {items:[],pictures:[],product:{},deitem:{}};
          }
          // 3
          componentDidMount() {
@@ -300,11 +300,27 @@
                error: function(xhr, status, err) {
                }.bind(this)
            });
+
+           var product_id = "{{product_id}}";
+
+           $.ajax({
+                url: "/search_descriptions",
+                dataType: 'json',
+                type: 'GET',
+                data:{"product_id":product_id},
+                success: function(data) {
+                   this.setState({deitem:data.row[0]});
+
+                }.bind(this),
+                error: function(xhr, status, err) {
+                }.bind(this)
+           });
          }
 
 
 
        render() {
+           var product_id = this.state.deitem.product_id;
          return (
              <div className="container-fluid ">
                 <h5 className="font_color_h5">商品图片</h5>
@@ -361,14 +377,16 @@
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="description"></div>
+                <div className="row margin_top_de">
+                    <p className="col-sm-1">商品描述</p>
+                    <div className="descript_infor col-sm-11">{this.state.deitem.description}</div>
                 </div>
 
                 <hr/>
         		<div className="span12 text_align_right container-fluid">
         			 <div className="col-sm-12 ">
-                        <button className="btn button_background1 button_white margin_right" type="button"  >上 架</button>
+                        <button className="btn button_background2 button_white margin_right" type="button"><a href={"product_description?product_id="+this.state.deitem.product_id}>查看描述</a></button>
+                        <button className="btn button_background1 button_white margin_right" type="button">上 架</button>
                      </div>
         		</div>
             </div>
