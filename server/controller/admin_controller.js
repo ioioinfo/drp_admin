@@ -302,7 +302,7 @@ exports.register = function(server, options, next){
 	}
 	//新增产品
 	var add_product = function(data,cb){
-		var url = "http://127.0.0.1:18002/add_product";
+		var url = "http://211.149.248.241:18002/add_product";
 		do_post_method(url,data,cb);
 	}
 	//保存库存接口
@@ -876,7 +876,9 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/product_description',
 			handler: function(request, reply){
-				return reply.view("product_description");
+				var product_id = request.query.product_id;
+				var product_name = request.query.product_name;
+				return reply.view("product_description",{"product_id":product_id,"product_name":product_name});
 			}
 		},
 		//查询描述
