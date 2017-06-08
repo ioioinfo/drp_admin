@@ -279,12 +279,12 @@
                  "guarantee":guarantee,
                  "product_brand":product_brand,
                  "industry_id":industry_id
-                }
+             };
            $.ajax({
                   url: "/add_product",
                   dataType: 'json',
                   type: 'POST',
-                  data: {"product":product},
+                  data: {product:JSON.stringify(product)},
                   success: function(data) {
                       if (data.success) {
                           alert("保存成功！");
