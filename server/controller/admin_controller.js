@@ -24,7 +24,8 @@ var pos_order_status = {
 	"2":"付款确认中",
 	"3":"付款完成",
 	"4":"交易完成",
-	"5":"交易作废"
+	"5":"交易作废",
+	"6":"退款"
 };
 
 var do_get_method = function(url,cb){
@@ -287,6 +288,11 @@ exports.register = function(server, options, next){
 	//得到所有运送方式
 	var get_logistics_type = function(cb){
 		var url = "http://211.149.248.241:18013/freightage/type";
+		do_get_method(url,cb);
+	};
+	//得到所有运送方式
+	var get_product_stock = function(product_id, cb){
+		var url = "http://211.149.248.241:12001/get_product_stock?product_id="+product_id;
 		do_get_method(url,cb);
 	};
 	//通过商品id找到图片
@@ -559,6 +565,11 @@ exports.register = function(server, options, next){
 	var get_logistics_info = function(order_id,cb){
 		var url = "http://211.149.248.241:18010/search_laster_logistics?order_id="+order_id;
 		do_get_method(url,cb);
+	};
+	//修改密码
+	var change_password = function(data,cb){
+		var url = "http://139.196.148.40:18666/password/change";
+		do_post_method(url,data,cb);
 	};
 	//绑定
 	var bind_store_account = function(data,cb){
@@ -877,8 +888,7 @@ exports.register = function(server, options, next){
 			path: '/product_description',
 			handler: function(request, reply){
 				var product_id = request.query.product_id;
-				var product_name = request.query.product_name;
-				return reply.view("product_description",{"product_id":product_id,"product_name":product_name});
+				return reply.view("product_description",{"product_id":product_id});
 			}
 		},
 		//查询描述
@@ -895,6 +905,28 @@ exports.register = function(server, options, next){
 						return reply({"success":true,"row":row.row,"service_info":service_info});
 					}else {
 						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//修改密码
+		{
+			method: 'POST',
+			path: '/change_password',
+			handler: function(request, reply){
+				var data = {};
+				data.mobile = request.payload.mobile;
+				data.password = request.payload.password;
+				var cookie_id = get_cookie_id(request);
+				if (!cookie_id) {
+					cookie_id = uuidV1();
+				}
+				data.request_id = cookie_id;
+				change_password(data,function(err,content){
+					if (!err) {
+						return reply({"success":true,"message":"ok"});
+					}else {
+						return reply({"success":false,"message":data.message});
 					}
 				});
 			}
@@ -1098,6 +1130,21 @@ exports.register = function(server, options, next){
 					}
 				});
 
+			}
+		},
+		//单个商品库存查询
+		{
+			method: 'GET',
+			path: '/get_product_stock',
+			handler: function(request, reply){
+				var product_id = request.query.product_id;
+				get_product_stock(product_id,function(err,rows){
+					if (!err) {
+						return reply({"success":true,"rows":rows.rows,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
 			}
 		},
 		//高手
