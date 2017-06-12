@@ -765,6 +765,21 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	};
 	server.route([
+		//付款情况
+		{
+			method: 'GET',
+			path: '/get_order_pay_infos',
+			handler: function(request, reply){
+				var order_id = request.query.order_id;
+				get_order_pay_infos(order_id,function(err,rows){
+					if (!err) {
+						return reply({"success":true,"rows":rows.rows});
+					}else {
+						return reply({"success":false,"message":rows.message});
+					}
+				});
+			}
+		},
 		//产品编辑
 		{
 			method: 'POST',
