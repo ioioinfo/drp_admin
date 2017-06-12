@@ -253,9 +253,9 @@
             );
         }
     };
-    
+
     //   ====================右侧下部from表单==============
-    
+
     class WrapRightFrom extends React.Component {
         render() {
             return (
@@ -276,10 +276,12 @@
         constructor(props) {
             super(props);
             // 初始化一个空对象
-            this.state = {order:{store:{}},items:[],product:{}};
+            this.state = {order:{store:{}},items:[],product:{},payitem:[]};
         }
         // 3
         componentDidMount() {
+
+            // 查询商品接口
             $.ajax({
                 url: "/search_order_infos",
                 dataType: 'json',
@@ -291,8 +293,25 @@
                 error: function(xhr, status, err) {
                 }.bind(this)
             });
+
+            // 查询支付方式接口
+            $.ajax({
+                url: "/get_order_pay_infos",
+                dataType: 'json',
+                type: 'GET',
+                data:{"order_id":"{{order_id}}"},
+                success: function(data) {
+                    if(data.rows.length==0){
+                        return;
+                    }
+                    this.setState({payitem:data.rows});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                }.bind(this)
+            });
+
         }
-    
+
         render() {
             var products = [];
             var total_number = 0;
@@ -326,7 +345,7 @@
                     </div>
                 );
             });
-                
+
             return (
                 <div className="container-fluid">
                 <div className="row overflow ">
@@ -335,24 +354,32 @@
                 </div>
                 <div className="col-sm-4">
                 <div className="margin_bottom overflow">
-                <div className="col-sm-3">门店</div>
-                <div className="col-sm-9 border_style">{this.state.order.store.org_store_name}</div>
+                    <div className="col-sm-4">门店</div>
+                    <div className="col-sm-8 border_style">{this.state.order.store.org_store_name}</div>
                 </div>
                 <div className="margin_bottom overflow">
-                <div className="col-sm-3">实付</div>
-                <div className="col-sm-9 border_style">{this.state.order.actual_price}</div>
+                    <div className="col-sm-4">支付方式</div>
+                    <div className="col-sm-8 border_style">
+                    {this.state.payitem.map(item => (
+                        <span>{item.pay_way}</span>))
+                    }    
+                    </div>
                 </div>
                 <div className="margin_bottom overflow">
-                <div className="col-sm-3">件数</div>
-                <div className="col-sm-9 border_style">{total_number}</div>
+                <div className="col-sm-4">实付</div>
+                <div className="col-sm-8 border_style">{this.state.order.actual_price}</div>
                 </div>
                 <div className="margin_bottom overflow">
-                <div className="col-sm-3">找零</div>
-                <div className="col-sm-9 border_style">{this.state.order.changes}</div>
+                <div className="col-sm-4">件数</div>
+                <div className="col-sm-8 border_style">{total_number}</div>
                 </div>
                 <div className="margin_bottom overflow">
-                <div className="col-sm-3">折扣</div>
-                <div className="col-sm-9 border_style">{this.state.order.card_reduce}</div>
+                <div className="col-sm-4">找零</div>
+                <div className="col-sm-8 border_style">{this.state.order.changes}</div>
+                </div>
+                <div className="margin_bottom overflow">
+                <div className="col-sm-4">折扣</div>
+                <div className="col-sm-8 border_style">{this.state.order.card_reduce}</div>
                 </div>
                 </div>
                 </div>

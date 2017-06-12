@@ -273,13 +273,13 @@
          );
       }
     };
-      // 右侧下部图片
+      // 右侧下部
      class WrapRight extends React.Component {
          // 2
          constructor(props) {
              super(props);
              // 初始化一个空对象
-             this.state = {order:{},items:[],product:{}};
+             this.state = {order:{},items:[],product:{},payitem:[]};
          }
          // 3
          componentDidMount() {
@@ -290,6 +290,21 @@
                data:{"order_id":"{{order_id}}"},
                success: function(data) {
                    this.setState({order:data.order,items: data.details[data.order.order_id],product:data.products});
+               }.bind(this),
+               error: function(xhr, status, err) {
+               }.bind(this)
+           });
+
+           $.ajax({
+               url: "/get_order_pay_infos",
+               dataType: 'json',
+               type: 'GET',
+               data:{"order_id":"{{order_id}}"},
+               success: function(data) {
+                   if(data.rows.length==0){
+                       return;
+                   }
+                   this.setState({payitem:data.rows});
                }.bind(this),
                error: function(xhr, status, err) {
                }.bind(this)
@@ -358,6 +373,16 @@
                         <div className="margin_bottom overflow">
                             <div className="col-sm-4">快递费</div>
                             <div className="col-sm-8 border_style">{this.state.order.logistics_price}</div>
+                        </div>
+                        <div className="margin_bottom overflow">
+                            <div className="col-sm-4">支付方式</div>
+                            <div className="col-sm-8 border_style">
+
+                            {this.state.payitem.map(item => (
+                                <span>{item.pay_way}</span>))
+                            }
+
+                            </div>
                         </div>
                  </div>
 
