@@ -205,10 +205,10 @@ exports.register = function(server, options, next){
 	};
 	//订单支付信息
 	var get_order_pay_infos = function(order_id,cb){
-		var url = "http://139.196.148.40:18008/get_order_pay_infos?order_id=";
+		var url = "http://139.196.148.40:18008/get_order_pay_infos?sob_id=ioio&order_id=";
 		url = url + order_id;
 		do_get_method(url,cb);
-	};
+	}
 	//查询单条订单
 	var search_order_info = function(order_id,cb){
 		var url = "http://211.149.248.241:18010/search_order_info?order_id=";
@@ -764,7 +764,27 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18002/update_product_info";
 		do_post_method(url,data,cb);
 	};
+	//退款查询
+	var get_return_order = function(order_id,cb){
+		var url = "http://211.149.248.241:18010/get_return_order?order_id="+order_id;
+		do_get_method(url,cb);
+	};
 	server.route([
+		//退款查询
+		{
+			method: 'GET',
+			path: '/get_return_order',
+			handler: function(request, reply){
+				var order_id = request.query.order_id;
+				get_return_order(order_id,function(err,rows){
+					if (!err) {
+						return reply({"success":true,"orders":rows.orders,"details_map":rows.details_map,"products_map":rows.products_map});
+					}else {
+						return reply({"success":false,"message":rows.message});
+					}
+				});
+			}
+		},
 		//付款情况
 		{
 			method: 'GET',
