@@ -637,7 +637,7 @@ exports.register = function(server, options, next){
 		var url = "http://139.196.148.40:18001/store/add_store";
 		do_post_method(url,data,cb);
 	}
-	//门店新增==编辑
+	//门店编辑
 	var update_store = function(data,cb){
 		var url = "http://139.196.148.40:18001/store/update_store";
 		do_post_method(url,data,cb);
@@ -2955,6 +2955,14 @@ exports.register = function(server, options, next){
 			path: '/mendian_center',
 			handler: function(request, reply){
 				return reply.view("mendian_center");
+			}
+		},
+		//门店页面
+		{
+			method: 'GET',
+			path: '/mendian_edit',
+			handler: function(request, reply){
+				return reply.view("mendian_edit");
 			}
 		},
 	]);
