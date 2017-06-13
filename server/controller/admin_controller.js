@@ -632,6 +632,11 @@ exports.register = function(server, options, next){
 		var url = "http://139.196.148.40:18006/invoice/apply_list_data?sob_id="+ org_code;
 		do_get_method(url,cb);
 	};
+	//根据id得到指定门店信息
+	var get_by_id = function(store_id,cb){
+		var url = "http://211.149.248.241:19999/store/get_by_id?id="+store_id+"&org_code="+org_code;
+		do_get_method(url,cb);
+	};
 	//门店新增
 	var add_store = function(data,cb){
 		var url = "http://139.196.148.40:18001/store/add_store";
@@ -770,6 +775,30 @@ exports.register = function(server, options, next){
 		do_get_method(url,cb);
 	};
 	server.route([
+		//门店详细信息
+		{
+			method: 'GET',
+			path: '/mendian_detail_view',
+			handler: function(request, reply){
+				return reply.view("mendian_detail_view");
+			}
+		},
+		//门店详细信息
+		{
+			method: 'get',
+			path: '/mendian_detail',
+			handler: function(request, reply){
+				var store_id = request.query.store_id;
+				get_by_id(store_id,function(err,row){
+					if (!err) {
+						var store = row.row;
+						return reply.view({"success":true,"store":store});
+					}else {
+						return reply({"success":false,"message":row.message});
+					}
+				});
+			}
+		},
 		//退款查询
 		{
 			method: 'GET',
