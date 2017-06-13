@@ -23,7 +23,8 @@ module.exports = {
         inventory_search: './app/inventory_search.jsx',
         product_description: './app/product_description.jsx',
         poor_orders: './app/poor_orders.jsx',
-        mendian_edit: './app/mendian_edit.jsx'
+        mendian_edit: './app/mendian_edit.jsx',
+        mendian_detail_view: './app/mendian_detail_view.jsx'
     },
     output: {
         path: __dirname,

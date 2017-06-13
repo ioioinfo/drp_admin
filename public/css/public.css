@@ -314,3 +314,8 @@ tr td:last-child{
 .operate_announce a{
     color: #fff;
 }
+
+/*编辑器样式*/
+#textarea_content{
+    min-height: 150px;
+}

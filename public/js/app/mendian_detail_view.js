@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 193);
+/******/ 	return __webpack_require__(__webpack_require__.s = 190);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -22488,16 +22488,15 @@ module.exports = traverseAllChildren;
 /* 187 */,
 /* 188 */,
 /* 189 */,
-/* 190 */,
-/* 191 */,
-/* 192 */,
-/* 193 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -22560,57 +22559,18 @@ var Wrap = function (_React$Component) {
 }(React.Component);
 
 ;
-
-// 右侧下部表格
+// 统计
 
 var Right = function (_React$Component2) {
     _inherits(Right, _React$Component2);
 
-    function Right(props) {
+    function Right() {
         _classCallCheck(this, Right);
 
-        var _this2 = _possibleConstructorReturn(this, (Right.__proto__ || Object.getPrototypeOf(Right)).call(this, props));
-
-        _this2.handleClick = _this2.handleClick.bind(_this2);
-        return _this2;
+        return _possibleConstructorReturn(this, (Right.__proto__ || Object.getPrototypeOf(Right)).apply(this, arguments));
     }
 
     _createClass(Right, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            ue = UM.getEditor('descript_infor');
-            $.ajax({
-                url: "/search_descriptions",
-                dataType: 'json',
-                type: 'GET',
-                data: { "product_id": product_id },
-                success: function (data) {
-                    var description = data.row[0].description;
-                    ue.setContent(description);
-                }.bind(this),
-                error: function (xhr, status, err) {}.bind(this)
-            });
-        }
-    }, {
-        key: 'handleClick',
-        value: function handleClick(e) {
-            var description = ue.getContent();
-            $.ajax({
-                url: "/update_product_description",
-                dataType: 'json',
-                type: 'POST',
-                data: { "product_id": product_id, "description": description },
-                success: function (data) {
-                    if (data.success) {
-                        alert("保存成功！");
-                    } else {
-                        alert("保存失败！");
-                    }
-                }.bind(this),
-                error: function (xhr, status, err) {}.bind(this)
-            });
-        }
-    }, {
         key: 'render',
         value: function render() {
             var breadcrumb = [];
@@ -22637,30 +22597,7 @@ var Right = function (_React$Component2) {
                     { className: 'breadcrumb margin_top20' },
                     breadcrumb
                 ),
-                React.createElement(
-                    'div',
-                    { className: 'row descript' },
-                    React.createElement(
-                        'p',
-                        { className: 'col-md-3 col-sm-3' },
-                        '\u5546\u54C1id: ',
-                        product_id
-                    )
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'row' },
-                    React.createElement('textarea', { className: 'descript_infor', id: 'descript_infor' })
-                ),
-                React.createElement(
-                    'div',
-                    null,
-                    React.createElement(
-                        'button',
-                        { className: 'btn button_background1 button_white margin_right pull-right', type: 'button', onClick: this.handleClick },
-                        '\u4FDD \u5B58'
-                    )
-                )
+                React.createElement(Middle, null)
             );
         }
     }]);
@@ -22670,6 +22607,152 @@ var Right = function (_React$Component2) {
 
 ;
 
+var Middle = function (_React$Component3) {
+    _inherits(Middle, _React$Component3);
+
+    function Middle(props) {
+        _classCallCheck(this, Middle);
+
+        // 初始化一个空对象
+        var _this3 = _possibleConstructorReturn(this, (Middle.__proto__ || Object.getPrototypeOf(Middle)).call(this, props));
+
+        _this3.state = { item: {} };
+        return _this3;
+    }
+
+    _createClass(Middle, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            $.ajax({
+                url: "/mendian_detail",
+                dataType: 'json',
+                type: 'GET',
+                data: { "store_id": store_id },
+                success: function (data) {
+                    this.setState({ item: data.row });
+                    var org_store_id = this.state.item.org_store_id;
+                    var org_store_code = this.state.item.org_store_code;
+                    var org_store_name = this.state.item.org_store_name;
+                    var open_date_text = this.state.item.open_date_text;
+                    var remark = this.state.item.remark;
+                    var address = this.state.item.points[0].province + this.state.item.points[0].city + this.state.item.points[0].district + this.state.item.points[0].detail_address;
+                    $("#org_store_id").val(org_store_id);
+                    $("#org_store_code").val(org_store_code);
+                    $("#org_store_name").val(org_store_name);
+                    $("#open_date_text").val(open_date_text);
+                    $("#remark").val(remark);
+                    $("#address").val(address);
+                }.bind(this),
+                error: function (xhr, status, err) {}.bind(this)
+
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _React$createElement, _React$createElement2, _React$createElement3, _React$createElement4, _React$createElement5, _React$createElement6;
+
+            return React.createElement(
+                'div',
+                { className: 'statistics_middle ' },
+                React.createElement(
+                    'div',
+                    { className: 'form-group form-group-sm overflow' },
+                    React.createElement('div', { className: 'col-sm-3' }),
+                    React.createElement(
+                        'label',
+                        { className: 'col-sm-3 col-md-2 control-label' },
+                        '\u95E8\u5E97id: '
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-5' },
+                        React.createElement('input', (_React$createElement = { className: 'form-control', type: 'text', id: 'formGroupInputSmall' }, _defineProperty(_React$createElement, 'id', 'org_store_id'), _defineProperty(_React$createElement, 'readOnly', true), _React$createElement))
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'form-group form-group-sm overflow' },
+                    React.createElement('div', { className: 'col-sm-3' }),
+                    React.createElement(
+                        'label',
+                        { className: 'col-sm-3 col-md-2 control-label' },
+                        '\u95E8\u5E97\u5E8F\u53F7: '
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-5' },
+                        React.createElement('input', (_React$createElement2 = { className: 'form-control', type: 'text', id: 'formGroupInputSmall' }, _defineProperty(_React$createElement2, 'id', 'org_store_code'), _defineProperty(_React$createElement2, 'readOnly', true), _React$createElement2))
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'form-group form-group-sm overflow' },
+                    React.createElement('div', { className: 'col-sm-3' }),
+                    React.createElement(
+                        'label',
+                        { className: 'col-sm-3 col-md-2 control-label' },
+                        '\u95E8\u5E97\u540D\u79F0: '
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-5' },
+                        React.createElement('input', (_React$createElement3 = { className: 'form-control', type: 'text', id: 'formGroupInputSmall' }, _defineProperty(_React$createElement3, 'id', 'org_store_name'), _defineProperty(_React$createElement3, 'readOnly', true), _React$createElement3))
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'form-group form-group-sm overflow' },
+                    React.createElement('div', { className: 'col-sm-3' }),
+                    React.createElement(
+                        'label',
+                        { className: 'col-sm-3 col-md-2 control-label' },
+                        '\u5F00\u5E97\u65F6\u95F4: '
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-5' },
+                        React.createElement('input', (_React$createElement4 = { className: 'form-control', type: 'text', id: 'formGroupInputSmall' }, _defineProperty(_React$createElement4, 'id', 'open_date_text'), _defineProperty(_React$createElement4, 'readOnly', true), _React$createElement4))
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'form-group form-group-sm overflow' },
+                    React.createElement('div', { className: 'col-sm-3' }),
+                    React.createElement(
+                        'label',
+                        { className: 'col-sm-3 col-md-2 control-label' },
+                        '\u5730\u5740: '
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-5' },
+                        React.createElement('input', (_React$createElement5 = { className: 'form-control', type: 'text', id: 'formGroupInputSmall' }, _defineProperty(_React$createElement5, 'id', 'address'), _defineProperty(_React$createElement5, 'readOnly', true), _React$createElement5))
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'form-group form-group-sm overflow' },
+                    React.createElement('div', { className: 'col-sm-3' }),
+                    React.createElement(
+                        'label',
+                        { className: 'col-sm-3 col-md-2 control-label' },
+                        '\u5907\u6CE8: '
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-5' },
+                        React.createElement('input', (_React$createElement6 = { className: 'form-control', type: 'text', id: 'formGroupInputSmall' }, _defineProperty(_React$createElement6, 'id', 'remark'), _defineProperty(_React$createElement6, 'readOnly', true), _React$createElement6))
+                    )
+                )
+            );
+        }
+    }]);
+
+    return Middle;
+}(React.Component);
+
+;
 // 返回到页面
 ReactDOM.render(React.createElement(Wrap, null), document.getElementById("content"));
 

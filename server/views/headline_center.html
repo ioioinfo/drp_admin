@@ -173,6 +173,7 @@
         ,{name:'operate',title:'操作',width:'10%',sort:false,type:"operate"}];
 
         var alertChangeState;
+        var alertChangeStatedown;
 
         // 图片懒加载
         var docTop = $(document).scrollTop();
@@ -229,6 +230,8 @@
                         </div>
                     </div>
                     <CkeckPassword/>
+                    <Alert/>
+                    <Alertdown/>
                 </div>
             );
         }
@@ -558,9 +561,12 @@
          constructor(props) {
              super(props);
              this.handleClick=this.handleClick.bind(this);
+             this.handleClick1=this.handleClick1.bind(this);
          }
          handleClick(e) {
             var id = this.props.item.id;
+            $(".alertWrapup").show();
+            $(".layout_toumingceng").show();
             alertChangeState = function() {
                 $.ajax({
                   url: "/publish_announce",
@@ -569,15 +575,35 @@
                   type: 'POST',
                   success: function(data) {
                       this.props.changeState("已发布");
-                      $(".alertWrap").hide();
+
+                      $(".alertWrapup").hide();
                       $(".layout_toumingceng").hide();
                   }.bind(this),
                   error: function(xhr, status, err) {
                   }.bind(this)
               });
           }.bind(this);
-            $(".alertWrap").show();
+         }
+
+         handleClick1(e) {
+            var id = this.props.item.id;
+            $(".alertWrapdown").show();
             $(".layout_toumingceng").show();
+            alertChangeStatedown = function() {
+                $.ajax({
+                  url: "/down_announce",
+                  dataType: 'json',
+                  data: {id:id},
+                  type: 'POST',
+                  success: function(data) {
+                      this.props.changeState("编辑中");
+                      $(".alertWrapdown").hide();
+                      $(".layout_toumingceng").hide();
+                  }.bind(this),
+                  error: function(xhr, status, err) {
+                  }.bind(this)
+              });
+          }.bind(this);
          }
        render() {
 
@@ -593,11 +619,11 @@
            }else if (this.props.thitem.type=="operate") {
                if(this.props.item.state_text=="已发布"){
                    return (
-                   <td><a href="edit_headline" className="btn btn-primary btn-xs operate_announce">编 辑</a><span className="btn btn-info btn-xs operate_announce" onClick={this.handleClick1}>下 架</span></td>
+                   <td><a href={"edit_headline?id="+this.props.item.id} className="btn btn-primary btn-xs operate_announce">编 辑</a><span className="btn btn-info btn-xs operate_announce" onClick={this.handleClick1}>下 架</span></td>
                    );
                }else {
                    return (
-                   <td><a href="edit_headline" className="btn btn-primary btn-xs operate_announce">编 辑</a><span className="btn btn-success btn-xs operate_announce" onClick={this.handleClick}>发 布</span></td>
+                   <td><a href={"edit_headline?id="+this.props.item.id} className="btn btn-primary btn-xs operate_announce">编 辑</a><span className="btn btn-success btn-xs operate_announce" onClick={this.handleClick}>发 布</span></td>
                    );
                }
            }
@@ -625,7 +651,7 @@
          }
        render() {
           return(
-              <div className="alertWrap">
+              <div className="alertWrap alertWrapup">
                   <p className="alertTitle">系统提示</p>
                   <p className="alertInfor">是否确认发布？</p>
                   <p className="alertSubmit">
@@ -637,7 +663,33 @@
        }
      };
 
-
+     //  下架弹出层
+     class Alertdown extends React.Component {
+         constructor(props) {
+             super(props);
+             this.handleClick=this.handleClick.bind(this);
+             this.handleClick1=this.handleClick1.bind(this);
+         }
+         handleClick(e) {
+             alertChangeStatedown();
+         }
+         handleClick1(e) {
+             $(".alertWrapdown").hide();
+             $(".layout_toumingceng").hide();
+         }
+       render() {
+          return(
+              <div className="alertWrap alertWrapdown">
+                  <p className="alertTitle">系统提示</p>
+                  <p className="alertInfor">是否确认下架？</p>
+                  <p className="alertSubmit">
+                       <span className="button button-action" onClick={this.handleClick1}>取 消</span>
+                       <span className="button button-action" onClick={this.handleClick}>确 认</span>
+                   </p>
+              </div>
+          )
+       }
+     };
      // 分页
      class Tab extends React.Component {
          constructor(props) {

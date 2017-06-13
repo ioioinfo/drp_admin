@@ -9,10 +9,15 @@
     <link rel="stylesheet" href="css/button.css">
     <link rel="stylesheet" href="css/public.css">
     <link rel="stylesheet" href="css/layout.css">
+    <link href="css/themes/default/css/umeditor.min.css" type="text/css" rel="stylesheet">
     <script src="js/react.min.js"></script>
     <script src="js/react-dom.min.js"></script>
     <script src="js/browser.min.js"></script>
     <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
+    <!-- 编辑插件 -->
+    <script src="js/template.min.js" type="text/javascript"></script>
+    <script src="js/umeditor.min.js" type="text/javascript"></script>
+    <script src="js/umeditor.config.js" type="text/javascript"></script>
     <style media="screen">
     .wrapRight{
         padding-top: 70px;
@@ -38,6 +43,7 @@
     <div id="content" class="container-fluid"></div>
     <script type="text/javascript">
         var default_selected = "07";
+        var ue;
     </script>
     <script type="text/babel">
       // 框架
@@ -243,23 +249,53 @@
              super(props);
              // 初始化一个空对象
              this.handleClick = this.handleClick.bind(this);
+             this.state = {item:{},imgs:[]};
          }
          componentDidMount() {
+             ue = UM.getEditor('textarea_content');
              $.ajax({
-               url: "/menu_list",
+               url: "/get_announce_by_id",
                dataType: 'json',
                type: 'GET',
+               data:{"id":"{{id}}"},
                success: function(data) {
-                   this.setState({items: data.rows});
+                   this.setState({item: data.row,imgs:data.row.imgs});
+                   var textarea_content = this.state.item.content;
+                   var title = this.state.item.title;
+                   $("#title").val(title);
+                   ue.setContent(textarea_content);
                }.bind(this),
                error: function(xhr, status, err) {
                }.bind(this)
            });
          }
          handleClick(e){
-           this.props.setSelected(this.props.item.code);
+             var id = this.state.item.id;
+             var title = $("#title").val();
+             var textarea_content = ue.getContent();
+             var imgs = this.state.item.imgs;
+             var headline = this.state.item.headline;
+             $.ajax({
+                    url: "/update_announce",
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {"id":id,"title":title,"content":textarea_content,"imgs":JSON.stringify(imgs),"headline":headline},
+                    success: function(data) {
+                        if (data.success) {
+                            alert("保存成功！");
+                        }else {
+                            alert("保存失败！");
+                        }
+                    }.bind(this),
+                    error: function(xhr, status, err) {
+                    }.bind(this)
+                });
+
+
          }
        render() {
+           var style={"minHeight":"250px"};
+
          return (
            <div className="wrapRight wrapRight_form col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
                <div className="row">
@@ -267,20 +303,21 @@
                        <div className="form-group show-grid">
                             <label  className="col-sm-2 control-label">标题</label>
                             <div className="col-sm-10">
-                              <input type="text" className="form-control" id="inputPassword3" />
+                              <input type="text" className="form-control" id="inputPassword3" id="title" />
                             </div>
                         </div>
                         <div className="form-group show-grid">
                              <label  className="col-sm-2 control-label">内容</label>
                              <div className="col-sm-10">
-                               <textarea className="form-control" rows="12"></textarea>
+                               <textarea className="form-control" rows="12" id="textarea_content" style={style}></textarea>
                              </div>
                          </div>
 
                         <div className="form-group show-grid">
                              <label  className="col-sm-2 control-label">上传图片</label>
                              <div className="col-sm-10">
-                               <input type="file" name="files" className="four image" id="fileupload" multiple />
+
+                               <img src="images/i-00.jpg" alt="..." className="img-thumbnail imgs" />
                              </div>
                          </div>
 
