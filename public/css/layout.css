@@ -198,8 +198,8 @@
 
 /*按钮大小边距*/
 .operate_edit, .operate_announce{
-    line-height: 20px;
-    height: 20px;
+    line-height: 25px;
+    height: 25px;
     padding: 0 10px;
     font-size: 12px;
 }

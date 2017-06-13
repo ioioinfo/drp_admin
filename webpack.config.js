@@ -22,7 +22,8 @@ module.exports = {
         return_view: './app/return_view.jsx',
         inventory_search: './app/inventory_search.jsx',
         product_description: './app/product_description.jsx',
-        poor_orders: './app/poor_orders.jsx'
+        poor_orders: './app/poor_orders.jsx',
+        mendian_edit: './app/mendian_edit.jsx'
     },
     output: {
         path: __dirname,

@@ -311,3 +311,6 @@ tr td:last-child{
 .margin_top_de{
     margin-top: 15px;
 }
+.operate_announce a{
+    color: #fff;
+}

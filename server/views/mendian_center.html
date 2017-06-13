@@ -388,8 +388,7 @@
        render() {
            if(this.props.thitem.type=='operation'){
                return (
-               <td><span className="btn btn-primary btn-xs operate_announce">编辑</span><span className="btn btn-info btn-xs operate_announce">查看</span></td>
-
+               <td><span className="btn btn-primary btn-xs operate_announce"><a href={"mendian_edit?store_id="+this.props.item.org_store_id}>编辑</a></span><span className="btn btn-info btn-xs operate_announce">查看</span></td>
                );
            }else {
                return (
