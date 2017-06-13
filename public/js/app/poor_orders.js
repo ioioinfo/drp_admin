@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 192);
+/******/ 	return __webpack_require__(__webpack_require__.s = 190);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -22946,9 +22946,7 @@ module.exports = Table;
 /***/ }),
 /* 188 */,
 /* 189 */,
-/* 190 */,
-/* 191 */,
-/* 192 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23033,7 +23031,6 @@ var Right = function (_React$Component2) {
         _this2.setPage = _this2.setPage.bind(_this2);
         _this2.handleSort = _this2.handleSort.bind(_this2);
         _this2.loadData = _this2.loadData.bind(_this2);
-        _this2.refresh = _this2.refresh.bind(_this2);
         // 初始化一个空对象
         _this2.state = { tabthitems: [], tabtritems: [], allNum: 0, everyNum: 20, thisPage: 1, sort: { name: "", dir: "" } };
         return _this2;
@@ -23066,23 +23063,6 @@ var Right = function (_React$Component2) {
             this.loadData({ sort: sort });
         }
     }, {
-        key: 'refresh',
-        value: function refresh(id, status_name) {
-            var tritems = this.state.tabtritems;
-            var st = "上架";
-            if (status_name == "上架") {
-                st = "下架";
-            } else if (status_name == "下架") {
-                st = "上架";
-            }
-            for (var i = 0; i < tritems.length; i++) {
-                if (id == tritems[i].id) {
-                    tritems[i].status_name = st;
-                }
-            }
-            this.setState({ tabtritems: tritems });
-        }
-    }, {
         key: 'render',
         value: function render() {
             var breadcrumb = [];
@@ -23111,7 +23091,7 @@ var Right = function (_React$Component2) {
                     breadcrumb
                 ),
                 React.createElement(SearchList, { loadData: this.loadData }),
-                React.createElement(Table, { tabthitems: this.state.tabthitems, tabtritems: this.state.tabtritems, sort: this.state.sort, onSort: this.handleSort, refresh: this.refresh, checkTd: checkTd }),
+                React.createElement(Table, { tabthitems: this.state.tabthitems, tabtritems: this.state.tabtritems, sort: this.state.sort, onSort: this.handleSort, checkTd: checkTd }),
                 React.createElement(PageTab, { setPage: this.setPage, allNum: this.state.allNum, everyNum: this.state.everyNum, thisPage: this.state.thisPage })
             );
         }
@@ -23218,115 +23198,8 @@ var SearchList = function (_React$Component3) {
 
 //判断特殊列
 var checkTd = function checkTd(defaultTd) {
-    var id = this.props.item.id;
-    var href = "product_edit?product_id=" + id;
-    var href1 = "product_view?product_id=" + id;
-
-    //  点击下架
-    var product_down_click = function (e) {
-        var product_id = this.props.item.id;
-        $.ajax({
-            url: "/product_down",
-            dataType: 'json',
-            type: 'POST',
-            data: { "product_id": product_id },
-            success: function (data) {
-                if (data.success) {
-                    this.props.refresh(product_id, this.props.item.status_name);
-                } else {}
-            }.bind(this),
-            error: function (xhr, status, err) {}.bind(this)
-        });
-    }.bind(this);
-
-    // 点击上架
-    var product_up_click = function (e) {
-        var product_id = this.props.item.id;
-        $.ajax({
-            url: "/product_up",
-            dataType: 'json',
-            type: 'POST',
-            data: { "product_id": product_id },
-            success: function (data) {
-                if (data.success) {
-                    this.props.refresh(product_id, this.props.item.status_name);
-                } else {}
-            }.bind(this),
-            error: function (xhr, status, err) {}.bind(this)
-        });
-    }.bind(this);
-
-    if (this.props.thitem.type == "operation") {
-        if (this.props.item.status_name == "上架") {
-            return React.createElement(
-                'td',
-                null,
-                React.createElement(
-                    'span',
-                    { className: 'btn btn-primary btn-xs operate_announce' },
-                    React.createElement(
-                        'a',
-                        { href: href },
-                        '\u7F16\u8F91'
-                    )
-                ),
-                React.createElement(
-                    'span',
-                    { className: 'btn btn-info btn-xs operate_announce' },
-                    React.createElement(
-                        'a',
-                        { href: href1 },
-                        '\u67E5\u770B'
-                    )
-                ),
-                React.createElement(
-                    'span',
-                    { className: 'btn btn-info btn-xs operate_announce', onClick: product_down_click },
-                    React.createElement(
-                        'a',
-                        null,
-                        '\u4E0B\u67B6'
-                    )
-                )
-            );
-        } else {
-            return React.createElement(
-                'td',
-                null,
-                React.createElement(
-                    'span',
-                    { className: 'btn btn-primary btn-xs operate_announce' },
-                    React.createElement(
-                        'a',
-                        { href: href },
-                        '\u7F16\u8F91'
-                    )
-                ),
-                React.createElement(
-                    'span',
-                    { className: 'btn btn-info btn-xs operate_announce' },
-                    React.createElement(
-                        'a',
-                        { href: href1 },
-                        '\u67E5\u770B'
-                    )
-                ),
-                React.createElement(
-                    'span',
-                    { className: 'btn btn-info btn-xs operate_announce', onClick: product_up_click },
-                    React.createElement(
-                        'a',
-                        null,
-                        '\u4E0A\u67B6'
-                    )
-                )
-            );
-        }
-    } else {
-        return defaultTd;
-    }
+    return React.createElement('td', null);
 };
-
 // 返回到页面
 ReactDOM.render(React.createElement(Wrap, null), document.getElementById("content"));
 

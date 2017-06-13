@@ -21,7 +21,8 @@ module.exports = {
         statistics: './app/statistics.jsx',
         return_view: './app/return_view.jsx',
         inventory_search: './app/inventory_search.jsx',
-        product_description: './app/product_description.jsx'
+        product_description: './app/product_description.jsx',
+        poor_orders: './app/poor_orders.jsx'
     },
     output: {
         path: __dirname,
