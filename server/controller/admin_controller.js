@@ -592,6 +592,10 @@ exports.register = function(server, options, next){
 		var url = "http://139.196.148.40:18005/publish_announce";
 		do_post_method(url,data,cb);
 	};
+	var down_announce = function(data,cb){
+		var url = "http://139.196.148.40:18005/down_announce";
+		do_post_method(url,data,cb);
+	};
 	//上传保存图片
 	var save_product_picture = function(data,cb){
 		var url = "http://211.149.248.241:18002/save_product_picture";
@@ -780,7 +784,8 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/mendian_detail_view',
 			handler: function(request, reply){
-				return reply.view("mendian_detail_view");
+				var store_id = request.query.store_id;
+				return reply.view("mendian_detail_view",{"store_id":store_id});
 			}
 		},
 		//门店详细信息
@@ -1158,7 +1163,8 @@ exports.register = function(server, options, next){
 																	"operator":1,
 																	"main_role_name":vip.vip_name,
 																	"main_role_id":vip.vip_id,
-																	"pay_type":order.pay_way
+																	"pay_type":order.pay_way,
+																	"platform_code":"drp_admin"
 																};
 																vip_add_amount_begin(payment,function(err,content){
 																	if (!err) {
@@ -1695,7 +1701,8 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/edit_headline',
 			handler: function(request, reply){
-				return reply.view("edit_headline");
+				var id = request.query.id;
+				return reply.view("edit_headline",{"id":id});
 			}
 		},
 		//announce add
@@ -1719,7 +1726,8 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/edit_announce',
 			handler: function(request, reply){
-				return reply.view("edit_announce");
+				var id = request.query.id;
+				return reply.view("edit_announce",{"id":id});
 			}
 		},
 		//商品导入页面
@@ -2083,6 +2091,22 @@ exports.register = function(server, options, next){
 				var id = request.payload.id;
 				var data = {"id":id};
 				publish_announce(data,function(err,row){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//头条公告发布
+		{
+			method: 'POST',
+			path: '/down_announce',
+			handler: function(request, reply){
+				var id = request.payload.id;
+				var data = {"id":id};
+				down_announce(data,function(err,row){
 					if (!err) {
 						return reply({"success":true,"service_info":service_info});
 					}else {
@@ -2990,7 +3014,8 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/mendian_edit',
 			handler: function(request, reply){
-				return reply.view("mendian_edit");
+				var store_id = request.query.store_id;
+				return reply.view("mendian_edit",{"store_id":store_id});
 			}
 		},
 	]);
