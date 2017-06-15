@@ -186,6 +186,11 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18010/get_all_num?params="+encodeURI(params);
 		do_get_method(url,cb);
 	};
+	//所有物流信息
+	var get_logistics_infos = function(order_id,cb){
+		var url = "http://127.0.0.1:18010/search_logistics_info?order_id="+order_id;
+		do_get_method(url,cb);
+	};
 	//获取所有门店
 	var get_all_mendian = function(cb){
 		var url = "http://211.149.248.241:19999/store/list?org_code="+org_code;
@@ -3018,6 +3023,69 @@ exports.register = function(server, options, next){
 				return reply.view("mendian_edit",{"store_id":store_id});
 			}
 		},
+		//查看物流
+		{
+			method: 'GET',
+			path: '/check_logistics',
+			handler: function(request, reply){
+				var order_id = request.query.order_id;
+				if (!order_id) {
+					return reply({"success":false,"message":"order_id null"});
+				}
+
+				var ep =  eventproxy.create("order","logistics_infos","companies","logistic_num", function(order,logistics_infos,companies,logistic_num){
+
+						var companies_map = {};
+						for (var i = 0; i < companies.length; i++) {
+							companies_map[companies[i].logi_code] = companies[i].logi_name;
+						}
+						var company = companies_map[order.type];
+
+						return reply({"logistics_infos":logistics_infos,"company":company,"logistic_num":logistic_num});
+
+				});
+
+				get_ec_order(order_id,function(err,results){
+					if (!err) {
+						ep.emit("order", results.orders[0]);
+					}else {
+						ep.emit("order", {});
+					}
+				});
+
+				companies(function(err,rows){
+					if (!err) {
+						ep.emit("companies", rows.rows);
+					}else {
+						ep.emit("companies", []);
+					}
+				});
+
+				get_logistics_id(order_id,function(err,rows){
+					if (!err) {
+						var logistics = rows.rows;
+						var logistic_num = "";
+						for (var i = 0; i < logistics.length; i++) {
+							var logistic_num = logistic_num + logistics[i].logi_id;
+						}
+						ep.emit("logistic_num", logistic_num);
+					}else {
+						ep.emit("logistic_num", "");
+					}
+				});
+
+				get_logistics_infos(order_id, function(err,rows){
+					if (!err) {
+						ep.emit("logistics_infos", rows.rows);
+					}else {
+						ep.emit("logistics_infos", []);
+					}
+				});
+
+			}
+		},
+
+
 	]);
 
     next();
