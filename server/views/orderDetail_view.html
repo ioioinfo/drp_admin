@@ -365,7 +365,7 @@
                     <div className="col-sm-4">支付方式</div>
                     <div className="col-sm-8 border_style">
                     {this.state.payitem.map(item => (
-                        <span>{item.pay_way}</span>))
+                        <p><span>{item.pay_way}</span>:  <span>{item.pay_amount}</span></p>))
                     }
                     </div>
                 </div>

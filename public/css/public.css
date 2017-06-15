@@ -318,3 +318,6 @@ tr td:last-child{
 #textarea_content{
     min-height: 150px;
 }
+.margin_bottom_logistics{
+    margin-bottom: 27px;
+}
