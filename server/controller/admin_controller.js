@@ -204,7 +204,7 @@ exports.register = function(server, options, next){
 	};
 	//根据personids找昵称
 	var get_person_avatar = function(person_ids, cb){
-		var url = "http://139.196.148.40:18003/get_person_avatar?person_ids=";
+		var url = "http://139.196.148.40:18003/person/get_avatar?person_ids=";
 		url = url + person_ids + "&scope_code=" +org_code;
 		do_get_method(url,cb);
 	};
