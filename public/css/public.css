@@ -212,7 +212,6 @@ tr td:last-child{
     overflow: hidden;
 }
 .border_bottom{
-    border-bottom: 1px solid #eee;
     margin-bottom: 7px;
 }
 .padding_left{

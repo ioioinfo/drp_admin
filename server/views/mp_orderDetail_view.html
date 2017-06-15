@@ -279,7 +279,7 @@
          constructor(props) {
              super(props);
              // 初始化一个空对象
-             this.state = {order:{},items:[],product:{},payitem:[]};
+             this.state = {order:{},items:[],product:{},payitem:[],logistics_payitem:[]};
          }
          // 3
          componentDidMount() {
@@ -309,6 +309,21 @@
                error: function(xhr, status, err) {
                }.bind(this)
            });
+
+           $.ajax({
+               url: "/check_logistics",
+               dataType: 'json',
+               type: 'GET',
+               data:{"order_id":"{{order_id}}"},
+               success: function(data) {
+                   if(data.logistics_infos.length==0){
+                       return;
+                   }
+                   this.setState({logistics_payitem:data.logistics_infos});
+               }.bind(this),
+               error: function(xhr, status, err) {
+               }.bind(this)
+           });
          }
 
        render() {
@@ -316,76 +331,90 @@
              <div className="container-fluid">
                 <div className="row overflow ">
                     <div className="col-sm-8">
-                    {this.state.items.map(item => (
+                        <h3>商品信息</h3>
+                        <hr/>
+                        {this.state.items.map(item => (
+                            <div className="row border_bottom font_size12">
+                                <div className="span12  col-sm-2">
+                                    <img alt="" src={this.state.product[item.product_id].img.location} className="img-polaroid " />
+                                </div>
+                                <div className="col-sm-10">
+                                    <div className="margin_bottom overflow font_size12">
+                                        <div className="col-sm-12 border_style">{this.state.product[item.product_id].product_name}</div>
+                                    </div>
+                                    <div className="margin_bottom overflow font_size12">
+                                        <div className="col-sm-12">商品ID : {item.product_id}</div>
+                                    </div>
+                                    <div className="margin_bottom overflow font_size12">
+                                        <div className="col-sm-3 line-height">数量 : {item.number}</div>
+                                        <div className="col-sm-3 line-height">重量 : {this.state.product[item.product_id].weight}kg</div>
+                                        <div className="col-sm-3 line-height">市场价 : {item.marketing_price}</div>
+                                        <div className="col-sm-3 line-height">销售价 : {item.price}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        <hr/>
+                        <h3>订单信息</h3>
+                        <hr/>
                         <div className="row border_bottom font_size12">
-                            <div className="span12  col-sm-2">
-                                <img alt="" src={this.state.product[item.product_id].img.location} className="img-polaroid " />
-                            </div>
-                            <div className="col-sm-10">
-                                <div className="margin_bottom overflow font_size12">
-                                    <div className="col-sm-12 border_style">{this.state.product[item.product_id].product_name}</div>
+                                <div className="margin_bottom overflow col-sm-6">
+                                    <div className="col-sm-4">订单号</div>
+                                    <div className="col-sm-8 border_style">{this.state.order.order_id}</div>
                                 </div>
-                                <div className="margin_bottom overflow font_size12">
-                                    <div className="col-sm-12">商品ID : {item.product_id}</div>
-                                </div>
-                                <div className="margin_bottom overflow font_size12">
-                                    <div className="col-sm-3 line-height">数量 : {item.number}</div>
-                                    <div className="col-sm-3 line-height">重量 : {this.state.product[item.product_id].weight}kg</div>
-                                    <div className="col-sm-3 line-height">市场价 : {item.marketing_price}</div>
-                                    <div className="col-sm-3 line-height">销售价 : {item.price}</div>
+                               <div className="margin_bottom overflow col-sm-6">
+                                   <div className="col-sm-4">姓名</div>
+                                   <div className="col-sm-8 border_style">{this.state.order.linkname}</div>
+                               </div>
+                               <div className="margin_bottom overflow col-sm-6">
+                                   <div className="col-sm-4">手机</div>
+                                   <div className="col-sm-8 border_style">{this.state.order.mobile}</div>
+                               </div>
+                               <div className="margin_bottom overflow col-sm-6">
+                                   <div className="col-sm-4">地址</div>
+                                   <div className="col-sm-8 border_style">{this.state.order.province}{this.state.order.city}{this.state.order.detail_address}</div>
+                               </div>
+                               <div className="margin_bottom overflow col-sm-6">
+                                   <div className="col-sm-4">下单时间</div>
+                                   <div className="col-sm-8 border_style">{this.state.order.created_at}</div>
+                               </div>
+                               <div className="margin_bottom overflow col-sm-6">
+                                   <div className="col-sm-4">总价</div>
+                                   <div className="col-sm-8 border_style">{this.state.order.gain_point}</div>
+                               </div>
+                               <div className="margin_bottom overflow col-sm-6">
+                                   <div className="col-sm-4">快递公司</div>
+                                   <div className="col-sm-8 border_style">{this.state.order.type}</div>
+                               </div>
+                               <div className="margin_bottom overflow col-sm-6">
+                                   <div className="col-sm-4">快递费</div>
+                                   <div className="col-sm-8 border_style">{this.state.order.logistics_price}</div>
+                               </div>
+                               <div className="margin_bottom overflow col-sm-6">
+                                   <div className="col-sm-4">支付方式</div>
+                                   <div className="col-sm-8 border_style">
 
+                                   {this.state.payitem.map(item => (
+                                       <span>{item.pay_way}</span>))
+                                   }
 
-
-                                </div>
-                            </div>
+                                   </div>
+                               </div>
                         </div>
-                    ))}
                     </div>
-                 <div className="col-sm-4">
-                         <div className="margin_bottom overflow">
-                             <div className="col-sm-4">订单号</div>
-                             <div className="col-sm-8 border_style">{this.state.order.order_id}</div>
-                         </div>
-                        <div className="margin_bottom overflow">
-                            <div className="col-sm-4">姓名</div>
-                            <div className="col-sm-8 border_style">{this.state.order.linkname}</div>
-                        </div>
-                        <div className="margin_bottom overflow">
-                            <div className="col-sm-4">手机</div>
-                            <div className="col-sm-8 border_style">{this.state.order.mobile}</div>
-                        </div>
-                        <div className="margin_bottom overflow">
-                            <div className="col-sm-4">地址</div>
-                            <div className="col-sm-8 border_style">{this.state.order.province}{this.state.order.city}{this.state.order.detail_address}</div>
-                        </div>
-                        <div className="margin_bottom overflow">
-                            <div className="col-sm-4">下单时间</div>
-                            <div className="col-sm-8 border_style">{this.state.order.created_at}</div>
-                        </div>
-                        <div className="margin_bottom overflow">
-                            <div className="col-sm-4">总价</div>
-                            <div className="col-sm-8 border_style">{this.state.order.gain_point}</div>
-                        </div>
-                        <div className="margin_bottom overflow">
-                            <div className="col-sm-4">快递公司</div>
-                            <div className="col-sm-8 border_style">{this.state.order.type}</div>
-                        </div>
-                        <div className="margin_bottom overflow">
-                            <div className="col-sm-4">快递费</div>
-                            <div className="col-sm-8 border_style">{this.state.order.logistics_price}</div>
-                        </div>
-                        <div className="margin_bottom overflow">
-                            <div className="col-sm-4">支付方式</div>
-                            <div className="col-sm-8 border_style">
 
-                            {this.state.payitem.map(item => (
-                                <span>{item.pay_way}</span>))
-                            }
-
+                    <div className="col-sm-4">
+                        <h3 className="logistics_title">物流信息</h3>
+                        <hr/>
+                        {this.state.logistics_payitem.map(item => (
+                            <div className="logistics_status">
+                                <p>{item.detail_desc}</p>
+                                <p>{item.add_time_text}</p>
                             </div>
-                        </div>
-                 </div>
+                        ))}
 
+
+                    </div>
                 </div>
             </div>
          );
