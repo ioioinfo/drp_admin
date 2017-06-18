@@ -428,6 +428,11 @@
        render() {
          return (
            <div className="wrapRight wrapRight_form col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+             <ol className="breadcrumb margin_top20">
+             <li>订单</li>
+             <li className="active">退货列表</li>
+             </ol>
+             <SearchList loadData={this.loadData}/>
              <Table tabthitems={this.state.tabthitems} tabtritems={this.state.tabtritems} sort={this.state.sort} onSort={this.handleSort} />
              <Tab setPage={this.setPage} allNum={this.state.allNum} everyNum={this.state.everyNum} thisPage={this.state.thisPage} />
            </div>
@@ -442,10 +447,7 @@
        render() {
            return (
                <div className="table-responsive">
-               <ol className="breadcrumb margin_top20">
-               <li>订单</li>
-               <li className="active">退货列表</li>
-               </ol>
+
                <div className="form-inline-wrap">
                <table className="table table-striped table-hover">
                <thead>
@@ -555,6 +557,60 @@
                );
            }
 
+       }
+     };
+
+     //  搜索框
+     class SearchList extends React.Component {
+         constructor(props) {
+           super(props);
+           this.handleClick = this.handleClick.bind(this);
+       }
+        handleClick(e){
+            var order_id = $(".order_id").val();
+            var status_name = $(".status_name").val();
+            var params1 = {"thisPage":1,"order_id":order_id,"status_name":status_name};
+
+            this.props.loadData(params1);
+        };
+      render() {
+          return (
+              <div className="row search_margin_botton">
+                  <div className="col-xs-6 col-lg-3 col-sm-3 show-grid">
+                      <div className="input-group">
+                          <input type="text" className="form-control order_id" placeholder="快递单..." />
+                          <span className="input-group-btn">
+                          </span>
+                      </div>
+                  </div>
+                  <div className="col-xs-6 col-lg-3 col-sm-3 show-grid">
+                      <div className="input-group">
+                          <input type="text" className="form-control vice_apply_name" placeholder="收货人..." disabled="disabled" />
+                          <span className="input-group-btn">
+                          </span>
+                      </div>
+                  </div>
+                  <div className="col-xs-6 col-lg-3 col-sm-3 show-grid">
+                      <div className="input-group">
+                          <input type="text" className="form-control host_name" placeholder="手机..." />
+                          <span className="input-group-btn">
+                          </span>
+                      </div>
+                  </div>
+                  <div className="col-xs-6 col-lg-2 col-sm-2 show-grid">
+                      <div className="input-group">
+                          <input type="text" className="form-control status_name" placeholder="状态..."  disabled="disabled"/>
+                      </div>
+                  </div>
+                  <div className="col-xs-12 col-lg-1 col-sm-1 show-grid">
+                      <div className="input-group">
+                          <span className="input-group-btn">
+                              <button className="btn btn-default" id="search_botton_left" type="button" onClick={this.handleClick}>查询</button>
+                          </span>
+                      </div>
+                  </div>
+              </div>
+          )
        }
      };
     //  发布弹出层
