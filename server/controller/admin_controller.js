@@ -75,6 +75,19 @@ exports.register = function(server, options, next){
 		}
 		return cookie_id;
 	};
+
+	//获取当前cookie drp_admin_user_id
+	var get_admin_id = function(request){
+		var drp_admin_user_id;
+		if (request.state && request.state.cookie) {
+			var cookie = request.state.cookie;
+			if (cookie.drp_admin_user_id) {
+				drp_admin_user_id = cookie.drp_admin_user_id;
+			}
+		}
+		return drp_admin_user_id;
+	};
+
 	//临时订单号
 	var get_temp_order_no = function(cb){
 		var url = "http://211.149.248.241:18011/get_temp_order_no?org_code=ioio&order_type=purchase_inbound"
@@ -2440,6 +2453,11 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/',
 			handler: function(request, reply){
+				var cookie = request.state.cookie;
+				var drp_admin_user_id = get_admin_id(request);
+				if (!drp_admin_user_id) {
+					return reply.view("login_page");
+				}
 				return reply.view("homePage");
 			}
 		},

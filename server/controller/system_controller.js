@@ -12,7 +12,7 @@
  │                                                              │
  └──────────────────────────────────────────────────────────────┘
 */
- 
+
 var _ = require('lodash');
 var moment = require('moment');
 var eventproxy = require('eventproxy');
@@ -29,7 +29,7 @@ exports.register = function(server, options, next) {
             'view': view
         });
     };
-    
+
     server.route([
         //返回menu菜单列表
         {
@@ -47,7 +47,7 @@ exports.register = function(server, options, next) {
                 });
             }
         },
-        
+
         //登录页面
         {
             method: 'GET',
@@ -68,18 +68,32 @@ exports.register = function(server, options, next) {
                 if (!username || !password) {
                     return reply({"success":false,"message":"param is null"});
                 }
+                var data = {
+                    "username":username,
+                    "password":password,
+                    "org_code":"ioio",
+                    "platform_code":"drp_admin"
+                };
                 var url = "http://139.196.148.40:18666/user/login_check";
                 uu_request.do_post_method(url,data,function(err,content) {
-                    var person_id = content.row.person_id;
-                    if (!person_id) {
-                        return reply({"success":false,"message":"no account"});
+                    if (!err) {
+                        if (content.success) {
+                            var person_id = content.row.person_id;
+                            if (!person_id) {
+                                return reply({"success":false,"message":"no account"});
+                            }
+                            var cookie = request.state.cookie;
+                            if (!cookie) {
+                                cookie = {};
+                            }
+                            cookie.drp_admin_user_id = person_id;
+                            return reply({"success":true}).state('cookie', cookie, cookie_options);
+                        }else {
+                            return reply({"success":false,"message":content.message});
+                        }
+                    }else {
+                        return reply({"success":false,"message":content.message});
                     }
-                    var cookie = request.state.cookie;
-                    if (!cookie) {
-                        cookie = {};
-                    }
-                    cookie.drp_admin_user_id = content.row.id;
-                    return reply({"success":true,"service_info":service_info}).state('cookie', cookie, cookie_options);
                 });
             },
         },
@@ -98,7 +112,7 @@ exports.register = function(server, options, next) {
                     return reply.redirect("/").state("cookie",cookie,cookie_options);
             },
         },
-        
+
         //查询用户信息
         {
             method: 'GET',
@@ -113,14 +127,14 @@ exports.register = function(server, options, next) {
                 if (!user_id) {
                     return reply({"success":true,"message":"ok","row":{}});
                 }
-                
+
                 var url = "http://139.196.148.40:18003/person/get_by_id="+user_id;
                 uu_request.do_get_method(url,function(err,content){
                     return reply({"success":true,"rows":content.rows,"message":"ok"});
                 });
             }
         },
-        
+
         //系统设置页面
         {
             method: 'GET',
@@ -129,7 +143,7 @@ exports.register = function(server, options, next) {
                 return reply.view(get_view("setting"), {});
             },
         },
-        
+
         //系统信息页面
         {
             method: 'GET',
@@ -138,7 +152,7 @@ exports.register = function(server, options, next) {
                 return reply.view(get_view("about"), {});
             },
         },
-        
+
     ]);
 
     next();
