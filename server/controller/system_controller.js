@@ -29,7 +29,17 @@ exports.register = function(server, options, next) {
             'view': view
         });
     };
-
+    //获取当前cookie drp_admin_user_id
+	var get_admin_id = function(request){
+		var drp_admin_user_id;
+		if (request.state && request.state.cookie) {
+			var cookie = request.state.cookie;
+			if (cookie.drp_admin_user_id) {
+				drp_admin_user_id = cookie.drp_admin_user_id;
+			}
+		}
+		return drp_admin_user_id;
+	};
     server.route([
         //返回menu菜单列表
         {
@@ -118,19 +128,15 @@ exports.register = function(server, options, next) {
             method: 'GET',
             path: '/user/login_info',
             handler: function(request,reply) {
-                //检查登录
-                var cookie = request.state.cookie;
-                if (!cookie) {
-                    return reply({"success":true,"message":"ok","row":{}});
-                }
-                var user_id = cookie.drp_admin_user_id;
-                if (!user_id) {
-                    return reply({"success":true,"message":"ok","row":{}});
-                }
+                var drp_admin_user_id = get_admin_id(request);
 
-                var url = "http://139.196.148.40:18003/person/get_by_id="+user_id;
+                var url = "http://139.196.148.40:18003/person/get_by_id?person_id="+drp_admin_user_id;
                 uu_request.do_get_method(url,function(err,content){
-                    return reply({"success":true,"rows":content.rows,"message":"ok"});
+                    if (!err) {
+                        return reply({"success":true,"rows":content.rows,"message":"ok"});
+                    }else {
+                        return reply({"success":false,"message":err,"message":"ok"});
+                    }
                 });
             }
         },
