@@ -9947,7 +9947,9 @@ var WrapRightHead = function (_React$Component) {
                 dataType: 'json',
                 type: 'GET',
                 success: function (data) {
-                    $(".head_user_name li:nth-child(2) a").html(data.row.name);
+                    if (data.row) {
+                        $(".head_user_name li:nth-child(2) a").html(data.row.name);
+                    }
                 }.bind(this),
                 error: function (xhr, status, err) {}.bind(this)
             });
@@ -22616,7 +22618,7 @@ var Middle = function (_React$Component3) {
         // 初始化一个空对象
         var _this3 = _possibleConstructorReturn(this, (Middle.__proto__ || Object.getPrototypeOf(Middle)).call(this, props));
 
-        _this3.state = { item: {} };
+        _this3.state = { item: { pictures: [] }, pictures: [] };
         return _this3;
     }
 
@@ -22629,7 +22631,7 @@ var Middle = function (_React$Component3) {
                 type: 'GET',
                 data: { "store_id": store_id },
                 success: function (data) {
-                    this.setState({ item: data.row });
+                    this.setState({ item: data.row, pictures: data.row.pictures });
                     var org_store_id = this.state.item.org_store_id;
                     var org_store_code = this.state.item.org_store_code;
                     var org_store_name = this.state.item.org_store_name;
@@ -22652,6 +22654,7 @@ var Middle = function (_React$Component3) {
         value: function render() {
             var _React$createElement, _React$createElement2, _React$createElement3, _React$createElement4, _React$createElement5, _React$createElement6;
 
+            var style = { width: "20%" };
             return React.createElement(
                 'div',
                 { className: 'statistics_middle ' },
@@ -22743,6 +22746,18 @@ var Middle = function (_React$Component3) {
                         'div',
                         { className: 'col-sm-5' },
                         React.createElement('input', (_React$createElement6 = { className: 'form-control', type: 'text', id: 'formGroupInputSmall' }, _defineProperty(_React$createElement6, 'id', 'remark'), _defineProperty(_React$createElement6, 'readOnly', true), _React$createElement6))
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'form-group form-group-sm overflow' },
+                    React.createElement('div', { className: 'col-sm-3' }),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-8' },
+                        this.state.item.pictures.map(function (item) {
+                            return React.createElement('img', { key: item.id, src: "images/" + item.location, style: style });
+                        })
                     )
                 )
             );

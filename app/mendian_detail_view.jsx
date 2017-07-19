@@ -56,7 +56,7 @@ class Middle extends React.Component {
     constructor(props) {
         super(props);
         // 初始化一个空对象
-        this.state = {item: {}};
+        this.state = {item: {pictures:[]},pictures:[]};
     }
 
     componentDidMount() {
@@ -66,7 +66,7 @@ class Middle extends React.Component {
              type: 'GET',
              data:{"store_id":store_id},
              success: function(data) {
-                this.setState({item:data.row});
+                this.setState({item:data.row,pictures:data.row.pictures});
                 var org_store_id=this.state.item.org_store_id;
                 var org_store_code=this.state.item.org_store_code;
                 var org_store_name=this.state.item.org_store_name;
@@ -87,6 +87,7 @@ class Middle extends React.Component {
         });
     };
     render() {
+      var style={width:"20%"};
         return (
             <div className="statistics_middle ">
                 <div className="form-group form-group-sm overflow">
@@ -131,6 +132,17 @@ class Middle extends React.Component {
                       <input className="form-control" type="text" id="formGroupInputSmall" id="remark" readOnly />
                     </div>
                 </div>
+
+                <div className="form-group form-group-sm overflow">
+                    <div className="col-sm-3"></div>
+                    <div className="col-sm-8">
+                    {this.state.item.pictures.map(item => (
+                      <img key={item.id} src={"images/"+item.location} style={style} />))
+                    }
+
+                    </div>
+                </div>
+
             </div>
         );
     }
