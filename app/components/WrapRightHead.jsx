@@ -8,7 +8,10 @@ class WrapRightHead extends React.Component {
             dataType: 'json',
             type: 'GET',
             success: function(data) {
-                $(".head_user_name li:nth-child(2) a").html(data.row.name);
+                if(data.row){
+                  $(".head_user_name li:nth-child(2) a").html(data.row.name);
+                }
+
             }.bind(this),
             error: function(xhr, status, err) {
             }.bind(this)
