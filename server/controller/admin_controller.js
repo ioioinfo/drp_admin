@@ -216,9 +216,9 @@ exports.register = function(server, options, next){
 		do_get_method(url,cb);
 	};
 	//根据personids找昵称
-	var get_person_avatar = function(person_ids, cb){
-		var url = "http://139.196.148.40:18003/person/get_avatar?person_ids=";
-		url = url + person_ids + "&scope_code=" +org_code;
+	var list_by_ids = function(ids, cb){
+		var url = "http://139.196.148.40:18003/person/list_by_ids?ids=";
+		url = url + ids + "&scope_code=" +org_code;
 		do_get_method(url,cb);
 	};
 	//订单支付信息
@@ -2930,7 +2930,7 @@ exports.register = function(server, options, next){
 								person_ids.push(orders[i].person_id);
 								orders[i].status_name = pos_order_status[orders[i].order_status];
 							}
-							get_person_avatar(JSON.stringify(person_ids),function(err,content){
+							list_by_ids(JSON.stringify(person_ids),function(err,content){
 								if (!err) {
 									if (content.success) {
 										var persons = content.rows;
@@ -2938,13 +2938,13 @@ exports.register = function(server, options, next){
 											var person = persons[i];
 											for (var j = 0; j < orders.length; j++) {
 												if (person.person_id == orders[j].person_id) {
-													orders[j].nickname = person.nickname;
+													orders[j].nickname = person.person_name;
 												}
 											}
 										}
 										for (var i = 0; i < orders.length; i++) {
 											if (!orders[i].nickname) {
-												orders[i].nickname = "无名氏";
+												orders[i].nickname = "";
 											}
 										}
 										ep.emit("orders", orders);
