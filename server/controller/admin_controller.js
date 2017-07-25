@@ -791,12 +791,42 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18002/update_product_info";
 		do_post_method(url,data,cb);
 	};
+	//批量改价
+	var update_products_prices = function(data, cb){
+		var url = "http://211.149.248.241:18002/update_products_prices";
+		do_post_method(url,data,cb);
+	};
 	//退款查询
 	var get_return_order = function(order_id,cb){
 		var url = "http://211.149.248.241:18010/get_return_order?order_id="+order_id;
 		do_get_method(url,cb);
 	};
 	server.route([
+		//批量改价
+		{
+			method: 'POST',
+			path: '/update_products_prices',
+			handler: function(request, reply){
+				var product_ids = request.payload.product_ids;
+				var discount = request.payload.discount;
+				var remark = request.payload.remark;
+				if (!discount || product_ids.length ==0) {
+					return reply({"success":false,"message":"params wrong"});
+				}
+				var data = {
+					"product_ids" :product_ids,
+					"discount" :discount,
+					"remark" :remark
+				}
+				update_products_prices(data,function(err,result){
+					if (!err) {
+						return reply({"success":true,"success_num":result.success_num,"fail_num":result.fail_num,"fail_ids":result.fail_ids});
+					}else {
+						return reply({"success":false,"message":result.message});
+					}
+				});
+			}
+		},
 		//门店详细信息
 		{
 			method: 'GET',
