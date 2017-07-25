@@ -801,7 +801,26 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18010/get_return_order?order_id="+order_id;
 		do_get_method(url,cb);
 	};
+	//查看历史
+	var find_history_list = function(cb){
+		var url = "http://211.149.248.241:18002/find_history_list";
+		do_get_method(url,cb);
+	};
 	server.route([
+		//查看历史
+		{
+			method: 'GET',
+			path: '/find_history_list',
+			handler: function(request, reply){
+				find_history_list(function(err,rows){
+					if (!err) {
+						return reply({"success":true,"rows":rows.rows});
+					}else {
+						return reply({"success":false,"message":rows.message});
+					}
+				});
+			}
+		},
 		//批量改价
 		{
 			method: 'POST',
@@ -810,13 +829,15 @@ exports.register = function(server, options, next){
 				var product_ids = request.payload.product_ids;
 				var discount = request.payload.discount;
 				var remark = request.payload.remark;
-				if (!discount || product_ids.length ==0) {
+				var person_id = request.payload.person_id;
+				if (!discount || product_ids.length ==0 || !person_id) {
 					return reply({"success":false,"message":"params wrong"});
 				}
 				var data = {
 					"product_ids" :product_ids,
 					"discount" :discount,
-					"remark" :remark
+					"remark" :remark,
+					"person_id" : person_id
 				}
 				update_products_prices(data,function(err,result){
 					if (!err) {
