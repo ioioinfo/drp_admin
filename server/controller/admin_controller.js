@@ -912,7 +912,7 @@ exports.register = function(server, options, next){
 				}
 				update_products_prices(data,function(err,result){
 					if (!err) {
-						return reply({"success":true,"success_num":result.success_num,"fail_num":result.fail_num,"fail_ids":result.fail_ids});
+						return reply({"success":true,"success_num":result.success_num,"fail_num":result.fail_num,"fail_ids":result.fail_ids,"discount":discount});
 					}else {
 						return reply({"success":false,"message":result.message});
 					}
