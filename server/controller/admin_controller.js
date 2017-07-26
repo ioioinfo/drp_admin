@@ -802,8 +802,8 @@ exports.register = function(server, options, next){
 		do_get_method(url,cb);
 	};
 	//查看历史
-	var find_history_list = function(cb){
-		var url = "http://211.149.248.241:18002/find_history_list";
+	var find_history_list = function(params,cb){
+		var url = "http://211.149.248.241:18002/find_history_list?params="+params;
 		do_get_method(url,cb);
 	};
 	//查询商品信息
@@ -883,9 +883,13 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/find_history_list',
 			handler: function(request, reply){
-				find_history_list(function(err,rows){
+                var params = {};
+                if (request.query.params) {
+                    params = JSON.parse(params);
+                }
+				find_history_list(JSON.stringify(params),function(err,rows){
 					if (!err) {
-						return reply({"success":true,"rows":rows.rows});
+						return reply({"success":true,"rows":rows.rows,"num":rows.num});
 					}else {
 						return reply({"success":false,"message":rows.message});
 					}
