@@ -806,7 +806,78 @@ exports.register = function(server, options, next){
 		var url = "http://211.149.248.241:18002/find_history_list";
 		do_get_method(url,cb);
 	};
+	//查询商品信息
+	var get_product_info = function(barcode, cb){
+		var url = "http://211.149.248.241:12001/get_cached_barcode?barcode=";
+		url = url + barcode;
+		do_get_method(url,cb);
+	};
+	//根据货物id找到pos商品
+	var get_pos_product = function(product_id, cb){
+		var url = "http://211.149.248.241:18002/get_pos_product?product_id=";
+		url = url + product_id;
+		do_get_method(url,cb);
+	};
+	//查询商品图片
+	var get_product_pictures = function(product_id,cb){
+		var url = "http://211.149.248.241:18002/get_product_pictures?product_id=";
+		url = url + product_id;
+		do_get_method(url,cb);
+	}
 	server.route([
+		//barcode查产品信息
+		{
+			method: 'GET',
+			path: '/get_product_info',
+			handler: function(request, reply){
+				// var barcode = "11112235";
+				var barcode = request.query.barcode;
+
+				get_product_info(barcode, function(err,row){
+					if (!err) {
+						if (row.success) {
+							var product_id = row.row.product_id;
+							get_pos_product(product_id, function(err,row){
+								if (!err) {
+									if (row.success) {
+										var product_info = row.row;
+										var industry_id = product_info.industry_id;
+										var sale_properties = row.sale_properties;
+										var ep =  eventproxy.create("picture_info",
+											function(stocks,picture_info){
+												return reply({"success":true,"row":product_info,"message":"ok","picture_info":picture_info,"sale_properties":sale_properties,"service_info":service_info});
+										});
+
+										get_product_pictures(product_id,function(err,rows){
+											if (!err) {
+												if (rows.rows) {
+													ep.emit("picture_info", rows.rows[0]);
+												}else {
+													ep.emit("picture_info", {});
+												}
+											}else {
+												ep.emit("picture_info", {});
+											}
+										});
+
+
+									}else {
+										return reply({"success":false,"message":row.message});
+									}
+								}else {
+									return reply({"success":false,"message":"params wrong"});
+								}
+							});
+						}else {
+							return reply({"success":false,"message":row.message});
+						}
+					}else {
+						return reply({"success":false});
+					}
+				});
+
+			}
+		},
 		//查看历史
 		{
 			method: 'GET',
