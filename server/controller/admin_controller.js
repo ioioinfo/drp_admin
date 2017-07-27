@@ -885,9 +885,11 @@ exports.register = function(server, options, next){
 			handler: function(request, reply){
                 var params = {};
                 if (request.query.params) {
-                    params = JSON.parse(params);
+                    params = request.query.params;
+                }else {
+                	params = JSON.stringify(params);
                 }
-				find_history_list(JSON.stringify(params),function(err,rows){
+				find_history_list(params,function(err,rows){
 					if (!err) {
 						return reply({"success":true,"rows":rows.rows,"num":rows.num});
 					}else {
