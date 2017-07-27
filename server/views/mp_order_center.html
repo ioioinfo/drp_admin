@@ -53,7 +53,7 @@
 		,{name:'district',title:'区',sort:false}
 		,{name:'send_seller',title:'买家留言',sort:false}
 		,{name:'status_name',title:'状态',sort:false}
-        ,{name:'op',title:'操作',type:'operation', sort:false}];
+    ,{name:'operation',title:'操作',type:'operation', sort:false}];
 
       function getTableData(params,cb) {
 		 params.everyNum = 10;
@@ -117,7 +117,6 @@
                 dataType: 'json',
                 type: 'GET',
                 success: function(data) {
-                    $(".head_user_name li:nth-child(2) a").html(data.row.name);
                 }.bind(this),
                 error: function(xhr, status, err) {
                 }.bind(this)
