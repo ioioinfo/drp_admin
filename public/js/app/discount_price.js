@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 199);
+/******/ 	return __webpack_require__(__webpack_require__.s = 192);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -23319,14 +23319,7 @@ module.exports = Table;
 /***/ }),
 /* 190 */,
 /* 191 */,
-/* 192 */,
-/* 193 */,
-/* 194 */,
-/* 195 */,
-/* 196 */,
-/* 197 */,
-/* 198 */,
-/* 199 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23411,14 +23404,15 @@ var Right = function (_React$Component2) {
         _this2.setPage = _this2.setPage.bind(_this2);
         _this2.handleSort = _this2.handleSort.bind(_this2);
         _this2.loadData = _this2.loadData.bind(_this2);
+        _this2.refresh = _this2.refresh.bind(_this2);
         // 初始化一个空对象
-        _this2.state = { tabthitems: [], tabtritems: [], allNum: 0, everyNum: 20, thisPage: 1, sort: { name: "", dir: "" } };
+        _this2.state = { tabthitems: [], tabtritems: tabtritems, allNum: 0, everyNum: 20, thisPage: 1, sort: { name: "", dir: "" } };
         return _this2;
     }
 
     _createClass(Right, [{
         key: 'loadData',
-        value: function loadData(params1) {
+        value: function loadData(params1, data) {
             var params = { thisPage: this.state.thisPage, sort: this.state.sort };
             $.extend(params, params1);
 
@@ -23441,6 +23435,23 @@ var Right = function (_React$Component2) {
         key: 'handleSort',
         value: function handleSort(sort) {
             this.loadData({ sort: sort });
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh(id, status_name) {
+            var tritems = this.state.tabtritems;
+            var st = "上架";
+            if (status_name == "上架") {
+                st = "下架";
+            } else if (status_name == "下架") {
+                st = "上架";
+            }
+            for (var i = 0; i < tritems.length; i++) {
+                if (id == tritems[i].id) {
+                    tritems[i].status_name = st;
+                }
+            }
+            this.setState({ tabtritems: tritems });
         }
     }, {
         key: 'render',
@@ -23470,8 +23481,8 @@ var Right = function (_React$Component2) {
                     { className: 'breadcrumb margin_top20' },
                     breadcrumb
                 ),
-                React.createElement(SearchList, { loadData: this.loadData }),
-                React.createElement(Table, { tabthitems: this.state.tabthitems, tabtritems: this.state.tabtritems, sort: this.state.sort, onSort: this.handleSort, checkTd: checkTd }),
+                React.createElement(SearchList, { loadData: this.loadData, tabtritems: this.state.tabtritems }),
+                React.createElement(Table, { tabthitems: this.state.tabthitems, tabtritems: this.state.tabtritems, sort: this.state.sort, onSort: this.handleSort, refresh: this.refresh }),
                 React.createElement(PageTab, { setPage: this.setPage, allNum: this.state.allNum, everyNum: this.state.everyNum, thisPage: this.state.thisPage })
             );
         }
@@ -23481,7 +23492,6 @@ var Right = function (_React$Component2) {
 }(React.Component);
 
 ;
-
 //  搜索框
 
 var SearchList = function (_React$Component3) {
@@ -23493,18 +23503,57 @@ var SearchList = function (_React$Component3) {
         var _this3 = _possibleConstructorReturn(this, (SearchList.__proto__ || Object.getPrototypeOf(SearchList)).call(this, props));
 
         _this3.handleClick = _this3.handleClick.bind(_this3);
+        _this3.onKeyPress = _this3.onKeyPress.bind(_this3);
         return _this3;
     }
 
     _createClass(SearchList, [{
+        key: 'onKeyPress',
+        value: function onKeyPress(e) {
+            var key = e.which;
+            if (key == 13) {
+                var barcode = $("#discount_price").val();
+                $.ajax({
+                    url: "/get_product_info",
+                    dataType: 'json',
+                    type: 'GET',
+                    data: { 'barcode': barcode },
+                    success: function (data) {
+                        if (data.success) {
+                            tabtritems.push(data.row);
+                            console.log(tabtritems);
+                            this.props.loadData({});
+                        } else {
+                            console.log("111");
+                            alert("没有此商品");
+                        }
+                    }.bind(this),
+                    error: function (xhr, status, err) {}.bind(this)
+                });
+            };
+        }
+    }, {
         key: 'handleClick',
         value: function handleClick(e) {
-            var product_name = $(".product_name").val();
-            var product_id = $(".product_id").val();
+            var discount = $(".discount_price_number").val();
+            console.log(discount);
+            var product_ids = [];
+            for (var i = 0; i < tabtritems.length; i++) {
+                product_ids.push(tabtritems[i].id);
+            }
+            $.ajax({
+                url: "/update_products_prices",
+                dataType: 'json',
+                type: 'POST',
+                data: { 'product_ids': JSON.stringify(product_ids),
+                    'person_id': "1", 'discount': discount, 'remark': "正常改价" },
+                success: function (data) {
+                    console.log(data.rows);
+                }.bind(this),
+                error: function (xhr, status, err) {}.bind(this)
+            });
 
-            var params1 = { "product_name": product_name, "product_id": product_id };
-
-            this.props.loadData(params1);
+            this.props.loadData({});
         }
     }, {
         key: 'render',
@@ -23518,7 +23567,7 @@ var SearchList = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'input-group' },
-                        React.createElement('input', { type: 'text', className: 'form-control product_id', placeholder: '\u7F16\u53F7...' }),
+                        React.createElement('input', { type: 'text', className: 'form-control product_id', placeholder: '\u7F16\u53F7...', readOnly: 'readOnly' }),
                         React.createElement('span', { className: 'input-group-btn' })
                     )
                 ),
@@ -23528,7 +23577,7 @@ var SearchList = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'input-group' },
-                        React.createElement('input', { type: 'text', className: 'form-control product_name', placeholder: '\u540D\u79F0...' }),
+                        React.createElement('input', { type: 'text', className: 'form-control product_name', placeholder: '\u540D\u79F0...', readOnly: 'readOnly' }),
                         React.createElement('span', { className: 'input-group-btn' })
                     )
                 ),
@@ -23538,7 +23587,7 @@ var SearchList = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'input-group' },
-                        React.createElement('input', { type: 'text', className: 'form-control host_name', placeholder: '\u7F16\u7801...' }),
+                        React.createElement('input', { type: 'text', className: 'form-control host_name', id: 'discount_price', placeholder: '\u7F16\u7801...', onKeyPress: this.onKeyPress }),
                         React.createElement('span', { className: 'input-group-btn' })
                     )
                 ),
@@ -23548,7 +23597,7 @@ var SearchList = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'input-group' },
-                        React.createElement('input', { type: 'text', className: 'form-control ip_address', placeholder: '\u6279\u6B21...' })
+                        React.createElement('input', { type: 'text', className: 'form-control discount_price_number', placeholder: '\u6298\u6263...' })
                     )
                 ),
                 React.createElement(
@@ -23563,7 +23612,7 @@ var SearchList = function (_React$Component3) {
                             React.createElement(
                                 'button',
                                 { className: 'btn btn-default', id: 'search_botton_left', type: 'button', onClick: this.handleClick },
-                                '\u67E5\u8BE2'
+                                '\u786E\u8BA4'
                             )
                         )
                     )
@@ -23576,40 +23625,6 @@ var SearchList = function (_React$Component3) {
 }(React.Component);
 
 ;
-
-//判断特殊列
-var checkTd = function checkTd(defaultTd) {
-    var id = this.props.item.id;
-    var href = "noob_sort?product_id=" + id;
-    var href1 = "master?product_id=" + id;
-
-    if (this.props.thitem.type == "operation") {
-        return React.createElement(
-            'td',
-            null,
-            React.createElement(
-                'span',
-                { className: 'btn btn-primary btn-xs operate_announce' },
-                React.createElement(
-                    'a',
-                    { href: href },
-                    '\u83DC\u9E1F'
-                )
-            ),
-            React.createElement(
-                'span',
-                { className: 'btn btn-info btn-xs operate_announce' },
-                React.createElement(
-                    'a',
-                    { href: href1 },
-                    '\u9AD8\u624B'
-                )
-            )
-        );
-    } else {
-        return defaultTd;
-    }
-};
 
 // 返回到页面
 ReactDOM.render(React.createElement(Wrap, null), document.getElementById("content"));

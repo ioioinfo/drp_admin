@@ -24,7 +24,9 @@ module.exports = {
         product_description: './app/product_description.jsx',
         poor_orders: './app/poor_orders.jsx',
         mendian_edit: './app/mendian_edit.jsx',
-        mendian_detail_view: './app/mendian_detail_view.jsx'
+        mendian_detail_view: './app/mendian_detail_view.jsx',
+        discount_price: './app/discount_price.jsx',
+        discount_history: './app/discount_history.jsx'
     },
     output: {
         path: __dirname,

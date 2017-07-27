@@ -9,14 +9,14 @@ class Table extends React.Component {
             <table className="table table-striped table-hover">
             <thead>
             <tr>
-            {this.props.tabthitems.map(item => (
-                <Th key={item.name} item={item} sort={this.props.sort} onSort={this.props.onSort} />))
+            {this.props.tabthitems.map((item,index) => (
+                <Th key={index} item={item} sort={this.props.sort} onSort={this.props.onSort} />))
             }
             </tr>
             </thead>
             <tbody>
-            {this.props.tabtritems.map(item => (
-                <Tr key={item.id} item={item} tabthitems={this.props.tabthitems} refresh={this.props.refresh} checkTd={this.props.checkTd} />))
+            {this.props.tabtritems.map((item,index) => (
+                <Tr key={index} item={item} tabthitems={this.props.tabthitems} refresh={this.props.refresh} checkTd={this.props.checkTd} />))
             }
             </tbody>
             </table>
@@ -36,8 +36,8 @@ class Tr extends React.Component {
     render() {
         return (
             <tr>
-            {this.props.tabthitems.map(item => (
-                <Td key={item.name} item={this.props.item} thitem={item} refresh={this.props.refresh} checkTd={this.props.checkTd} />))
+            {this.props.tabthitems.map((item,index) => (
+                <Td key={index} item={this.props.item} thitem={item} refresh={this.props.refresh} checkTd={this.props.checkTd} />))
             }
             </tr>
         );
