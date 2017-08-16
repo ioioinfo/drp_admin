@@ -267,6 +267,45 @@
              var guarantee = $("#guarantee").val();
              var product_brand = $("#product_brand").val();
              var industry_id = 102;
+             if(!id){
+               alert('请输入商品id');
+               return;
+             }else if (!weight) {
+               alert('请输入商品重量');
+               return;
+             }
+             else if (!product_name) {
+               alert('请输入商品名称');
+               return;
+             }
+             else if (!product_sale_price) {
+               alert('请输入商品售价');
+               return;
+             }
+             else if (!product_brand) {
+               alert('请输入商品品牌');
+               return;
+             }
+             else if (!guarantee) {
+               alert('请输入商品保质期');
+               return;
+             }
+             else if (!sort_id) {
+               alert('请输入商品分类id');
+               return;
+             }
+             else if (!color) {
+               alert('请输入商品成色');
+               return;
+             }
+             else if (!product_marketing_price) {
+               alert('请输入商品市场价');
+               return;
+             }
+             else if (!origin) {
+               alert('请输入门店');
+               return;
+             }
              var product = {
                  "product_id":id,
                  "product_name":product_name,
@@ -289,7 +328,7 @@
                       if (data.success) {
                           alert("保存成功！");
                       }else {
-                          alert("保存失败！");
+                          alert(data.message);
                       }
                   }.bind(this),
                   error: function(xhr, status, err) {
