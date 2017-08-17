@@ -3182,44 +3182,20 @@ exports.register = function(server, options, next){
 					return reply({"success":false,"message":"order_id null"});
 				}
 
-				var ep =  eventproxy.create("order","logistics_infos","companies","logistic_num", function(order,logistics_infos,companies,logistic_num){
-
-						var companies_map = {};
-						for (var i = 0; i < companies.length; i++) {
-							companies_map[companies[i].logi_code] = companies[i].logi_name;
-						}
-						var company = companies_map[order.type];
-
-						return reply({"logistics_infos":logistics_infos,"company":company,"logistic_num":logistic_num});
-
-				});
-
-				get_ec_order(order_id,function(err,results){
-					if (!err) {
-						ep.emit("order", results.orders[0]);
-					}else {
-						ep.emit("order", {});
-					}
-				});
-
-				companies(function(err,rows){
-					if (!err) {
-						ep.emit("companies", rows.rows);
-					}else {
-						ep.emit("companies", []);
-					}
+				var ep =  eventproxy.create("logistics_order","logistics_infos", function(logistics_order,logistics_infos){
+					return reply({"logistics_infos":logistics_infos,"logistics_order":logistics_order});
 				});
 
 				get_logistics_id(order_id,function(err,rows){
 					if (!err) {
-						var logistics = rows.rows;
-						var logistic_num = "";
-						for (var i = 0; i < logistics.length; i++) {
-							var logistic_num = logistic_num + logistics[i].logi_id;
-						}
-						ep.emit("logistic_num", logistic_num);
+						var logistics_order = {};
+                        if (rows.rows.length > 0) {
+                            logistics_order = rows.rows[0];
+                        }
+                        
+						ep.emit("logistics_order", logistics_order);
 					}else {
-						ep.emit("logistic_num", "");
+						ep.emit("logistics_order", "");
 					}
 				});
 
