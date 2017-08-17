@@ -2763,14 +2763,15 @@ exports.register = function(server, options, next){
 				if (!order_id) {
 					return reply({"success":false,"message":"params null","service_info":service_info});
 				}
-				var ep =  eventproxy.create("order","details","products","logistics_info","logistics_type",
-					function(order,details,products,logistics_info,logistics_type){
+				var ep =  eventproxy.create("order","details","products","pay_info","logistics_info","logistics_type",
+					function(order,details,products,pay_info,logistics_info,logistics_type){
 						for (var i = 0; i < logistics_type.length; i++) {
 							if (logistics_type[i].id == order.type) {
 								order.type = logistics_type[i].name;
 							}
 						}
-					return reply({"success":true,"order":order,"details":details,"products":products,"logistics_info":logistics_info});
+					return reply({"success":true,"order":order,"details":details,"products":products,"pay_info":pay_info
+                        ,"logistics_info":logistics_info});
 				});
 
 				get_ec_order(order_id,function(err,results){
@@ -2778,10 +2779,12 @@ exports.register = function(server, options, next){
 						ep.emit("order", results.orders[0]);
 						ep.emit("details", results.details);
 						ep.emit("products", results.products);
+                        ep.emit("pay_info", results.pay_info);
 					}else {
 						ep.emit("order", {});
 						ep.emit("details", {});
 						ep.emit("products", {});
+                        ep.emit("pay_info", {});
 					}
 				});
 				get_logistics_info(order_id,function(err,results){
