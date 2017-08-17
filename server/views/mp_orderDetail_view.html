@@ -289,22 +289,8 @@
                type: 'GET',
                data:{"order_id":"{{order_id}}"},
                success: function(data) {
-                   this.setState({order:data.order,items: data.details[data.order.order_id],product:data.products});
-               }.bind(this),
-               error: function(xhr, status, err) {
-               }.bind(this)
-           });
-
-           $.ajax({
-               url: "/get_order_pay_infos",
-               dataType: 'json',
-               type: 'GET',
-               data:{"order_id":"{{order_id}}"},
-               success: function(data) {
-                   if(data.rows.length==0){
-                       return;
-                   }
-                   this.setState({payitem:data.rows});
+                   this.setState({order:data.order,items: data.details[data.order.order_id]
+                     ,product:data.products,payitem:data.pay_info});
                }.bind(this),
                error: function(xhr, status, err) {
                }.bind(this)
