@@ -4,16 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>编辑公告</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="{{static_host}}/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{static_host}}/css/dashboard.css">
     <link rel="stylesheet" href="css/button.css">
     <link rel="stylesheet" href="css/public.css">
-    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="{{static_host}}/css/layout.css">
     <link href="css/themes/default/css/umeditor.min.css" type="text/css" rel="stylesheet">
-    <script src="js/react.min.js"></script>
-    <script src="js/react-dom.min.js"></script>
-    <script src="js/browser.min.js"></script>
-    <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
+    <script src="{{static_host}}/js/react.min.js"></script>
+    <script src="{{static_host}}/js/react-dom.min.js"></script>
+    <script src="{{static_host}}/js/browser.min.js"></script>
+    <script src="{{static_host}}/js/jquery-3.1.1.min.js" type="text/javascript"></script>
     <!-- 编辑插件 -->
     <script src="js/template.min.js" type="text/javascript"></script>
     <script src="js/umeditor.min.js" type="text/javascript"></script>
@@ -92,7 +92,7 @@
                 dataType: 'json',
                 type: 'GET',
                 success: function(data) {
-                    $(".head_user_name li:nth-child(2) a").html(data.row.name);
+                    // $(".head_user_name li:nth-child(2) a").html(data.row.name);
                 }.bind(this),
                 error: function(xhr, status, err) {
                 }.bind(this)

@@ -4,16 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>线上订单</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="{{static_host}}/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{static_host}}/css/dashboard.css">
     <link rel="stylesheet" href="css/button.css">
     <link rel="stylesheet" href="css/public.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <script src="js/react.min.js"></script>
-    <script src="js/react-dom.min.js"></script>
-    <script src="js/browser.min.js"></script>
-    <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{{static_host}}/css/layout.css">
+    <script src="{{static_host}}/js/react.min.js"></script>
+    <script src="{{static_host}}/js/react-dom.min.js"></script>
+    <script src="{{static_host}}/js/browser.min.js"></script>
+    <script src="{{static_host}}/js/jquery-3.1.1.min.js" type="text/javascript"></script>
+    <script src="{{static_host}}/js/bootstrap.min.js"></script>
     <style media="screen">
 
     /*操作按钮样式*/
@@ -45,6 +45,7 @@
 		,{name:'order_id',title:'订单号',sort:false}
 		,{name:'actual_price',title:'实付',sort:false}
 		,{name:'total_number',title:'总数',sort:false}
+    ,{name:'store_name',title:'发货地',sort:false}
 		,{name:'logistics_price',title:'运费',sort:false}
 		,{name:'linkname',title:'收货人',sort:false}
 		,{name:'mobile',title:'收货人手机',sort:false}
@@ -53,7 +54,7 @@
 		,{name:'district',title:'区',sort:false}
 		,{name:'send_seller',title:'买家留言',sort:false}
 		,{name:'status_name',title:'状态',sort:false}
-        ,{name:'op',title:'操作',type:'operation', sort:false}];
+    ,{name:'operation',title:'操作',type:'operation', sort:false}];
 
       function getTableData(params,cb) {
 		 params.everyNum = 10;
@@ -117,7 +118,6 @@
                 dataType: 'json',
                 type: 'GET',
                 success: function(data) {
-                    $(".head_user_name li:nth-child(2) a").html(data.row.name);
                 }.bind(this),
                 error: function(xhr, status, err) {
                 }.bind(this)

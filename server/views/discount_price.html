@@ -3,12 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>商品列表</title>
+    <title>折扣设置</title>
     <link rel="stylesheet" href="{{static_host}}/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{static_host}}/css/dashboard.css">
     <link rel="stylesheet" href="css/button.css">
     <link rel="stylesheet" href="css/public.css">
     <link rel="stylesheet" href="{{static_host}}/css/layout.css">
+    <link rel="stylesheet" href="css/discount_price.css">
     <style media="screen">
     /*搜索框样式*/
     .search{
@@ -70,38 +71,31 @@
     </style>
 </head>
 <body>
+  <script src="{{static_host}}/js/jquery-3.1.1.min.js" type="text/javascript"></script>
     <div id="content" class="container-fluid"></div>
 
     <script type="text/javascript">
     var default_selected = "02";
-    var breadcrumbs = ["商品","商品列表"];
+    var breadcrumbs = ["商品","设置折扣"];
+    var tabtritems=[];
 
     //表头
     var tt = [{name:'id',title:'编号',sort:true}
     ,{name:'product_name',title:'名称',sort:false}
     ,{name:'product_sale_price',title:'售价',sort:false}
     ,{name:'product_marketing_price',title:'市场价',sort:false}
-    ,{name:'status_name',title:'状态',sort:false}
-    ,{name:'update_at_text',title:'上架时间',sort:false}
-    ,{name:'operation',title:'操作',type:"operation"}];
+    ,{name:'status_name',title:'折扣',sort:false}
+    ,{name:'status_name',title:'折扣价',sort:false}];
 
     function getTableData(params,cb) {
         params.everyNum = 50;
         var allNum = 0;
-        $.get("/get_products_list",{params:JSON.stringify(params)},function(data){
-            console.log("params:"+JSON.stringify(params));
-            if (data.success) {
-                allNum = data.num;
-                cb({tabthitems:tt,tabtritems:data.products,allNum:allNum,everyNum:params.everyNum});
-            }else {
-                alert(data.message);
-            }
-        });
+        cb({tabthitems:tt,tabtritems:tabtritems,allNum:tabtritems.length,everyNum:params.everyNum});
     };
     </script>
-    <script src="{{static_host}}/js/jquery-3.1.1.min.js" type="text/javascript"></script>
+
     <script src="{{static_host}}/js/bootstrap.min.js"></script>
-    <script src="js/app/products_center.js"></script>
+    <script src="js/app/discount_price.js"></script>
 
 </body>
 </html>

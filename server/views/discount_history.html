@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>商品列表</title>
+    <title>折扣历史</title>
     <link rel="stylesheet" href="{{static_host}}/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{static_host}}/css/dashboard.css">
     <link rel="stylesheet" href="css/button.css">
@@ -74,25 +74,26 @@
 
     <script type="text/javascript">
     var default_selected = "02";
-    var breadcrumbs = ["商品","商品列表"];
+    var breadcrumbs = ["商品","折扣历史"];
 
     //表头
-    var tt = [{name:'id',title:'编号',sort:true}
+    var tt = [{name:'product_id',title:'产品编号',sort:true}
     ,{name:'product_name',title:'名称',sort:false}
-    ,{name:'product_sale_price',title:'售价',sort:false}
-    ,{name:'product_marketing_price',title:'市场价',sort:false}
-    ,{name:'status_name',title:'状态',sort:false}
-    ,{name:'update_at_text',title:'上架时间',sort:false}
-    ,{name:'operation',title:'操作',type:"operation"}];
+    ,{name:'old_price',title:'历史价格',sort:false}
+    ,{name:'new_price',title:'折扣价',sort:false}
+    ,{name:'discount',title:'折扣',sort:false}
+    ,{name:'remark',title:'备注',sort:false}
+    ,{name:'person_id',title:'操作员',sort:false}
+    ,{name:'created_at',title:'设置时间',sort:false}];
 
     function getTableData(params,cb) {
         params.everyNum = 50;
         var allNum = 0;
-        $.get("/get_products_list",{params:JSON.stringify(params)},function(data){
+        $.get("/find_history_list",{params:JSON.stringify(params)},function(data){
             console.log("params:"+JSON.stringify(params));
             if (data.success) {
                 allNum = data.num;
-                cb({tabthitems:tt,tabtritems:data.products,allNum:allNum,everyNum:params.everyNum});
+                cb({tabthitems:tt,tabtritems:data.rows,allNum:allNum,everyNum:params.everyNum});
             }else {
                 alert(data.message);
             }
@@ -101,7 +102,7 @@
     </script>
     <script src="{{static_host}}/js/jquery-3.1.1.min.js" type="text/javascript"></script>
     <script src="{{static_host}}/js/bootstrap.min.js"></script>
-    <script src="js/app/products_center.js"></script>
+    <script src="js/app/discount_history.js"></script>
 
 </body>
 </html>

@@ -4,16 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>添加商品</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="{{static_host}}/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{static_host}}/css/dashboard.css">
     <link rel="stylesheet" href="css/button.css">
     <link rel="stylesheet" href="css/public.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <script src="js/react.min.js"></script>
-    <script src="js/react-dom.min.js"></script>
-    <script src="js/browser.min.js"></script>
-    <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{{static_host}}/css/layout.css">
+    <script src="{{static_host}}/js/react.min.js"></script>
+    <script src="{{static_host}}/js/react-dom.min.js"></script>
+    <script src="{{static_host}}/js/browser.min.js"></script>
+    <script src="{{static_host}}/js/jquery-3.1.1.min.js" type="text/javascript"></script>
+    <script src="{{static_host}}/js/bootstrap.min.js"></script>
     <style media="screen">
     .wrapRight .row{
         background: #fff;
@@ -81,7 +81,7 @@
                     dataType: 'json',
                     type: 'GET',
                     success: function(data) {
-                        $(".head_user_name li:nth-child(2) a").html(data.row.name);
+                        // $(".head_user_name li:nth-child(2) a").html(data.row.name);
                     }.bind(this),
                     error: function(xhr, status, err) {
                     }.bind(this)
@@ -267,6 +267,45 @@
              var guarantee = $("#guarantee").val();
              var product_brand = $("#product_brand").val();
              var industry_id = 102;
+             if(!id){
+               alert('请输入商品id');
+               return;
+             }else if (!weight) {
+               alert('请输入商品重量');
+               return;
+             }
+             else if (!product_name) {
+               alert('请输入商品名称');
+               return;
+             }
+             else if (!product_sale_price) {
+               alert('请输入商品售价');
+               return;
+             }
+             else if (!product_brand) {
+               alert('请输入商品品牌');
+               return;
+             }
+             else if (!guarantee) {
+               alert('请输入商品保质期');
+               return;
+             }
+             else if (!sort_id) {
+               alert('请输入商品分类id');
+               return;
+             }
+             else if (!color) {
+               alert('请输入商品成色');
+               return;
+             }
+             else if (!product_marketing_price) {
+               alert('请输入商品市场价');
+               return;
+             }
+             else if (!origin) {
+               alert('请输入门店');
+               return;
+             }
              var product = {
                  "product_id":id,
                  "product_name":product_name,
@@ -289,7 +328,7 @@
                       if (data.success) {
                           alert("保存成功！");
                       }else {
-                          alert("保存失败！");
+                          alert(data.message);
                       }
                   }.bind(this),
                   error: function(xhr, status, err) {

@@ -159,6 +159,24 @@ exports.register = function(server, options, next) {
             },
         },
 
+        //商品折扣
+        {
+            method: 'GET',
+            path: '/discount_price',
+            handler: function(request, reply) {
+                return reply.view(get_view("discount_price"), {});
+            },
+        },
+
+        //商品折扣历史
+        {
+            method: 'GET',
+            path: '/discount_history',
+            handler: function(request, reply) {
+                return reply.view(get_view("discount_history"), {});
+            },
+        },
+
     ]);
 
     next();

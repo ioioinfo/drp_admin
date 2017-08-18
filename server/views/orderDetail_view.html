@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>线下订单查看</title>
     <link rel="stylesheet" href="{{static_host}}/bootstrap.min.css">
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="{{static_host}}/css/dashboard.css">
     <link rel="stylesheet" href="css/button.css">
     <link rel="stylesheet" href="css/public.css">
-    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="{{static_host}}/css/layout.css">
     <script src="{{static_host}}/react.min.js"></script>
     <script src="{{static_host}}/react-dom.min.js"></script>
     <script src="{{static_host}}/browser.min.js"></script>
@@ -105,7 +105,7 @@
                 dataType: 'json',
                 type: 'GET',
                 success: function(data) {
-                    $(".head_user_name li:nth-child(2) a").html(data.row.name);
+                    // $(".head_user_name li:nth-child(2) a").html(data.row.name);
                 }.bind(this),
                 error: function(xhr, status, err) {
                 }.bind(this)

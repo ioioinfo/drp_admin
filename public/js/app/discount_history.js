@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 199);
+/******/ 	return __webpack_require__(__webpack_require__.s = 191);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -23318,15 +23318,7 @@ module.exports = Table;
 
 /***/ }),
 /* 190 */,
-/* 191 */,
-/* 192 */,
-/* 193 */,
-/* 194 */,
-/* 195 */,
-/* 196 */,
-/* 197 */,
-/* 198 */,
-/* 199 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23471,7 +23463,7 @@ var Right = function (_React$Component2) {
                     breadcrumb
                 ),
                 React.createElement(SearchList, { loadData: this.loadData }),
-                React.createElement(Table, { tabthitems: this.state.tabthitems, tabtritems: this.state.tabtritems, sort: this.state.sort, onSort: this.handleSort, checkTd: checkTd }),
+                React.createElement(Table, { tabthitems: this.state.tabthitems, tabtritems: this.state.tabtritems, sort: this.state.sort, onSort: this.handleSort }),
                 React.createElement(PageTab, { setPage: this.setPage, allNum: this.state.allNum, everyNum: this.state.everyNum, thisPage: this.state.thisPage })
             );
         }
@@ -23481,7 +23473,6 @@ var Right = function (_React$Component2) {
 }(React.Component);
 
 ;
-
 //  搜索框
 
 var SearchList = function (_React$Component3) {
@@ -23501,8 +23492,8 @@ var SearchList = function (_React$Component3) {
         value: function handleClick(e) {
             var product_name = $(".product_name").val();
             var product_id = $(".product_id").val();
-
-            var params1 = { "product_name": product_name, "product_id": product_id };
+            var is_down = 0;
+            var params1 = { "product_name": product_name, "product_id": product_id, "is_down": is_down };
 
             this.props.loadData(params1);
         }
@@ -23576,40 +23567,6 @@ var SearchList = function (_React$Component3) {
 }(React.Component);
 
 ;
-
-//判断特殊列
-var checkTd = function checkTd(defaultTd) {
-    var id = this.props.item.id;
-    var href = "noob_sort?product_id=" + id;
-    var href1 = "master?product_id=" + id;
-
-    if (this.props.thitem.type == "operation") {
-        return React.createElement(
-            'td',
-            null,
-            React.createElement(
-                'span',
-                { className: 'btn btn-primary btn-xs operate_announce' },
-                React.createElement(
-                    'a',
-                    { href: href },
-                    '\u83DC\u9E1F'
-                )
-            ),
-            React.createElement(
-                'span',
-                { className: 'btn btn-info btn-xs operate_announce' },
-                React.createElement(
-                    'a',
-                    { href: href1 },
-                    '\u9AD8\u624B'
-                )
-            )
-        );
-    } else {
-        return defaultTd;
-    }
-};
 
 // 返回到页面
 ReactDOM.render(React.createElement(Wrap, null), document.getElementById("content"));
