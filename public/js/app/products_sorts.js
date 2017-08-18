@@ -23408,11 +23408,12 @@ var Right = function (_React$Component2) {
 
         var _this2 = _possibleConstructorReturn(this, (Right.__proto__ || Object.getPrototypeOf(Right)).call(this, props));
 
+        _this2.setUserParams = _this2.setUserParams.bind(_this2);
         _this2.setPage = _this2.setPage.bind(_this2);
         _this2.handleSort = _this2.handleSort.bind(_this2);
         _this2.loadData = _this2.loadData.bind(_this2);
         // 初始化一个空对象
-        _this2.state = { tabthitems: [], tabtritems: [], allNum: 0, everyNum: 20, thisPage: 1, sort: { name: "", dir: "" } };
+        _this2.state = { tabthitems: [], tabtritems: [], allNum: 0, everyNum: 20, thisPage: 1, sort: { name: "", dir: "" }, userParams: {} };
         return _this2;
     }
 
@@ -23420,7 +23421,7 @@ var Right = function (_React$Component2) {
         key: 'loadData',
         value: function loadData(params1) {
             var params = { thisPage: this.state.thisPage, sort: this.state.sort };
-            $.extend(params, params1);
+            $.extend(params, this.state.userParams, params1);
 
             getTableData(params, function (data) {
                 $.extend(data, params1);
@@ -23431,6 +23432,11 @@ var Right = function (_React$Component2) {
         key: 'componentDidMount',
         value: function componentDidMount() {
             this.loadData({});
+        }
+    }, {
+        key: 'setUserParams',
+        value: function setUserParams(params) {
+            this.setState({ userParams: params });
         }
     }, {
         key: 'setPage',
@@ -23470,7 +23476,7 @@ var Right = function (_React$Component2) {
                     { className: 'breadcrumb margin_top20' },
                     breadcrumb
                 ),
-                React.createElement(SearchList, { loadData: this.loadData }),
+                React.createElement(SearchList, { loadData: this.loadData, setUserParams: this.setUserParams }),
                 React.createElement(Table, { tabthitems: this.state.tabthitems, tabtritems: this.state.tabtritems, sort: this.state.sort, onSort: this.handleSort, checkTd: checkTd }),
                 React.createElement(PageTab, { setPage: this.setPage, allNum: this.state.allNum, everyNum: this.state.everyNum, thisPage: this.state.thisPage })
             );
@@ -23501,9 +23507,20 @@ var SearchList = function (_React$Component3) {
         value: function handleClick(e) {
             var product_name = $(".product_name").val();
             var product_id = $(".product_id").val();
+            var origin = $(".origin").val();
+            var ip_sort = $(".ip_sort").val();
+            if (ip_sort == "全部") {
+                ip_sort = "";
+            } else if (ip_sort == "未分类") {
+                ip_sort = "1";
+            } else if (ip_sort == "分类") {
+                ip_sort = "0";
+            } else if (ip_sort == "选择分类查询") {
+                ip_sort = "";
+            }
 
-            var params1 = { "product_name": product_name, "product_id": product_id };
-
+            var params1 = { "product_name": product_name, "product_id": product_id, 'origin': origin, 'sort_id': ip_sort };
+            this.props.setUserParams(params1);
             this.props.loadData(params1);
         }
     }, {
@@ -23538,7 +23555,7 @@ var SearchList = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'input-group' },
-                        React.createElement('input', { type: 'text', className: 'form-control host_name', placeholder: '\u7F16\u7801...' }),
+                        React.createElement('input', { type: 'text', className: 'form-control origin', placeholder: '\u95E8\u5E97...' }),
                         React.createElement('span', { className: 'input-group-btn' })
                     )
                 ),
@@ -23548,7 +23565,30 @@ var SearchList = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'input-group' },
-                        React.createElement('input', { type: 'text', className: 'form-control ip_address', placeholder: '\u6279\u6B21...' })
+                        React.createElement(
+                            'select',
+                            { type: 'text', className: 'form-control ip_sort' },
+                            React.createElement(
+                                'option',
+                                null,
+                                '\u9009\u62E9\u5206\u7C7B\u67E5\u8BE2'
+                            ),
+                            React.createElement(
+                                'option',
+                                null,
+                                '\u672A\u5206\u7C7B'
+                            ),
+                            React.createElement(
+                                'option',
+                                null,
+                                '\u5206\u7C7B'
+                            ),
+                            React.createElement(
+                                'option',
+                                null,
+                                '\u5168\u90E8'
+                            )
+                        )
                     )
                 ),
                 React.createElement(

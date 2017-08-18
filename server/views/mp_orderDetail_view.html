@@ -279,7 +279,7 @@
          constructor(props) {
              super(props);
              // 初始化一个空对象
-             this.state = {order:{},items:[],product:{},payitem:[],logistics_payitem:[]};
+             this.state = {order:{},items:[],product:{},payitem:[],logistics_payitem:[],logistics_order:{}};
          }
          // 3
          componentDidMount() {
@@ -305,7 +305,7 @@
                    if(data.logistics_infos.length==0){
                        return;
                    }
-                   this.setState({logistics_payitem:data.logistics_infos});
+                   this.setState({logistics_payitem:data.logistics_infos,logistics_order:data.logistics_order});
                }.bind(this),
                error: function(xhr, status, err) {
                }.bind(this)
@@ -392,6 +392,7 @@
                     <div className="col-sm-3 col-sm-offset-1">
                         <h3 className="logistics_title">物流信息</h3>
                         <hr/>
+                        <div className="margin_bottom_logistics">订单号：{this.state.logistics_order.logi_no}</div>
                         {this.state.logistics_payitem.map(item => (
                             <div className="logistics_status margin_bottom_logistics">
                                 <p>{item.detail_desc}</p>
