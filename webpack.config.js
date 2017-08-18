@@ -26,7 +26,8 @@ module.exports = {
         mendian_edit: './app/mendian_edit.jsx',
         mendian_detail_view: './app/mendian_detail_view.jsx',
         discount_price: './app/discount_price.jsx',
-        discount_history: './app/discount_history.jsx'
+        discount_history: './app/discount_history.jsx',
+        recharge_orders: './app/recharge_orders.jsx',
     },
     output: {
         path: __dirname,
