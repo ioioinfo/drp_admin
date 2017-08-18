@@ -824,7 +824,43 @@ exports.register = function(server, options, next){
 		url = url + product_id;
 		do_get_method(url,cb);
 	}
+	//充值订单列表
+	var get_recharge_orders = function(params,cb){
+		var url = "http://211.149.248.241:18010/get_recharge_orders?params=";
+		url = url + params;
+		do_get_method(url,cb);
+	}
 	server.route([
+		//充值订单列表信息
+		{
+			method: 'GET',
+			path: '/get_recharge_orders',
+			handler: function(request, reply){
+				var params = request.query.params;
+				if (!params) {
+					return reply({"success":false,"message":"params wrong","service_info":service_info});
+				}
+				get_recharge_orders(params,function(err,rows){
+					if (!err) {
+						// for (var i = 0; i < rows.rows.length; i++) {
+						// 	var order = rows.rows[i];
+						// 	order.status_name = order_status[order.order_status];
+						// }
+						return reply({"success":true,"message":"ok","orders":rows.rows,"num":rows.num,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//充值订单列表
+		{
+			method: 'GET',
+			path: '/recharge_orders',
+			handler: function(request, reply){
+				return reply.view("recharge_orders");
+			}
+		},
 		//barcode查产品信息
 		{
 			method: 'GET',
