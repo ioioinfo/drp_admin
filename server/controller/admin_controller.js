@@ -6,6 +6,10 @@ var service_info = "drp admin service";
 var org_code = "ioio";
 var platform_code = "ioio";
 if(typeof require !== 'undefined') XLSX = require('xlsjs');
+var charge_status = {
+	"-1": "等待付款",
+	"1" : "已付款"
+};
 var order_status ={
 	"-1": "等待买家付款",
 	"0" : "付款确认中",
@@ -842,10 +846,10 @@ exports.register = function(server, options, next){
 				}
 				get_recharge_orders(params,function(err,rows){
 					if (!err) {
-						// for (var i = 0; i < rows.rows.length; i++) {
-						// 	var order = rows.rows[i];
-						// 	order.status_name = order_status[order.order_status];
-						// }
+						for (var i = 0; i < rows.rows.length; i++) {
+							var order = rows.rows[i];
+							order.status_name = charge_status[order.order_status];
+						}
 						return reply({"success":true,"message":"ok","orders":rows.rows,"num":rows.num,"service_info":service_info});
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":service_info});
@@ -3228,7 +3232,7 @@ exports.register = function(server, options, next){
                         if (rows.rows.length > 0) {
                             logistics_order = rows.rows[0];
                         }
-                        
+
 						ep.emit("logistics_order", logistics_order);
 					}else {
 						ep.emit("logistics_order", "");
