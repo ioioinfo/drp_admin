@@ -74,15 +74,16 @@
 
     <script type="text/javascript">
     var default_selected = "05";
-    var breadcrumbs = ["财务","充值列表"];
+    var breadcrumbs = ["订单","充值列表"];
 
     //表头
     var tt = [{name:'id',title:'充值id',sort:false}
+    ,{name:'status_name',title:'充值状态',sort:false}
     ,{name:'marketing_price',title:'获得金额',sort:false}
     ,{name:'actual_price',title:'充值金额',sort:false}
     ,{name:'actual_price',title:'充值方式',sort:false}
     ,{name:'created_at',title:'充值时间',sort:false}
-    ,{name:'order_status',title:'充值状态',sort:false,type:"operation"}]
+    ]
 
     function getTableData(params,cb) {
         params.everyNum = 50;
