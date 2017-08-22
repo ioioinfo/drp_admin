@@ -313,16 +313,29 @@
          }
 
        render() {
+         var items = this.state.items;
+         for (var i = 0; i < items.length; i++) {
+           var item = items[i];
+           var location;
+           if (this.state.product[item.product_id].img) {
+               location = this.state.product[item.product_id].img.location;
+           } else {
+               location = "{{static_host}}/no_picture.png";
+           }
+           item.img_location = location;
+         }
+
          return (
              <div className="container-fluid">
                 <div className="row overflow ">
                     <div className="col-sm-8">
                         <h3>商品信息</h3>
                         <hr/>
-                        {this.state.items.map(item => (
+                        <div>
+                        {items.map(item => (
                             <div className="row border_bottom font_size12">
                                 <div className="span12  col-sm-2">
-                                    <img alt="" src={this.state.product[item.product_id].img.location} className="img-polaroid " />
+                                    <img alt="" src={item.img_location} className="img-polaroid " />
                                 </div>
                                 <div className="col-sm-10">
                                     <div className="margin_bottom overflow font_size12">
@@ -340,6 +353,7 @@
                                 </div>
                             </div>
                         ))}
+                        </div>
                         <hr/>
                         <h3>订单信息</h3>
                         <hr/>
