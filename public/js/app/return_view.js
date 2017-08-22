@@ -23005,7 +23005,7 @@ var Middle = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'col-sm-6 col-xs-6 return_view_style' },
-                        this.state.items.order_id
+                        this.state.items.product_id
                     ),
                     React.createElement(
                         'div',
