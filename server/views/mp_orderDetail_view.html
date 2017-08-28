@@ -313,16 +313,29 @@
          }
 
        render() {
+         var items = this.state.items;
+         for (var i = 0; i < items.length; i++) {
+           var item = items[i];
+           var location;
+           if (this.state.product[item.product_id].img) {
+               location = this.state.product[item.product_id].img.location;
+           } else {
+               location = "{{static_host}}/no_picture.png";
+           }
+           item.img_location = location;
+         }
+
          return (
              <div className="container-fluid">
                 <div className="row overflow ">
                     <div className="col-sm-8">
                         <h3>商品信息</h3>
                         <hr/>
-                        {this.state.items.map(item => (
+                        <div>
+                        {items.map(item => (
                             <div className="row border_bottom font_size12">
                                 <div className="span12  col-sm-2">
-                                    <img alt="" src={this.state.product[item.product_id].img.location} className="img-polaroid " />
+                                    <img alt="" src={item.img_location} className="img-polaroid " />
                                 </div>
                                 <div className="col-sm-10">
                                     <div className="margin_bottom overflow font_size12">
@@ -340,6 +353,7 @@
                                 </div>
                             </div>
                         ))}
+                        </div>
                         <hr/>
                         <h3>订单信息</h3>
                         <hr/>
@@ -392,7 +406,7 @@
                     <div className="col-sm-3 col-sm-offset-1">
                         <h3 className="logistics_title">物流信息</h3>
                         <hr/>
-                        <div className="margin_bottom_logistics">订单号：{this.state.logistics_order.logi_no}</div>
+                        <div className="margin_bottom_logistics">快递单号：{this.state.logistics_order.logi_no}</div>
                         {this.state.logistics_payitem.map(item => (
                             <div className="logistics_status margin_bottom_logistics">
                                 <p>{item.detail_desc}</p>

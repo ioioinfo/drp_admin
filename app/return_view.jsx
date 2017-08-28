@@ -65,7 +65,7 @@ class Middle extends React.Component {
         return (
             <div className="statistics_middle">
                 <div className="row">
-                    <div className="col-sm-6 col-xs-6 return_view_style">{this.state.items.order_id}</div>
+                    <div className="col-sm-6 col-xs-6 return_view_style">{this.state.items.product_id}</div>
                     <div className="col-sm-6 col-xs-6 return_view_style">{this.state.items.return_reason}</div>
                     <div className="col-sm-6 col-xs-6 return_view_style">{this.state.items.number}</div>
                     <div className="col-sm-6 col-xs-6 return_view_style">{this.state.items.created_at}</div>

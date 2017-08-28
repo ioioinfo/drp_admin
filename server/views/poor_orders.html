@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>库存查询</title>
+    <title>异常订单</title>
     <link rel="stylesheet" href="{{static_host}}/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{static_host}}/css/dashboard.css">
     <link rel="stylesheet" href="css/button.css">
@@ -29,11 +29,11 @@
     function getTableData(params,cb) {
         params.everyNum = 50;
         var allNum = 0;
-        $.get("/get_products_list",{params:JSON.stringify(params)},function(data){
+        $.get("/get_poor_orders",{params:JSON.stringify(params)},function(data){
             console.log("params:"+JSON.stringify(params));
             if (data.success) {
                 allNum = data.num;
-                cb({tabthitems:tt,tabtritems:data.products,allNum:allNum,everyNum:params.everyNum});
+                cb({tabthitems:tt,tabtritems:data.rows,allNum:allNum,everyNum:params.everyNum});
             }else {
                 alert(data.message);
             }
