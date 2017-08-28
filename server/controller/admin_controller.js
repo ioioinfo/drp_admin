@@ -947,7 +947,7 @@ exports.register = function(server, options, next){
 				var discount = request.payload.discount;
 				var remark = request.payload.remark;
 				var person_id = request.payload.person_id;
-				if (!discount || product_ids.length ==0 || !person_id) {
+				if (!discount || !product_ids || !person_id) {
 					return reply({"success":false,"message":"params wrong"});
 				}
 				var data = {
