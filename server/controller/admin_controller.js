@@ -834,7 +834,87 @@ exports.register = function(server, options, next){
 		url = url + params;
 		do_get_method(url,cb);
 	}
+	//产品标签列表
+	var search_products_lables = function(params,cb){
+		var url = "http://211.149.248.241:18002/search_products_lables?params=";
+		url = url + params;
+		do_get_method(url,cb);
+	}
+	//查看标签
+	var find_lables_list = function(params,cb){
+		var url = "http://211.149.248.241:18002/find_lables_list?params=";
+		url = url + params;
+		do_get_method(url,cb);
+	}
+	//新增或者更新或者删除标签
+	var update_products_lable = function(data, cb){
+		var url = "http://211.149.248.241:18002/update_products_lable";
+		do_post_method(url,data,cb);
+	};
 	server.route([
+		//新增或者更新或者删除标签
+		{
+			method: 'POST',
+			path: '/update_products_lable',
+			handler: function(request, reply){
+				var lable = request.payload.lable;
+				var id = request.payload.id;
+				if (!id || !lable) {
+					return reply({"success":false,"message":"id or lable null"});
+				}
+				var data = {
+					"lable" :lable,
+					"id" :id
+				}
+				update_products_lable(data,function(err,result){
+					if (!err) {
+						return reply({"success":true,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":result.message});
+					}
+				});
+			}
+		},
+		//查看标签
+		{
+			method: 'GET',
+			path: '/find_lables_list',
+			handler: function(request, reply){
+				var params = request.query.params;
+				if (!params) {
+					params = {};
+					params = JSON.stringify(params);
+				}
+				find_lables_list(params,function(err,rows){
+					if (!err) {
+
+						return reply({"success":true,"message":"ok","rows":rows.rows,"num":rows.num,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//产品标签列表
+		{
+			method: 'GET',
+			path: '/search_products_lables',
+			handler: function(request, reply){
+				var params = request.query.params;
+				if (!params) {
+					params = {};
+					params = JSON.stringify(params);
+				}
+				search_products_lables(params,function(err,rows){
+					if (!err) {
+
+						return reply({"success":true,"message":"ok","rows":rows.rows,"num":rows.num,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
 		//充值订单列表信息
 		{
 			method: 'GET',
