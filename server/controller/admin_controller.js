@@ -408,6 +408,11 @@ exports.register = function(server, options, next){
 		});
 
 	};
+	//查询库存
+	var query_product_stock = function(data,cb){
+		var url = "http://211.149.248.241:12001/query_product_stock";
+		do_post_method(url,data,cb);
+	}
 	//读取，保存商品
 	var read_product_excel = function(path, reply) {
 		var workbook = XLSX.readFile(path);
@@ -1293,6 +1298,7 @@ exports.register = function(server, options, next){
 				return reply.view("inventory_search");
 			}
 		},
+
 		//变异订单
 		{
 			method: 'GET',
@@ -2778,6 +2784,60 @@ exports.register = function(server, options, next){
 						return reply({"success":true,"message":"ok","products":products,"service_info":service_info});
 					}else {
 						return reply({"success":false,"message":row.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//库存list
+		{
+			method: 'GET',
+			path: '/get_stock_list',
+			handler: function(request, reply){
+				var params = request.query.params;
+				if (!params) {
+					return reply({"success":false,"message":"params wrong","service_info":service_info});
+				}
+				get_products_list(params,function(err,rows){
+					if (!err) {
+						if (rows.success) {
+							var products = rows.rows;
+							var product_ids = [];
+							for (var i = 0; i < products.length; i++) {
+								product_ids.push(products[i].id);
+							}
+							if (products.length ==0) {
+								return reply({"success":true,"message":"ok","products":[],"service_info":service_info,"num":0});
+							}
+							var num = rows.num;
+							var data = {
+								"product_ids":JSON.stringify(product_ids),
+								"industry_id":102
+							}
+							query_product_stock(data,function(err,rows){
+								if (!err) {
+									var stock_map = {};
+									for (var i = 0; i < rows.rows.length; i++) {
+										var product = rows.rows[i];
+										stock_map[product.product_id] = product;
+									}
+									for (var i = 0; i < products.length; i++) {
+										var product = products[i];
+										if (stock_map[product.id]) {
+											product.quantity = stock_map[product.id].quantity;
+											product.lock_num = stock_map[product.id].lock_num;
+										}
+									}
+									return reply({"success":true,"products":products,"num":num,"service_info":service_info});
+								}else {
+									return reply({"success":false,"message":results.message});
+								}
+							});
+
+						}else {
+							return reply({"success":false,"message":rows.message,"service_info":service_info});
+						}
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
 					}
 				});
 			}

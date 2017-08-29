@@ -31,7 +31,7 @@
     function getTableData(params,cb) {
         params.everyNum = 50;
         var allNum = 0;
-        $.get("/get_products_list",{params:JSON.stringify(params)},function(data){
+        $.get("/get_stock_list",{params:JSON.stringify(params)},function(data){
             console.log("params:"+JSON.stringify(params));
             if (data.success) {
                 allNum = data.num;
