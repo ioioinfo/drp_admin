@@ -320,7 +320,16 @@
 
 
        render() {
-           var product_id = this.state.deitem.product_id;
+           var description  = '没有商品描述';
+           var product_description_href = '#';
+           var product_id = '';
+
+          if(this.state.deitem){
+             product_id = this.state.deitem.product_id;
+             description = this.state.deitem.description;
+             product_description_href = "product_description?product_id="+this.state.deitem.product_id;
+          }
+
          return (
              <div className="container-fluid ">
                 <h5 className="font_color_h5">商品图片</h5>
@@ -379,13 +388,13 @@
 
                 <div className="row margin_top_de">
                     <p className="col-sm-1">商品描述</p>
-                    <div className="descript_infor col-sm-11">{this.state.deitem.description}</div>
+                    <div className="descript_infor col-sm-11">{description}</div>
                 </div>
 
                 <hr/>
         		<div className="span12 text_align_right container-fluid">
         			 <div className="col-sm-12 ">
-                        <button className="btn button_background2 button_white margin_right" type="button"><a href={"product_description?product_id="+this.state.deitem.product_id}>查看描述</a></button>
+                        <button className="btn button_background2 button_white margin_right" type="button"><a href={product_description_href}>查看描述</a></button>
                         <button className="btn button_background1 button_white margin_right" type="button">上 架</button>
                      </div>
         		</div>
