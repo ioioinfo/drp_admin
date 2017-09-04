@@ -16,14 +16,14 @@ class Wrap extends React.Component {
             <div className="wrap">
             <nav className="navbar navbar-inverse navbar-fixed-top">
             <div className="container-fluid">
-            <Logo/>
-            <WrapRightHead/>
+            <Logo />
+            <WrapRightHead />
             </div>
             </nav>
             <div className="container-fluid">
             <div className="row">
-            <Left/>
-            <Right/>
+            <Left />
+            <Right />
             </div>
             </div>
             <ChangePassword/>
@@ -82,6 +82,7 @@ class Right extends React.Component {
         );
     }
 };
+
 //  搜索框
 class SearchList extends React.Component {
     constructor(props) {
@@ -89,15 +90,8 @@ class SearchList extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
     handleClick(e){
-        var product_name = $(".product_name").val();
-        var product_id = $(".product_id").val();
-        var is_down = 0 ;
-        var params1 = {"product_name":product_name,"product_id":product_id,"is_down":is_down};
-
-        this.props.loadData(params1);
 
     };
-
     render() {
         return (
             <div className="row search_margin_botton">
@@ -117,14 +111,14 @@ class SearchList extends React.Component {
             </div>
             <div className="col-lg-3 col-sm-3 show-grid">
             <div className="input-group">
-            <input type="text" className="form-control host_name" placeholder="编码..." />
+            <input type="text" className="form-control origin" placeholder="门店..." />
             <span className="input-group-btn">
             </span>
             </div>
             </div>
             <div className="col-lg-2 col-sm-2 show-grid">
             <div className="input-group">
-            <input type="text" className="form-control ip_address" placeholder="批次..." />
+            <input type="text" className="form-control ip_sort" placeholder="状态..." />
             </div>
             </div>
             <div className="col-lg-1 col-sm-1 show-grid">
@@ -141,10 +135,23 @@ class SearchList extends React.Component {
 
 //判断特殊列
 var checkTd = function(defaultTd) {
-            return (
-                <td></td>
-            );
-        };
+    var id = this.props.item.id;
+    var href = "noob_sort?product_id="+id;
+    var href1 = "master?product_id="+id;
+    var statu = '成功';
+    if(this.props.item.order_status=='-1'){
+        statu = '失败';
+    }
+
+    if(this.props.thitem.type=="operation"){
+        return (
+            <td>{statu}</td>
+        );
+    }else {
+        return defaultTd;
+    }
+};
+
 // 返回到页面
 ReactDOM.render(
     <Wrap/>,

@@ -19,18 +19,16 @@
     var default_selected = "05";
     var breadcrumbs = ["订单","异常订单"];
     //表头
-    var tt = [{name:'id',title:'编号',sort:true}
-    ,{name:'product_name',title:'名称',sort:false}
-    ,{name:'product_sale_price',title:'售价',sort:false}
-    ,{name:'product_marketing_price',title:'市场价',sort:false}
-    ,{name:'status_name',title:'状态',sort:false}
-    ,{name:'update_at_text',title:'上架时间',sort:false}];
+    var tt = [{name:'order_id',title:'订单',sort:true}
+    ,{name:'linkname',title:'名称',sort:false}
+    ,{name:'mobile',title:'手机',sort:false}
+    ,{name:'detail_address',title:'地址',sort:false}
+    ,{name:'products_price',title:'价格',sort:false}];
 
     function getTableData(params,cb) {
         params.everyNum = 50;
         var allNum = 0;
         $.get("/get_poor_orders",{params:JSON.stringify(params)},function(data){
-            console.log("params:"+JSON.stringify(params));
             if (data.success) {
                 allNum = data.num;
                 cb({tabthitems:tt,tabtritems:data.rows,allNum:allNum,everyNum:params.everyNum});

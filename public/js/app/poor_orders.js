@@ -23478,6 +23478,7 @@ var Right = function (_React$Component2) {
 }(React.Component);
 
 ;
+
 //  搜索框
 
 var SearchList = function (_React$Component3) {
@@ -23494,14 +23495,7 @@ var SearchList = function (_React$Component3) {
 
     _createClass(SearchList, [{
         key: 'handleClick',
-        value: function handleClick(e) {
-            var product_name = $(".product_name").val();
-            var product_id = $(".product_id").val();
-            var is_down = 0;
-            var params1 = { "product_name": product_name, "product_id": product_id, "is_down": is_down };
-
-            this.props.loadData(params1);
-        }
+        value: function handleClick(e) {}
     }, {
         key: 'render',
         value: function render() {
@@ -23534,7 +23528,7 @@ var SearchList = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'input-group' },
-                        React.createElement('input', { type: 'text', className: 'form-control host_name', placeholder: '\u7F16\u7801...' }),
+                        React.createElement('input', { type: 'text', className: 'form-control origin', placeholder: '\u95E8\u5E97...' }),
                         React.createElement('span', { className: 'input-group-btn' })
                     )
                 ),
@@ -23544,7 +23538,7 @@ var SearchList = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'input-group' },
-                        React.createElement('input', { type: 'text', className: 'form-control ip_address', placeholder: '\u6279\u6B21...' })
+                        React.createElement('input', { type: 'text', className: 'form-control ip_sort', placeholder: '\u72B6\u6001...' })
                     )
                 ),
                 React.createElement(
@@ -23575,8 +23569,25 @@ var SearchList = function (_React$Component3) {
 
 //判断特殊列
 var checkTd = function checkTd(defaultTd) {
-    return React.createElement('td', null);
+    var id = this.props.item.id;
+    var href = "noob_sort?product_id=" + id;
+    var href1 = "master?product_id=" + id;
+    var statu = '成功';
+    if (this.props.item.order_status == '-1') {
+        statu = '失败';
+    }
+
+    if (this.props.thitem.type == "operation") {
+        return React.createElement(
+            'td',
+            null,
+            statu
+        );
+    } else {
+        return defaultTd;
+    }
 };
+
 // 返回到页面
 ReactDOM.render(React.createElement(Wrap, null), document.getElementById("content"));
 
