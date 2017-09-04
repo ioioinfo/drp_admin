@@ -21,12 +21,10 @@
     //表头
     var tt = [{name:'id',title:'产品id',sort:true}
     ,{name:'product_name',title:'商品名称',sort:false}
-    ,{name:'product_sale_price',title:'总数',sort:false}
-    ,{name:'product_marketing_price',title:'仓库',sort:false}
-    ,{name:'product_marketing_price1',title:'被锁库数量',sort:false}
-    ,{name:'product_marketing_price2',title:'代发货',sort:false}
-    ,{name:'product_marketing_price3',title:'出库途中数量',sort:false}
-    ,{name:'product_marketing_price4',title:'未入库数量',sort:false}];
+    ,{name:'product_sale_price',title:'销售价',sort:false}
+    ,{name:'product_marketing_price',title:'市场价',sort:false}
+    ,{name:'quantity',title:'实际库存',sort:false}
+    ,{name:'lock_num',title:'锁定库存',sort:false}];
 
     function getTableData(params,cb) {
         params.everyNum = 50;
