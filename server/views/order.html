@@ -55,14 +55,20 @@
       function getTableData(params,cb) {
 		 params.everyNum = 10;
 		 var allNum = 0;
-		 $.post("/get_all_orders",{params:JSON.stringify(params)},function(data){
-			 if (data.success) {
-				 allNum = data.num;
-				 cb({tabthitems:tt,tabtritems:data.orders,allNum:allNum,everyNum:params.everyNum});
-			 }else {
-				 alert(data.message);
-			 }
-		 });
+         if (params.st == 2) {
+             params.everyNum = 10000;
+             location.href = "/export_orders?params="+JSON.stringify(params);
+         }else {
+             $.post("/get_all_orders",{params:JSON.stringify(params)},function(data){
+    			 if (data.success) {
+    				 allNum = data.num;
+    				 cb({tabthitems:tt,tabtritems:data.orders,allNum:allNum,everyNum:params.everyNum});
+    			 }else {
+    				 alert(data.message);
+    			 }
+    		 });
+         }
+
 	 };
 
 
@@ -314,12 +320,23 @@
          constructor(props) {
            super(props);
            this.handleClick = this.handleClick.bind(this);
+           this.handleClick2 = this.handleClick2.bind(this);
        }
         handleClick(e){
             var order_id = $(".order_id").val();
             var product_id = $(".product_id").val();
             var status_name = $(".status_name").val();
-            var params1 = {"thisPage":1,"order_id":order_id,"product_id":product_id,"status_name":status_name};
+            var st = 1;
+            var params1 = {"thisPage":1,"order_id":order_id,"product_id":product_id,"status_name":status_name,"st":st};
+
+            this.props.loadData(params1);
+        };
+        handleClick2(e){
+            var order_id = $(".order_id").val();
+            var product_id = $(".product_id").val();
+            var status_name = $(".status_name").val();
+            var st = 2;
+            var params1 = {"thisPage":1,"order_id":order_id,"product_id":product_id,"status_name":status_name,"st":st};
 
             this.props.loadData(params1);
         };
@@ -356,6 +373,7 @@
                       <div className="input-group">
                           <span className="input-group-btn">
                               <button className="btn btn-default" id="search_botton_left" type="button" onClick={this.handleClick}>查询</button>
+                              <button className="btn btn-default"  type="button" onClick={this.handleClick2}>导出</button>
                           </span>
                       </div>
                   </div>

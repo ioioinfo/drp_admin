@@ -3339,6 +3339,111 @@ exports.register = function(server, options, next){
 
 			}
 		},
+		//导出所有线下订单 及数量
+		{
+			method: 'GET',
+			path: '/export_orders',
+			handler: function(request, reply){
+				var params = request.query.params;
+				if (!params) {
+					return reply({"success":false,"message":"params wrong","service_info":service_info});
+				}
+				var ep =  eventproxy.create("orders","num","mendians",
+					function(orders,num,mendians){
+						for (var i = 0; i < orders.length; i++) {
+							var order = orders[i];
+							for (var j = 0; j < mendians.length; j++) {
+								if (mendians[j].org_store_id == order.store_id) {
+									order.org_store_name = mendians[j].org_store_name;
+								}
+							}
+						}
+						var xlsx = require('node-xlsx').default;
+
+						const data = [["时间","订单号","订单人","门店",
+						"实付(元)","找零(元)","抹零(元)","状态"]];
+						for (var i = 0; i < orders.length; i++) {
+							var r = orders[i];
+							data.push([r.order_date_text,r.order_id,r.nickname,r.org_store_name,
+							r.actual_price,r.changes,r.small_change,r.status_name]);
+						}
+
+						var buffer = xlsx.build([{name: "线下订单", data: data}]);
+						return reply(buffer)
+						.header('Content-Type', 'application/octet-stream')
+						.header('content-disposition', 'attachment; filename=stores_orders_list.xlsx;');
+
+				});
+
+				get_all_orders(params,function(err,rows){
+					if (!err) {
+						if (rows.success) {
+							var orders = rows.rows;
+							var person_ids = [];
+							for (var i = 0; i < orders.length; i++) {
+								person_ids.push(orders[i].person_id);
+								orders[i].status_name = pos_order_status[orders[i].order_status];
+							}
+							list_by_ids(JSON.stringify(person_ids),function(err,content){
+								if (!err) {
+									if (content.success) {
+										var persons = content.rows;
+										for (var i = 0; i < persons.length; i++) {
+											var person = persons[i];
+											for (var j = 0; j < orders.length; j++) {
+												if (person.person_id == orders[j].person_id) {
+													orders[j].nickname = person.person_name;
+												}
+											}
+										}
+										for (var i = 0; i < orders.length; i++) {
+											if (!orders[i].nickname) {
+												orders[i].nickname = "";
+											}
+										}
+										ep.emit("orders", orders);
+									}else {
+										ep.emit("orders", orders);
+									}
+								}else {
+									ep.emit("orders", orders);
+								}
+							});
+						}else {
+							ep.emit("orders", []);
+						}
+					}else {
+						ep.emit("orders", []);
+					}
+				});
+				get_all_num(params,function(err,row){
+					if (!err) {
+						if (row.success) {
+							var num = row.num;
+							ep.emit("num", num);
+						}else {
+							ep.emit("num", 0);
+						}
+					}else {
+						ep.emit("num", 0);
+					}
+				});
+				get_all_mendian(function(err,rows){
+					if (!err) {
+						if (rows.success) {
+							var mendians = rows.rows
+							ep.emit("mendians", mendians);
+						}else {
+							ep.emit("mendians", []);
+						}
+					}else {
+						ep.emit("mendians", []);
+					}
+				});
+
+
+			}
+		},
 		//根据日期获取订单
 		{
 			method: 'GET',
