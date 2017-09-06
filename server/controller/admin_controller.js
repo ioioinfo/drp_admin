@@ -1,6 +1,7 @@
 const uu_request = require('../utils/uu_request');
 var service_info = "ec order service";
 var fs = require('fs-extra');
+var xlsx = require('node-xlsx').default;
 var eventproxy = require('eventproxy');
 var service_info = "drp admin service";
 var org_code = "ioio";
@@ -3026,6 +3027,43 @@ exports.register = function(server, options, next){
 							order.status_name = order_status[order.order_status];
 						}
 						return reply({"success":true,"message":"ok","orders":rows.rows,"num":rows.num,"service_info":service_info});
+					}else {
+						return reply({"success":false,"message":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
+		//mp订单导出
+		{
+			method: 'GET',
+			path: '/export_mp_orders_list',
+			handler: function(request, reply){
+				var params = request.query.params;
+				if (!params) {
+					return reply({"success":false,"message":"params wrong","service_info":service_info});
+				}
+				mp_orders_list(params,function(err,rows){
+					console.log("rows:"+JSON.stringify(rows));
+					if (!err) {
+						for (var i = 0; i < rows.rows.length; i++) {
+							var order = rows.rows[i];
+							order.status_name = order_status[order.order_status];
+						}
+						var xlsx = require('node-xlsx').default;
+
+						const data = [["时间","订单号","实付","总数",
+                        "发货地","运费","收货人","收货人手机","省",
+						"市","区","买家留言","状态"]];
+                        for (var i = 0; i < rows.rows.length; i++) {
+                            var r = rows.rows[i];
+                            data.push([r.order_date_text,r.order_id,r.actual_price,r.total_number,r.store_name,r.logistics_price,r.linkname,r.mobile,r.province,
+							r.city,r.district,r.send_seller,r.status_name]);
+                        }
+
+						var buffer = xlsx.build([{name: "线上订单", data: data}]);
+                        return reply(buffer)
+                        .header('Content-Type', 'application/octet-stream')
+                        .header('content-disposition', 'attachment; filename=mp_orders_list.xlsx;');
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":service_info});
 					}

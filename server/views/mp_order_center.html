@@ -59,16 +59,20 @@
       function getTableData(params,cb) {
 		 params.everyNum = 10;
 		 var allNum = 0;
-		 $.get("/mp_orders_list",{params:JSON.stringify(params)},function(data){
-			 if (data.success) {
-				 allNum = data.num;
-				 cb({tabthitems:tt,tabtritems:data.orders,allNum:allNum,everyNum:params.everyNum});
-			 }else {
-				 alert(data.message);
-			 }
-		 });
+         if (params.st == 2) {
+             params.everyNum = 10000;
+             location.href = "/export_mp_orders_list?params="+JSON.stringify(params);
+         }else {
+             $.get("/mp_orders_list",{params:JSON.stringify(params)},function(data){
+                if (data.success) {
+                    allNum = data.num;
+                    cb({tabthitems:tt,tabtritems:data.orders,allNum:allNum,everyNum:params.everyNum});
+                }else {
+                    alert(data.message);
+                }
+            });
+         }
 	 };
-
 
 	</script>
     <script type="text/babel">
@@ -288,6 +292,7 @@
            this.setState(data);
          }.bind(this));
        }
+
        componentDidMount() {
          this.loadData({});
        }
@@ -317,14 +322,26 @@
          constructor(props) {
            super(props);
            this.handleClick = this.handleClick.bind(this);
+           this.handleClick2 = this.handleClick2.bind(this);
        }
        handleClick(e){
            var order_id = $(".order_id").val();
            var linkname = $(".linkname").val();
            var mobile = $(".mobile").val();
            var status_name = $(".status_name").val();
+           var st = 1;
+             var params1 = {"order_id":order_id,"linkname":linkname,"mobile":mobile,"status_name":status_name,"st":st};
 
-             var params1 = {"order_id":order_id,"linkname":linkname,"mobile":mobile,"status_name":status_name};
+             this.props.loadData(params1);
+
+       };
+       handleClick2(e){
+           var order_id = $(".order_id").val();
+           var linkname = $(".linkname").val();
+           var mobile = $(".mobile").val();
+           var status_name = $(".status_name").val();
+           var st = 2;
+             var params1 = {"order_id":order_id,"linkname":linkname,"mobile":mobile,"status_name":status_name,"st":st};
 
              this.props.loadData(params1);
 
@@ -362,6 +379,7 @@
                       <div className="input-group">
                           <span className="input-group-btn">
                               <button className="btn btn-default" id="search_botton_left" type="button" onClick={this.handleClick}>查询</button>
+                              <button className="btn btn-default"  type="button" onClick={this.handleClick2}>导出</button>
                           </span>
                       </div>
                   </div>
