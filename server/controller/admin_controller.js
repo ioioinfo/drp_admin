@@ -3102,10 +3102,22 @@ exports.register = function(server, options, next){
 								}
 								list_logistics_by_ids(JSON.stringify(order_ids),function(err,rows){
 									if (!err) {
+										var logist = {
+											"created_at_text":"",
+											"send_time_text":"",
+											"logi_name":"",
+											"logi_no":""
+										};
 										var logistics_map = {};
 										for (var i = 0; i < rows.rows.length; i++) {
 											var logistic = rows.rows[i];
 											logistics_map[logistic.order_id] = logistic;
+										}
+										for (var i = 0; i < orders.length; i++) {
+											var o = orders[i];
+											if (!logistics_map[o.order_id]) {
+												logistics_map[o.order_id]= logist;
+											}
 										}
 										var xlsx = require('node-xlsx').default;
 
