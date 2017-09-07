@@ -60,7 +60,7 @@
 		 params.everyNum = 10;
 		 var allNum = 0;
          if (params.st == 2) {
-             params.everyNum = 10000;
+             params.everyNum = 1000;
              location.href = "/export_mp_orders_list?params="+JSON.stringify(params);
          }else {
              $.get("/mp_orders_list",{params:JSON.stringify(params)},function(data){
