@@ -24,6 +24,14 @@ var order_status ={
 	"8" : "退款中订单",
 	"9" : "等待买家评价"
 };
+var export_status = {
+	"1" : "等待卖家拣货",
+	"2" : "等待卖家发货",
+	"3" : "等待快递员揽货",
+	"4" : "卖家已发货",
+	"5" : "等待买家收货",
+	"6" : "交易成功"
+};
 var pos_order_status = {
 	"1":"未付款",
 	"2":"付款确认中",
@@ -855,6 +863,12 @@ exports.register = function(server, options, next){
 	var find_lables_list = function(params,cb){
 		var url = "http://211.149.248.241:18002/find_lables_list?params=";
 		url = url + params;
+		do_get_method(url,cb);
+	}
+	//得到订单明细简单版
+	var get_orders_infos = function(order_ids,cb){
+		var url = "http://211.149.248.241:18010/get_orders_infos?order_ids=";
+		url = url + order_ids;
 		do_get_method(url,cb);
 	}
 	//新增或者更新或者删除标签
@@ -3086,78 +3100,95 @@ exports.register = function(server, options, next){
 					if (!err) {
 						var order_ids = [];
 						var person_ids = [];
+						var orders = [];
+						var orders_map = {};
 						for (var i = 0; i < rows.rows.length; i++) {
 							var order = rows.rows[i];
-							order_ids.push(order.order_id);
-							person_ids.push(order.person_id);
 							order.status_name = order_status[order.order_status];
-						}
-						var orders = rows.rows;
-						list_by_ids(JSON.stringify(person_ids),function(err,content){
-							if (!err) {
-								var persons_map = {};
-								for (var i = 0; i < content.rows.length; i++) {
-									var person = content.rows[i];
-									persons_map[person.person_id] = person;
-								}
-								list_logistics_by_ids(JSON.stringify(order_ids),function(err,rows){
-									if (!err) {
-										var logist = {
-											"created_at_text":"",
-											"send_time_text":"",
-											"logi_name":"",
-											"logi_no":""
-										};
-										var logistics_map = {};
-										for (var i = 0; i < rows.rows.length; i++) {
-											var logistic = rows.rows[i];
-											logistics_map[logistic.order_id] = logistic;
-										}
-										for (var i = 0; i < orders.length; i++) {
-											var o = orders[i];
-											if (!logistics_map[o.order_id]) {
-												logistics_map[o.order_id]= logist;
-											}
-										}
-										var xlsx = require('node-xlsx').default;
-
-										const data = [["订单号","拍下时间","付款时间",
-											"发货时间","交易结束时间","快递公司","快递单号",
-											"商家编码","属性商家编码","数量","单价","实际单价",
-											"价格","子订单状态","退款状态","总价","运费",
-											"订单状态","买家昵称","收件人","电话",
-											"座机","地址"
-										]];
-				                        for (var i = 0; i < orders.length; i++) {
-				                            var r = orders[i];
-				                            data.push([r.order_id,r.order_date_text,
-												logistics_map[r.order_id].created_at_text,
-												logistics_map[r.order_id].send_time_text,
-												logistics_map[r.order_id].created_at_text,
-												logistics_map[r.order_id].logi_name,
-												logistics_map[r.order_id].logi_no,
-												"","",r.total_number,"","",
-												"","","",r.actual_price,r.logistics_price,
-												r.status_name,
-												persons_map[r.person_id].person_name,
-												r.linkname,r.mobile,
-												"",r.detail_address
-											]);
-				                        }
-
-										var buffer = xlsx.build([{name: "线上订单", data: data}]);
-				                        return reply(buffer)
-				                        .header('Content-Type', 'application/octet-stream')
-				                        .header('content-disposition', 'attachment; filename=mp_orders_list.xlsx;');
-
-									}else {
-										return reply({"success":false,"message":rows.message,"service_info":service_info});
-									}
-								});
-							}else {
-								return reply({"success":false,"message":content.message,"service_info":service_info});
+							if (export_status[order.order_status]) {
+								order_ids.push(order.order_id);
+								person_ids.push(order.person_id);
+								orders.push(order);
+								orders_map[order.order_id] = order;
 							}
-						});
+						}
+						if (order_ids.length ==0) {
+							return reply({"success":false,"message":"订单不符合要求","service_info":service_info});
+						}else {
+							get_orders_infos(JSON.stringify(order_ids),function(err,rows){
+								if (!err) {
+									var details = rows.rows;
+									list_by_ids(JSON.stringify(person_ids),function(err,content){
+										if (!err) {
+											var persons_map = {};
+											for (var i = 0; i < content.rows.length; i++) {
+												var person = content.rows[i];
+												persons_map[person.person_id] = person;
+											}
+											list_logistics_by_ids(JSON.stringify(order_ids),function(err,rows){
+												if (!err) {
+													var logist = {
+														"created_at_text":"",
+														"send_time_text":"",
+														"logi_name":"",
+														"logi_no":""
+													};
+													var logistics_map = {};
+													for (var i = 0; i < rows.rows.length; i++) {
+														var logistic = rows.rows[i];
+														logistics_map[logistic.order_id] = logistic;
+													}
+													for (var i = 0; i < orders.length; i++) {
+														var o = orders[i];
+														if (!logistics_map[o.order_id]) {
+															logistics_map[o.order_id]= logist;
+														}
+													}
+													var xlsx = require('node-xlsx').default;
+
+													const data = [["订单号","拍下时间","付款时间",
+														"发货时间","交易结束时间","快递公司","快递单号",
+														"商家编码","属性商家编码","数量","单价","实际单价",
+														"价格","子订单状态","退款状态","总价","运费",
+														"订单状态","买家昵称","收件人","电话",
+														"座机","地址"
+													]];
+							                        for (var i = 0; i < details.length; i++) {
+							                            var r = details[i];
+							                            data.push([r.order_id,
+															orders_map[r.order_id].order_date_text,
+															logistics_map[r.order_id].created_at_text,
+															logistics_map[r.order_id].send_time_text,
+															logistics_map[r.order_id].created_at_text,
+															logistics_map[r.order_id].logi_name,
+															logistics_map[r.order_id].logi_no,
+															r.product_id,"",r.number,r.marketing_price,r.price,
+															r.total_price,"","",orders_map[r.order_id].actual_price,orders_map[r.order_id].logistics_price,
+															orders_map[r.order_id].status_name,
+															persons_map[orders_map[r.order_id].person_id].person_name,
+															orders_map[r.order_id].linkname,orders_map[r.order_id].mobile,
+															"",orders_map[r.order_id].detail_address
+														]);
+							                        }
+
+													var buffer = xlsx.build([{name: "线上订单", data: data}]);
+							                        return reply(buffer)
+							                        .header('Content-Type', 'application/octet-stream')
+							                        .header('content-disposition', 'attachment; filename=mp_orders_list.xlsx;');
+
+												}else {
+													return reply({"success":false,"message":rows.message,"service_info":service_info});
+												}
+											});
+										}else {
+											return reply({"success":false,"message":content.message,"service_info":service_info});
+										}
+									});
+								}else {
+									return reply({"success":false,"message":rows.message,"service_info":service_info});
+								}
+							});
+						}
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":service_info});
 					}
