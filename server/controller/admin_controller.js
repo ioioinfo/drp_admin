@@ -2075,12 +2075,33 @@ exports.register = function(server, options, next){
 					if (!err) {
 						var orders = rows.rows;
 						var products = rows.products;
+						var ids = [];
 						for (var i = 0; i < orders.length; i++) {
+							ids.push(orders[i].person_id);
 							orders[i].product_name = products[orders[i].product_id].product_name;
 							orders[i].product_sale_price = products[orders[i].product_id].product_sale_price;
 							orders[i].img = products[orders[i].product_id].img.location;
 						}
-						return reply({"success":true,"rows":orders,"products":products,"num":rows.num});
+						ids = JSON.stringify(ids);
+						var num = rows.num;
+						list_by_ids(ids,function(err,rows){
+                            if (!err) {
+                                var person_map = {};
+                                for (var i = 0; i < rows.rows.length; i++) {
+                                    var person = rows.rows[i];
+                                    person_map[person.person_id] = person;
+                                }
+                                for (var i = 0; i < orders.length; i++) {
+                                    var order = orders[i];
+                                    if (person_map[order.person_id]) {
+                                        order.nickname = person_map[order.person_id].person_name;
+                                    }
+                                }
+                                return reply({"success":true,"rows":orders,"num":num,"products":products});
+                            }else {
+                                return reply({"success":false,"message":rows.message});
+                            }
+                        });
 					}else {
 						return reply({"success":false,"message":rows.message,"service_info":rows.service_info});
 					}
