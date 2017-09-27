@@ -11,6 +11,10 @@ var charge_status = {
 	"-1": "等待付款",
 	"1" : "已付款"
 };
+var charge_way = {
+	"ali_pay": "支付宝充值",
+	"weinxin_pay" : "微信充值"
+};
 var order_status ={
 	"-1": "等待买家付款",
 	"0" : "付款确认中",
@@ -954,6 +958,7 @@ exports.register = function(server, options, next){
 						for (var i = 0; i < rows.rows.length; i++) {
 							var order = rows.rows[i];
 							order.status_name = charge_status[order.order_status];
+							order.pay_way = charge_way[order.pay_way];
 						}
 						return reply({"success":true,"message":"ok","orders":rows.rows,"num":rows.num,"service_info":service_info});
 					}else {
