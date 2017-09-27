@@ -90,35 +90,37 @@ class SearchList extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
     handleClick(e){
-
+        var order_id = $(".order_id").val();
+        var params1 = {"order_id":order_id};
+        this.props.loadData(params1);
     };
     render() {
         return (
             <div className="row search_margin_botton">
             <div className="col-lg-3 col-sm-3 show-grid">
             <div className="input-group">
-            <input type="text" className="form-control product_id" placeholder="编号..." />
+            <input type="text" className="form-control order_id" placeholder="单号..." />
             <span className="input-group-btn">
             </span>
             </div>
             </div>
             <div className="col-lg-3 col-sm-3 show-grid">
             <div className="input-group">
-            <input type="text" className="form-control product_name" placeholder="名称..." />
+            <input type="text" className="form-control product_name" placeholder="名称..." readOnly="readOnly"/>
             <span className="input-group-btn">
             </span>
             </div>
             </div>
             <div className="col-lg-3 col-sm-3 show-grid">
             <div className="input-group">
-            <input type="text" className="form-control origin" placeholder="门店..." />
+            <input type="text" className="form-control origin" placeholder="门店..." readOnly="readOnly" />
             <span className="input-group-btn">
             </span>
             </div>
             </div>
             <div className="col-lg-2 col-sm-2 show-grid">
             <div className="input-group">
-            <input type="text" className="form-control ip_sort" placeholder="状态..." />
+            <input type="text" className="form-control ip_sort" placeholder="状态..."  readOnly="readOnly"/>
             </div>
             </div>
             <div className="col-lg-1 col-sm-1 show-grid">

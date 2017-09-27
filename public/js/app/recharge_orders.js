@@ -23499,7 +23499,11 @@ var SearchList = function (_React$Component3) {
 
     _createClass(SearchList, [{
         key: 'handleClick',
-        value: function handleClick(e) {}
+        value: function handleClick(e) {
+            var order_id = $(".order_id").val();
+            var params1 = { "order_id": order_id };
+            this.props.loadData(params1);
+        }
     }, {
         key: 'render',
         value: function render() {
@@ -23512,7 +23516,7 @@ var SearchList = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'input-group' },
-                        React.createElement('input', { type: 'text', className: 'form-control product_id', placeholder: '\u7F16\u53F7...' }),
+                        React.createElement('input', { type: 'text', className: 'form-control order_id', placeholder: '\u5355\u53F7...' }),
                         React.createElement('span', { className: 'input-group-btn' })
                     )
                 ),
@@ -23522,7 +23526,7 @@ var SearchList = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'input-group' },
-                        React.createElement('input', { type: 'text', className: 'form-control product_name', placeholder: '\u540D\u79F0...' }),
+                        React.createElement('input', { type: 'text', className: 'form-control product_name', placeholder: '\u540D\u79F0...', readOnly: 'readOnly' }),
                         React.createElement('span', { className: 'input-group-btn' })
                     )
                 ),
@@ -23532,7 +23536,7 @@ var SearchList = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'input-group' },
-                        React.createElement('input', { type: 'text', className: 'form-control origin', placeholder: '\u95E8\u5E97...' }),
+                        React.createElement('input', { type: 'text', className: 'form-control origin', placeholder: '\u95E8\u5E97...', readOnly: 'readOnly' }),
                         React.createElement('span', { className: 'input-group-btn' })
                     )
                 ),
@@ -23542,7 +23546,7 @@ var SearchList = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { className: 'input-group' },
-                        React.createElement('input', { type: 'text', className: 'form-control ip_sort', placeholder: '\u72B6\u6001...' })
+                        React.createElement('input', { type: 'text', className: 'form-control ip_sort', placeholder: '\u72B6\u6001...', readOnly: 'readOnly' })
                     )
                 ),
                 React.createElement(

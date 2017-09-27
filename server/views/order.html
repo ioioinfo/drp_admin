@@ -31,6 +31,22 @@
     .button-primary a{
         color: #fff;
     }
+    .mendian_wrap{
+        position: absolute;
+        top: 37px;
+        left: 0;
+        padding: 7px;
+        border: 1px solid #666;
+        background: #fff;
+        display: none;
+        width: 140%;
+    }
+
+    .mendian_list{
+        text-indent: 5px;
+        height: 27px;
+        line-height: 27px;
+    }
     </style>
   </head>
   <body>
@@ -321,13 +337,30 @@
            super(props);
            this.handleClick = this.handleClick.bind(this);
            this.handleClick2 = this.handleClick2.bind(this);
+           this.handleClick3 = this.handleClick3.bind(this);
+           this.handleClick4 = this.handleClick4.bind(this);
+           this.state={list:[]};
+       }
+       componentDidMount() {
+
+           $.ajax({
+               url: "/store_list",
+               dataType: 'json',
+               type: 'GET',
+               success: function(data) {
+                   this.setState({list:data.rows});
+               }.bind(this),
+               error: function(xhr, status, err) {
+               }.bind(this)
+           });
        }
         handleClick(e){
             var order_id = $(".order_id").val();
             var product_id = $(".product_id").val();
             var status_name = $(".status_name").val();
+            var store_id = $(".store_id").val();
             var st = 1;
-            var params1 = {"thisPage":1,"order_id":order_id,"product_id":product_id,"status_name":status_name,"st":st};
+            var params1 = {"thisPage":1,"order_id":order_id,"product_id":product_id,"status_name":status_name,"store_id":store_id,"st":st};
 
             this.props.loadData(params1);
         };
@@ -335,11 +368,21 @@
             var order_id = $(".order_id").val();
             var product_id = $(".product_id").val();
             var status_name = $(".status_name").val();
+            var store_id = $(".store_id").val();
             var st = 2;
-            var params1 = {"thisPage":1,"order_id":order_id,"product_id":product_id,"status_name":status_name,"st":st};
+            var params1 = {"thisPage":1,"order_id":order_id,"product_id":product_id,"status_name":status_name,"store_id":store_id,"st":st};
 
             this.props.loadData(params1);
         };
+        handleClick3(e){
+            e.preventDefault();
+            $('.mendian_wrap').show();
+        }
+        handleClick4(store_id,org_store_name){
+            $('.store_id').val(store_id);
+            $('.store_name').val(org_store_name);
+            $('.mendian_wrap').css("display","none");
+        }
       render() {
           return (
               <div className="row search_margin_botton">
@@ -358,10 +401,15 @@
                       </div>
                   </div>
                   <div className="col-xs-6 col-lg-3 col-sm-3 show-grid">
-                      <div className="input-group">
-                          <input type="text" className="form-control host_name" placeholder="手机..." disabled="disabled" />
-                          <span className="input-group-btn">
-                          </span>
+                      <div className="input-group mendian_hover">
+                          <input type="hidden" className="form-control host_name store_id" placeholder="门店id..."/>
+                          <input type="text" className="form-control host_name store_name" placeholder="门店id..."  onClick={this.handleClick3}/>
+                          <p className="mendian_wrap">
+                              {this.state.list.map(item => (
+                                  <div className="mendian_list" onClick={this.handleClick4.bind(this,item.org_store_id,item.org_store_name)}>{item.org_store_name}</div>))
+                              }
+
+                          </p>
                       </div>
                   </div>
                   <div className="col-xs-6 col-lg-2 col-sm-2 show-grid">
