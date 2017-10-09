@@ -542,6 +542,9 @@
            var href = "return_view?id="+id;
            if(this.props.thitem.type=="image"){
                var images = this.props.item[this.props.thitem.name];
+               if (!images) {
+                 images = "{{static_host}}/no_picture.png";
+               }
                return (
                    <td><img className="loading" src={images} alt="" /></td>
                );

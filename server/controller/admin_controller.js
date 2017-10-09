@@ -2085,7 +2085,9 @@ exports.register = function(server, options, next){
 							ids.push(orders[i].person_id);
 							orders[i].product_name = products[orders[i].product_id].product_name;
 							orders[i].product_sale_price = products[orders[i].product_id].product_sale_price;
-							orders[i].img = products[orders[i].product_id].img.location;
+							if (products[orders[i].product_id].img) {
+								orders[i].img = products[orders[i].product_id].img.location;
+							}
 						}
 						ids = JSON.stringify(ids);
 						var num = rows.num;
