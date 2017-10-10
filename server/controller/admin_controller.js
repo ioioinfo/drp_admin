@@ -3765,22 +3765,67 @@ exports.register = function(server, options, next){
 			path: '/get_orders_byDate',
 			handler: function(request, reply){
 				var store_id = "";
-				var date = new Date();
-				var date1 = date.toLocaleDateString();
-				var date2 = date1 +" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+				var date,date1,date2;
+				if (request.query.date) {
+					date1 = request.query.date;
+					date2 = date1 + " 23:59:59";
+				}else {
+					date = new Date();
+					date1 = date.toLocaleDateString();
+					date2 = date1 +" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+				}
 
 				get_orders_byDate(date1,date2,store_id,function(err,rows){
 					if (!err) {
+						store_id = request.query.store_id;
+						var pay_map = {};
+						var pay_ways = [];
 						if (rows.rows.length == 0) {
-							return reply({"success":true,"time":date2,"order_num":0,"total_sales":0,"total_products":0,"service_info":service_info});
+							return reply({"success":true,"time":date2,"order_num":0,"total_sales":0,"total_products":0,"pay_map":pay_map,"pay_ways":pay_ways,"service_info":service_info});
 						}
-						var order_num = rows.rows.length;
-						var total_products =  rows.prducts_num;
+						var order_num = 0;
+						var total_products =  0;
 						var total_sales = 0;
+						var order_ids = [];
+						var total_changes = 0;
 						for (var i = 0; i < rows.rows.length; i++) {
-							total_sales = total_sales + rows.rows[i].actual_price;
+							if (!store_id || rows.rows[i].store_id == store_id) {
+								order_num = order_num + 1;
+								total_products = total_products + rows.rows[i].num;
+								total_sales = total_sales + rows.rows[i].actual_price;
+								total_changes = total_changes + rows.rows[i].changes;
+								order_ids.push(rows.rows[i].order_id);
+							}
 						}
-						return reply({"success":true,"time":date2,"order_num":order_num,"total_sales":total_sales,"total_products":total_products,"service_info":service_info});
+						if (order_ids.length ==0) {
+							return reply({"success":true,"time":date2,"order_num":0,"total_sales":0,"total_products":0,"pay_map":pay_map,"pay_ways":pay_ways,"service_info":service_info});
+						}else {
+							order_ids = JSON.stringify(order_ids);
+							get_orders_pay_infos(order_ids,function(err,rows){
+								if (!err) {
+									var pay_infos = rows.rows;
+									for (var i = 0; i < pay_infos.length; i++) {
+										var pay = pay_infos[i];
+										if (!pay_map[pay.pay_way]) {
+											pay_map[pay.pay_way] = pay.pay_amount;
+											pay_ways.push(pay.pay_way);
+										}else {
+											pay_map[pay.pay_way] = pay_map[pay.pay_way] + pay.pay_amount;
+										}
+									}
+									for (var i = 0; i < pay_ways.length; i++) {
+										pay_map[pay_ways[i]] = parseFloat(pay_map[pay_ways[i]].toFixed(2));
+									}
+
+									pay_map["找零"] = parseFloat(total_changes.toFixed(2));
+									pay_ways.push("找零");
+
+									return reply({"success":true,"time":date2,"order_num":order_num,"total_sales":parseFloat(total_sales.toFixed(2)),"total_products":total_products,"pay_map":pay_map,"pay_ways":pay_ways,"service_info":service_info});
+								}else {
+									return reply({"success":false,"message":rows.message,"service_info":service_info});
+								}
+							});
+						}
 					}else {
 						return reply({"success":true,"rows":rows.message,"service_info":service_info});
 					}
