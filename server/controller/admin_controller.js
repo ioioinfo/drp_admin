@@ -6,7 +6,7 @@ var eventproxy = require('eventproxy');
 var service_info = "drp admin service";
 var org_code = "ioio";
 var platform_code = "ioio";
-if(typeof require !== 'undefined') XLSX = require('xlsjs');
+if(typeof require !== 'undefined') XLSX = require('xlsx');
 var charge_status = {
 	"-1": "等待付款",
 	"1" : "已付款"
@@ -881,6 +881,56 @@ exports.register = function(server, options, next){
 		do_post_method(url,data,cb);
 	};
 	server.route([
+		//营业额
+		{
+			method: 'GET',
+			path: '/get_orders_byDate2',
+			handler: function(request, reply){
+				var date1 = request.query.date1;
+				var date2 = request.query.date2;
+				var store_id = request.query.store_id;
+				if (!store_id) {
+					store_id = "";
+				}
+				var data_map = {};
+				var data_list = [];
+				get_orders_byDate(date1,date2,store_id,function(err,rows){
+					if (!err) {
+						if (rows.rows.length == 0) {
+							return reply({"success":true,"time":date2,"order_num":0,"total_sales":0,"total_products":0,"service_info":service_info});
+						}
+						var order_num = 0;
+						var total_products =  rows.prducts_num;
+						var order_ids = [];
+						var sales = 0;
+						for (var i = 0; i < rows.rows.length; i++) {
+							var row = rows.rows[i];
+							var created_at_text = row.created_at_text;
+							var actual_price = row.actual_price;
+							var number = row.num;
+
+							if (!data_map[created_at_text]) {
+								var data = {
+									"created_at_text":created_at_text,
+									"actual_price": 0,
+									"product_number": 0,
+									"number": 0
+								}
+								data_map[created_at_text] = data;
+
+								data_list.push(data);
+							}
+							data_map[created_at_text].actual_price = parseFloat((data_map[created_at_text].actual_price + actual_price).toFixed(2));
+							data_map[created_at_text].number = data_map[created_at_text].number + 1;
+							data_map[created_at_text].product_number = data_map[created_at_text].product_number + number;
+						}
+						return reply({"success":true,"rows":data_list,"service_info":service_info});
+					}else {
+						return reply({"success":true,"rows":rows.message,"service_info":service_info});
+					}
+				});
+			}
+		},
 		//新增或者更新或者删除标签
 		{
 			method: 'POST',
