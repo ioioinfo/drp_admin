@@ -772,6 +772,12 @@ exports.register = function(server, options, next){
 		var url = "http://139.196.148.40:18666/vip/get_by_person_id?person_id=" + person_id + "&org_code=" + org_code;
 		do_get_method(url,cb);
 	};
+	//批量订单支付信息
+	var get_orders_pay_infos = function(order_ids,cb){
+		var url = "http://139.196.148.40:18008/get_orders_pay_infos?sob_id=ioio&order_ids=";
+		url = url + order_ids;
+		do_get_method(url,cb);
+	}
 	//变异订单
 	var get_poor_orders = function(cb){
 		var url = "http://211.149.248.241:18010/get_poor_orders";
