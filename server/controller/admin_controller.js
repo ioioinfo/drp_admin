@@ -227,9 +227,9 @@ exports.register = function(server, options, next){
 		do_get_method(url,cb);
 	};
 	//根据日期查询订单
-	var get_orders_byDate = function(date1,date2,cb){
+	var get_orders_byDate = function(date1,date2,store_id, cb){
 		var url = "http://211.149.248.241:18010/get_orders_byDate?date1=";
-		url = url + date1 + "&date2=" + date2;
+		url = url + date1 + "&date2=" + date2 + "&store_id="+store_id;
 		do_get_method(url,cb);
 	};
 	//根据personids找昵称
@@ -3764,10 +3764,12 @@ exports.register = function(server, options, next){
 			method: 'GET',
 			path: '/get_orders_byDate',
 			handler: function(request, reply){
+				var store_id = "";
 				var date = new Date();
 				var date1 = date.toLocaleDateString();
 				var date2 = date1 +" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
-				get_orders_byDate(date1,date2,function(err,rows){
+
+				get_orders_byDate(date1,date2,store_id,function(err,rows){
 					if (!err) {
 						if (rows.rows.length == 0) {
 							return reply({"success":true,"time":date2,"order_num":0,"total_sales":0,"total_products":0,"service_info":service_info});
