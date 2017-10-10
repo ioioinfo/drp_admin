@@ -1,24 +1,27 @@
-
+.wrapRight{
+    margin-top: 50px;
+}
 .statistics_middle{
     background: #dedede;
     overflow: hidden;
+    padding: 7px;
 }
 .statistics_middle .number{
     font-size: 18px;
     text-align: center;
     min-height: 75px;
+    border-bottom: 1px solid #f1f1f1;
 }
 .statistics_middle .number p:last-child{
     font-size: 14px;
 }
-.statistics_middle .number1,.number3{
-    border-right: 1px solid #F1F1F1;
-}
-.statistics_middle .number1,.number2{
-    border-bottom: 1px solid #F1F1F1;
-}
-.statistics_middle .number3,.number4{
-    padding-top: 7px;
+.statistics_middle .statistics_middle_right{
+    border-left: 1px solid #f1f1f1;
+    padding-left: 0;
+    padding-right: 0;
+    border-top: 1px solid #f1f1f1;
+    border-bottom: 1px solid #f1f1f1;
+    border-right: 1px solid #f1f1f1;
 }
 .statistics_middle .back{
     background: #EDEDED;
@@ -33,7 +36,26 @@
     font-weight: 400;
     font-size: 24px;
 }
-.statistics_middle .number4{
-    height: 66px;
-    line-height: 66px;
+.statistics_middle_left_border{
+    /*border-right:  1px solid #F1F1F1;*/
+    margin-bottom: 37px;
+}
+.input-group-addon{
+    cursor: pointer;
+}
+.mendian_list{
+    padding: 7px;
+
+}
+.mendian_infor{
+    min-height: 70px;
+    border: 1px solid #f1f1f1;
+    padding: 7px;
+    cursor: pointer;
+}
+.mendian_back{
+    border: 1px solid red;
+}
+.margin_top{
+    margin-top: 107px;
 }
