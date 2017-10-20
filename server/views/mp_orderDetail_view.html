@@ -49,6 +49,9 @@
     .overflow-x{
         overflow-x: auto;
     }
+    .pay_way_style{
+        margin-right: 7px;
+    }
     </style>
   </head>
   <body>
@@ -395,7 +398,7 @@
                                    <div className="col-sm-8 border_style">
 
                                    {this.state.payitem.map(item => (
-                                       <span>{item.pay_way}</span>))
+                                       <span classNam="pay_way_style">{item.pay_way}&nbsp;:&nbsp;¥{item.pay_amount}<br/></span>))
                                    }
 
                                    </div>
