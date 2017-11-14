@@ -47,11 +47,11 @@ exports.register = function(server, options, next) {
             path: '/menu_list',
             handler: function(request, reply){
                 //登录者信息
-                var user_id = request.query.user_id;
-                if (!user_id) {
-                    user_id = "1";
+                var person_id = request.query.user_id;
+                if (!person_id) {
+                    person_id = "1";
                 }
-                var url = "http://139.196.148.40:18666/menu_list?user_id="+user_id;
+                var url = "http://139.196.148.40:18666/menu_list?platform_code=drp_admin&person_id="+person_id;
                 uu_request.do_get_method(url,function(err,content){
                     return reply({"success":true,"rows":content.rows,"message":"ok"});
                 });
